@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  height: 100%;
+}
+
+#root {
+  min-height: 100dvh;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+body {
+  @apply bg-surface text-neutral-900;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.safe-pb {
+  padding-bottom: env(safe-area-inset-bottom, 12px);
+}
