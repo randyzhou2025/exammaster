@@ -1,0 +1,22 @@
+# 本地开发用 PostgreSQL（端口 5433，避免与主机已安装的 5432 冲突）
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: exam-master-pg
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: exam
+      POSTGRES_PASSWORD: exam_dev_password
+      POSTGRES_DB: exam_master
+    ports:
+      - "5433:5432"
+    volumes:
+      - exam_master_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U exam -d exam_master"]
+      interval: 3s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  exam_master_pgdata:

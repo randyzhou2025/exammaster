@@ -17,7 +17,7 @@ export function MockExamResultPage() {
 
   if (!state || typeof state.score !== "number" || !state.paper) {
     return (
-      <div className="flex min-h-full flex-col items-center justify-center gap-3 p-6">
+      <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-3 p-6">
         <p className="text-sm text-neutral-600">暂无成绩数据</p>
         <Link to="/mock" className="text-brand font-medium">
           返回模考
@@ -29,7 +29,7 @@ export function MockExamResultPage() {
   const wrongCount = state.paper.filter((q) => !isAnswerCorrect(q, state.answers[q.id] ?? [])).length;
 
   return (
-    <div className="flex min-h-full flex-col bg-surface p-4">
+    <div className="flex min-h-0 flex-1 flex-col bg-surface p-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
       <h1 className="text-center text-lg font-bold text-neutral-900">成绩单</h1>
       <div className="mt-6 rounded-2xl bg-white p-6 text-center shadow-card">
         <p className="text-sm text-neutral-500">得分</p>

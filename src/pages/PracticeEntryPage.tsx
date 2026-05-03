@@ -21,6 +21,6 @@ export function PracticeEntryPage() {
   }, [kind, nav]);
 
   return (
-    <div className="flex min-h-full items-center justify-center text-sm text-neutral-500">正在打开…</div>
+    <div className="flex min-h-0 flex-1 items-center justify-center text-sm text-neutral-500">正在打开…</div>
   );
 }

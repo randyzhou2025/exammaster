@@ -4,7 +4,13 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "setup:local": "node scripts/setup-local.mjs",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "db:push": "npm --prefix server run db:push",
     "dev": "vite",
+    "dev:api": "npm --prefix server run dev",
+    "dev:full": "concurrently -k -n web,api -c blue,green \"npm run dev\" \"npm run dev:api\"",
     "build": "tsc -b && vite build",
     "import-theory-bank": "node scripts/parse-theory-bank.mjs",
     "preview": "vite preview"
@@ -17,6 +23,7 @@
     "zustand": "^5.0.2"
   },
   "devDependencies": {
+    "concurrently": "^9.1.2",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.3",

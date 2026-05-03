@@ -34,7 +34,7 @@ export function MockExamIntroPage() {
   };
 
   return (
-    <div className="flex min-h-full flex-col bg-gradient-to-b from-brand to-brand-dark text-white">
+    <div className="flex min-h-0 flex-1 flex-col bg-gradient-to-b from-brand to-brand-dark pb-[calc(1rem+env(safe-area-inset-bottom,0px))] text-white">
       <header className="flex items-center gap-2 px-2 pt-2">
         <Link to="/" className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/10">
           ←

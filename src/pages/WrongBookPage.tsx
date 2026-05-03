@@ -3,7 +3,7 @@ import type { ChangeEventHandler } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useShallow } from "zustand/react/shallow";
 import clsx from "clsx";
-import { useAppStore, selectStats, defaultRecord } from "@/stores/appStore";
+import { useAppStore, selectStats, defaultRecord, isWrongBookMember } from "@/stores/appStore";
 import type { Question } from "@/types/exam";
 import { isTimestampToday } from "@/domain/dateUtils";
 import { downloadJson, parseBackupJson } from "@/lib/backup";
@@ -62,11 +62,7 @@ export function WrongBookPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const wrongQuestions = useMemo(
-    () =>
-      bank.filter((q) => {
-        const r = byId[q.id] ?? defaultRecord();
-        return r.firstAnswerMode === "wrong" && !r.remediated;
-      }),
+    () => bank.filter((q) => isWrongBookMember(byId[q.id] ?? defaultRecord())),
     [bank, byId]
   );
 
@@ -123,7 +119,7 @@ export function WrongBookPage() {
 
   const handleClear = () => {
     if (wrongQuestions.length === 0) return;
-    if (!window.confirm("确定清空错题本？题目将移出复习列表（不影响首次答题统计）。")) return;
+    if (!window.confirm("确定清空错题本？列表中的题目将记为「最新答对」，首页与顺序练习中的答错数会相应减少。")) return;
     clearWrongBook();
   };
 
@@ -158,7 +154,7 @@ export function WrongBookPage() {
   };
 
   return (
-    <div className="flex min-h-dvh flex-col bg-surface">
+    <div className="flex min-h-0 flex-1 flex-col bg-surface pb-[env(safe-area-inset-bottom,0px)]">
       <header className="sticky top-0 z-10 border-b border-neutral-200 bg-white px-2 pt-2 shadow-sm">
         <div className="flex items-center gap-2 pb-2">
           <button

@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useShallow } from "zustand/react/shallow";
 import { useAppStore, selectStats } from "@/stores/appStore";
@@ -7,10 +8,10 @@ export function SequentialDashboardPage() {
   const stats = useAppStore(useShallow(selectStats));
   const startPractice = useAppStore((s) => s.startPractice);
   const acc =
-    stats.firstAccuracy === null ? "—" : `${Math.round(stats.firstAccuracy * 100)}%`;
+    stats.practiceAccuracy === null ? "—" : `${Math.round(stats.practiceAccuracy * 100)}%`;
 
   return (
-    <div className="flex min-h-full flex-col bg-gradient-to-b from-brand to-brand-dark pb-8 text-white">
+    <div className="flex min-h-0 flex-1 flex-col bg-gradient-to-b from-brand to-brand-dark pb-[calc(2rem+env(safe-area-inset-bottom,0px))] text-white">
       <header className="flex items-center gap-3 px-3 pt-2">
         <button
           type="button"
@@ -26,7 +27,7 @@ export function SequentialDashboardPage() {
 
       <div className="mt-4 px-4">
         <div className="rounded-xl bg-white/10 px-4 py-3 text-sm backdrop-blur">
-          智慧题库 · 本地进度 · 背题模式不参与首次统计
+          智慧题库 · 本地进度 · 背题模式不写最新作答统计
         </div>
       </div>
 
@@ -43,32 +44,24 @@ export function SequentialDashboardPage() {
               </div>
             </div>
             <div className="text-right">
-              <p className="text-2xl font-bold text-red-500 tabular-nums">{acc}</p>
-              <p className="text-xs text-neutral-500">首次答题正确率</p>
+              <p className="text-2xl font-bold text-brand tabular-nums">{acc}</p>
+              <p className="text-xs text-neutral-500">正确率（按最新作答）</p>
+              <p className="mt-1 text-[11px] text-neutral-400 tabular-nums">
+                答对 {stats.attemptCorrect} · 答错 {stats.attemptWrong}
+              </p>
             </div>
           </div>
 
-          <div className="mt-5 grid grid-cols-4 gap-2 text-center text-sm">
-            <div>
-              <p className="text-lg font-bold text-neutral-900 tabular-nums">{stats.unanswered}</p>
-              <p className="text-xs text-neutral-500">未做题</p>
-            </div>
-            <div>
-              <p className="text-lg font-bold text-neutral-900 tabular-nums">{stats.answered}</p>
-              <p className="text-xs text-neutral-500">已做题</p>
-            </div>
-            <button
-              type="button"
+          <div className="mt-5 grid grid-cols-3 gap-2 text-sm">
+            <StatGridCell value={stats.unanswered} label="未做题" />
+            <StatGridCell value={stats.answered} label="已做题" />
+            <StatGridCell
+              value={stats.attemptWrong}
+              label="答错"
+              valueClassName="text-red-500"
+              interactive
               onClick={() => nav("/wrong-book")}
-              className="rounded-lg py-1 text-center ring-brand/30 transition active:bg-red-50 hover:ring-2"
-            >
-              <p className="text-lg font-bold text-red-500 tabular-nums">{stats.wrongBookCount}</p>
-              <p className="text-xs text-neutral-500">错题</p>
-            </button>
-            <div>
-              <p className="text-lg font-bold text-brand tabular-nums">{acc}</p>
-              <p className="text-xs text-neutral-500">首次正确率</p>
-            </div>
+            />
           </div>
 
           <button
@@ -111,6 +104,42 @@ export function SequentialDashboardPage() {
       </div>
     </div>
   );
+}
+
+const STAT_CELL_SHELL =
+  "flex min-h-[52px] w-full flex-col items-center justify-center gap-0.5 rounded-lg text-center";
+
+function StatGridCell({
+  value,
+  label,
+  valueClassName = "text-neutral-900",
+  interactive,
+  onClick,
+}: {
+  value: ReactNode;
+  label: string;
+  valueClassName?: string;
+  interactive?: boolean;
+  onClick?: () => void;
+}) {
+  const inner = (
+    <>
+      <span className={`text-lg font-bold tabular-nums leading-none ${valueClassName}`}>{value}</span>
+      <span className="block text-xs leading-tight text-neutral-500">{label}</span>
+    </>
+  );
+  if (interactive && onClick) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        className={`${STAT_CELL_SHELL} ring-brand/30 transition active:bg-red-50 hover:ring-2`}
+      >
+        {inner}
+      </button>
+    );
+  }
+  return <div className={STAT_CELL_SHELL}>{inner}</div>;
 }
 
 function MiniMode({ label, onClick }: { label: string; onClick: () => void }) {

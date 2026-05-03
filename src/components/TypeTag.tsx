@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import type { QuestionType } from "@/types/exam";
 
 const LABEL: Record<QuestionType, string> = {
@@ -6,9 +7,15 @@ const LABEL: Record<QuestionType, string> = {
   multiple: "多选",
 };
 
-export function TypeTag({ type }: { type: QuestionType }) {
+/** 驾考类 App 常见样式：小标签、蓝底白字，与题干首行内联排版 */
+export function TypeTag({ type, className }: { type: QuestionType; className?: string }) {
   return (
-    <span className="inline-flex shrink-0 items-center rounded-md bg-brand-light px-2 py-0.5 text-xs font-semibold text-brand">
+    <span
+      className={clsx(
+        "inline-flex items-center align-middle rounded px-2 py-0.5 text-[12px] font-medium leading-none text-white bg-brand",
+        className
+      )}
+    >
       {LABEL[type]}
     </span>
   );
