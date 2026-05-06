@@ -321,12 +321,16 @@ function shuffleIds(ids: string[]): string[] {
   return a;
 }
 
-/** 背题模式不写答题统计，题在库里仍算「未做」；同步书签题号，避免下次「继续练习」落到第一道未做题 */
-function sequentialMemorizeResumePatch(
+/**
+ * 顺序练习当前题号 → `sequentialResumeQuestionId`。
+ * 答题模式也必须同步：否则只依赖退出练习时的 `exitPractice` 写书签，若杀进程/丢会话后点「继续练习」，
+ * `startPractice` 会按陈旧书签恢复，题序会远落后于真实进度（如已在第 229 题却回到第 205 题）。
+ */
+function sequentialResumeBookmarkPatch(
   p: NonNullable<AppState["practice"]>,
   index: number
 ): Pick<AppState, "sequentialResumeQuestionId"> | Record<string, never> {
-  if (p.kind !== "sequential" || p.uiMode !== "memorize") return {};
+  if (p.kind !== "sequential") return {};
   const id = p.orderedIds[index];
   if (!id) return {};
   return { sequentialResumeQuestionId: id };
@@ -370,13 +374,17 @@ export const useAppStore = create<AppState>()(
           );
           if (firstUnanswered >= 0) index = firstUnanswered;
         }
+        const practice = { kind, orderedIds, index, uiMode };
+        const bookmark =
+          kind === "sequential" && orderedIds.length > 0
+            ? sequentialResumeBookmarkPatch(
+                practice as NonNullable<AppState["practice"]>,
+                Math.min(Math.max(0, index), orderedIds.length - 1)
+              )
+            : {};
         set({
-          practice: {
-            kind,
-            orderedIds,
-            index,
-            uiMode,
-          },
+          practice,
+          ...bookmark,
         });
       },
 
@@ -400,12 +408,12 @@ export const useAppStore = create<AppState>()(
         const p = get().practice;
         if (!p) return;
         const nextPractice = { ...p, uiMode };
-        if (p.kind === "sequential" && uiMode === "memorize") {
-          const id = p.orderedIds[p.index];
-          if (id) {
-            set({ practice: nextPractice, sequentialResumeQuestionId: id });
-            return;
-          }
+        if (p.kind === "sequential") {
+          set({
+            practice: nextPractice,
+            ...sequentialResumeBookmarkPatch(p, p.index),
+          });
+          return;
         }
         set({ practice: nextPractice });
       },
@@ -416,7 +424,7 @@ export const useAppStore = create<AppState>()(
         const clamped = Math.max(0, Math.min(p.orderedIds.length - 1, index));
         set({
           practice: { ...p, index: clamped },
-          ...sequentialMemorizeResumePatch(p, clamped),
+          ...sequentialResumeBookmarkPatch(p, clamped),
         });
       },
 
@@ -426,7 +434,7 @@ export const useAppStore = create<AppState>()(
         const next = Math.min(p.index + 1, p.orderedIds.length - 1);
         set({
           practice: { ...p, index: next },
-          ...sequentialMemorizeResumePatch(p, next),
+          ...sequentialResumeBookmarkPatch(p, next),
         });
       },
 
