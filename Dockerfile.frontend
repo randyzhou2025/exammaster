@@ -1,0 +1,13 @@
+# 构建 Vite 静态资源，再用 Nginx 提供页面并在容器内转发 /api → exam_api（与宝塔只反代 3000 口一致）
+FROM node:20-alpine AS build
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci
+COPY tsconfig.json tsconfig.node.json index.html vite.config.ts postcss.config.js tailwind.config.js ./
+COPY src ./src
+RUN npm run build
+
+FROM nginx:1.27-alpine
+COPY deploy/nginx-frontend.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/dist /usr/share/nginx/html
+EXPOSE 80

@@ -1,0 +1,59 @@
+# 生产：与 cyber_* 类似 — Postgres + API(127.0.0.1:3001) + 前端 Nginx(127.0.0.1:3000)
+# 使用：在仓库根目录复制 deploy/env.example 为 .env.prod 并填写密钥，然后：
+#   docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
+#
+# 首次建表（仅一次）：
+#   docker compose -f docker-compose.prod.yml --env-file .env.prod exec exam_api npm run db:push
+
+services:
+  exam_postgres:
+    image: postgres:16-alpine
+    container_name: exam_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: exam
+      POSTGRES_PASSWORD: ${EXAM_POSTGRES_PASSWORD:?set EXAM_POSTGRES_PASSWORD in .env.prod}
+      POSTGRES_DB: exam_master
+    volumes:
+      - exam_master_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U exam -d exam_master"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  exam_api:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    image: exam-master-api:latest
+    container_name: exam_api
+    restart: unless-stopped
+    depends_on:
+      exam_postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://exam:${EXAM_POSTGRES_PASSWORD}@exam_postgres:5432/exam_master
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env.prod min 16 chars}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+      PORT: "4000"
+      HOST: 0.0.0.0
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+    ports:
+      - "127.0.0.1:3011:4000"
+
+  exam_frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    image: exam-master-frontend:latest
+    container_name: exam_frontend
+    restart: unless-stopped
+    depends_on:
+      - exam_api
+    ports:
+      - "127.0.0.1:3010:80"
+
+volumes:
+  exam_master_pgdata:

@@ -13,7 +13,10 @@
     "dev:full": "concurrently -k -n web,api -c blue,green \"npm run dev\" \"npm run dev:api\"",
     "build": "tsc -b && vite build",
     "import-theory-bank": "node scripts/parse-theory-bank.mjs",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "docker:prod:up": "docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build",
+    "docker:prod:down": "docker compose -f docker-compose.prod.yml --env-file .env.prod down",
+    "docker:prod:logs": "docker compose -f docker-compose.prod.yml --env-file .env.prod logs -f --tail=80"
   },
   "dependencies": {
     "clsx": "^2.1.1",

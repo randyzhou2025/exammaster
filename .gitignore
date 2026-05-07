@@ -3,6 +3,7 @@ dist
 .DS_Store
 *.local
 server/.env
+.env.prod
 
 # 本地素材（不入库）
 题库/
