@@ -22,6 +22,9 @@ import { AdminLoginLogsPage } from "@/pages/AdminLoginLogsPage";
 import { QuestionBankPage } from "@/pages/QuestionBankPage";
 import { useAuthStore } from "@/stores/authStore";
 
+const routerBasename =
+  import.meta.env.BASE_URL === "/" ? undefined : import.meta.env.BASE_URL.replace(/\/$/, "");
+
 export default function App() {
   const bootstrap = useAuthStore((s) => s.bootstrap);
   useEffect(() => {
@@ -29,7 +32,7 @@ export default function App() {
   }, [bootstrap]);
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={routerBasename}>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />

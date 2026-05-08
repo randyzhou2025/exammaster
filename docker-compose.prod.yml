@@ -47,6 +47,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.frontend
+      args:
+        # 站点根路径部署用默认 /；宝塔子路径部署示例：在 .env.prod 写 VITE_BASE_PATH=/examprep/
+        VITE_BASE_PATH: ${VITE_BASE_PATH:-/}
     image: exam-master-frontend:latest
     container_name: exam_frontend
     restart: unless-stopped

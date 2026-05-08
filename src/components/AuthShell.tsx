@@ -2,7 +2,6 @@ import type { ReactNode } from "react";
 
 const BRAND_NAME = "考练宝典";
 const BRAND_EN = "EXAM PREP SUITE";
-const TAGLINE = "专业备考与智能刷题平台";
 
 /**
  * 登录 / 注册共用：深色质感背景 + 品牌区 + 玻璃拟态卡片，突出「备考工具」定位。
@@ -57,10 +56,7 @@ export function AuthShell({
           <h1 className="mt-1.5 text-[1.65rem] font-bold tracking-tight text-white sm:text-[1.75rem]">
             {BRAND_NAME}
           </h1>
-          <p className="mx-auto mt-2 max-w-[17rem] text-[13px] leading-relaxed text-slate-300/95">
-            {TAGLINE}
-          </p>
-          <p className="mx-auto mt-3 max-w-[19rem] text-[12px] leading-relaxed text-slate-400/90">
+          <p className="mx-auto mt-2 max-w-[19rem] text-[12px] leading-relaxed text-slate-400/90">
             题库练习 · 模考仿真 · 错题巩固 · 进度可视
           </p>
         </header>

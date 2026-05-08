@@ -1,5 +1,8 @@
 # 构建 Vite 静态资源，再用 Nginx 提供页面并在容器内转发 /api → exam_api（与宝塔只反代 3000 口一致）
+# 子路径部署示例：compose 里传 build-arg VITE_BASE_PATH=/examprep/
 FROM node:20-alpine AS build
+ARG VITE_BASE_PATH=/
+ENV VITE_BASE_PATH=$VITE_BASE_PATH
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
