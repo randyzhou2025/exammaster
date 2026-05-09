@@ -99,7 +99,8 @@ export async function registerAuthRoutes(app: FastifyInstance, authenticate: pre
         passwordHash: await hashPassword(password),
         displayName: displayName?.trim() || null,
         role: "user",
-        isAuthorized: false,
+        /** 注册后即可使用备考功能；管理员仍可后台撤销授权 */
+        isAuthorized: true,
       })
       .returning({
         id: users.id,
