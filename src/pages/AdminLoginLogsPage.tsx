@@ -105,13 +105,13 @@ export function AdminLoginLogsPage() {
         ) : (
           <>
             <div className="mt-4 overflow-x-auto rounded-xl border border-neutral-200">
-              <table className="min-w-[760px] w-full text-left text-sm">
+              <table className="min-w-[520px] w-full text-left text-sm sm:min-w-[760px]">
                 <thead className="bg-neutral-50 text-neutral-600">
                   <tr>
                     <th className="px-3 py-2 font-semibold">用户名</th>
                     <th className="px-3 py-2 font-semibold">登录时间</th>
-                    <th className="px-3 py-2 font-semibold">登录地点</th>
-                    <th className="px-3 py-2 font-semibold">登录IP</th>
+                    <th className="hidden px-3 py-2 font-semibold sm:table-cell">登录地点</th>
+                    <th className="hidden px-3 py-2 font-semibold sm:table-cell">登录IP</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -124,12 +124,20 @@ export function AdminLoginLogsPage() {
                   ) : (
                     rows.map((l) => (
                       <tr key={l.id} className="border-t border-neutral-100">
-                        <td className="px-3 py-2 text-neutral-900">{l.username}</td>
+                        <td className="px-3 py-2 text-neutral-900">
+                          <div>{l.username}</div>
+                          <div className="mt-1 space-y-0.5 text-[11px] text-neutral-600 sm:hidden">
+                            <div>{l.location}</div>
+                            <div className="font-mono text-neutral-700">{l.ip}</div>
+                          </div>
+                        </td>
                         <td className="px-3 py-2 text-neutral-700">
                           {new Date(l.loginAt).toLocaleString("zh-CN", { hour12: false })}
                         </td>
-                        <td className="px-3 py-2 text-neutral-700">{l.location}</td>
-                        <td className="px-3 py-2 font-mono text-[13px] text-neutral-700">{l.ip}</td>
+                        <td className="hidden px-3 py-2 text-neutral-700 sm:table-cell">{l.location}</td>
+                        <td className="hidden px-3 py-2 font-mono text-[13px] text-neutral-700 sm:table-cell">
+                          {l.ip}
+                        </td>
                       </tr>
                     ))
                   )}

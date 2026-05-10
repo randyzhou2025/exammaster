@@ -1,4 +1,4 @@
-import type { FastifyInstance, FastifyReply, preHandlerHookHandler } from "fastify";
+import type { FastifyInstance, FastifyReply, FastifyRequest, preHandlerHookHandler } from "fastify";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "../db/index.js";
@@ -78,6 +78,24 @@ async function resolveLocationByIp(ip: string): Promise<string> {
   }
 }
 
+/** 登录 / 注册成功后写入一条登录日志（与 POST /api/auth/login 字段一致） */
+async function recordLoginLog(request: FastifyRequest, userId: string, username: string): Promise<void> {
+  const ip = normalizeClientIp(
+    (request.headers["x-forwarded-for"] as string | undefined) ?? request.ip
+  );
+  const location = await resolveLocationByIp(ip);
+  try {
+    await db.insert(loginLogs).values({
+      userId,
+      username,
+      ip,
+      location,
+    });
+  } catch {
+    /* ignore */
+  }
+}
+
 export async function registerAuthRoutes(app: FastifyInstance, authenticate: preHandlerHookHandler) {
   app.post("/api/auth/register", async (request, reply: FastifyReply) => {
     const parsed = registerSchema.safeParse(request.body);
@@ -113,6 +131,8 @@ export async function registerAuthRoutes(app: FastifyInstance, authenticate: pre
 
     const token = await reply.jwtSign({ sub: created.id, role: created.role });
 
+    await recordLoginLog(request, created.id, created.email);
+
     return reply.send({ token, user: publicUser(created) });
   });
 
@@ -140,21 +160,7 @@ export async function registerAuthRoutes(app: FastifyInstance, authenticate: pre
 
     const token = await reply.jwtSign({ sub: row.id, role: row.role });
 
-    const ip = normalizeClientIp(
-      (request.headers["x-forwarded-for"] as string | undefined) ?? request.ip
-    );
-    const location = await resolveLocationByIp(ip);
-    // 登录日志失败不影响登录主链路
-    try {
-      await db.insert(loginLogs).values({
-        userId: row.id,
-        username: row.email,
-        ip,
-        location,
-      });
-    } catch {
-      /* ignore */
-    }
+    await recordLoginLog(request, row.id, row.email);
 
     return reply.send({
       token,
