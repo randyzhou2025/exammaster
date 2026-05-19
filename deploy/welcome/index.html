@@ -2,7 +2,8 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#eef2ff" />
     <meta name="description" content="Randy 的个人项目集散页 — 非商业用途" />
     <title>Randy · 个人主页</title>
     <style>
@@ -24,28 +25,61 @@
         box-sizing: border-box;
       }
 
+      html {
+        height: 100%;
+      }
+
       body {
         margin: 0;
         min-height: 100vh;
         min-height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        overflow-x: clip;
         font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
         color: var(--ink);
         background:
           radial-gradient(ellipse 100% 60% at 50% -20%, rgba(99, 102, 241, 0.16), transparent 55%),
           radial-gradient(ellipse 65% 50% at 100% 100%, rgba(14, 165, 233, 0.12), transparent 50%),
           linear-gradient(168deg, var(--bg0) 0%, var(--bg1) 42%, #f8fafc 100%);
-        padding: max(1.25rem, env(safe-area-inset-top)) max(1.25rem, env(safe-area-inset-right))
-          max(1.5rem, env(safe-area-inset-bottom)) max(1.25rem, env(safe-area-inset-left));
+        /* 手机端优先：左右至少 1rem，并与安全区取较大值 */
+        padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right))
+          max(1.5rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+      }
+
+      @media (min-width: 480px) {
+        body {
+          padding-left: max(1.25rem, env(safe-area-inset-left));
+          padding-right: max(1.25rem, env(safe-area-inset-right));
+        }
       }
 
       .wrap {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
         max-width: 40rem;
         margin: 0 auto;
+        min-width: 0;
+        min-height: 0;
+      }
+
+      .content {
+        flex: 0 0 auto;
+      }
+
+      /* 声明 + 页脚：内容少时贴底，内容多时在正文下方自然排列 */
+      .site-footer {
+        margin-top: auto;
+        padding-top: 2rem;
       }
 
       header.hero {
         text-align: center;
-        padding: 0.5rem 0 1.75rem;
+        padding: 0.5rem 0 1.5rem;
+        width: 100%;
+        min-width: 0;
       }
 
       .avatar {
@@ -66,20 +100,37 @@
 
       .hero h1 {
         margin: 0 0 0.5rem;
-        font-size: clamp(1.45rem, 4.5vw, 1.85rem);
+        font-size: clamp(1.25rem, 5vw, 1.85rem);
         font-weight: 700;
         letter-spacing: 0.02em;
         color: var(--ink);
+        overflow-wrap: anywhere;
+        word-break: break-word;
+        padding-inline: 0.125rem;
+      }
+
+      /* 中文在窄屏必须可换行：勿用 keep-all/strict，易在 iOS/WebKit 上整行溢出裁切 */
+      .hero .tagline,
+      .entry-desc,
+      .note,
+      .disclaimer {
+        overflow-wrap: anywhere;
+        word-break: break-word;
+        hyphens: auto;
+        text-wrap: pretty;
       }
 
       .hero .tagline {
+        display: block;
+        width: 100%;
+        max-width: min(100%, 28rem);
         margin: 0 auto;
-        max-width: 28rem;
-        font-size: 0.98rem;
-        line-height: 1.7;
+        box-sizing: border-box;
+        font-size: clamp(0.9rem, 3.8vw, 0.98rem);
+        line-height: 1.75;
         color: var(--muted);
-        word-break: keep-all;
-        line-break: strict;
+        text-align: center;
+        padding-inline: 0.125rem;
       }
 
       section.block {
@@ -95,7 +146,7 @@
         color: #94a3b8;
       }
 
-      /* 主入口：整张卡片可点 */
+      /* 主入口：整张卡片可点（触控友好） */
       a.entry {
         display: block;
         text-decoration: none;
@@ -106,16 +157,26 @@
         box-shadow: var(--shadow);
         backdrop-filter: blur(14px);
         -webkit-backdrop-filter: blur(14px);
-        padding: 1.35rem 1.35rem 1.3rem;
+        padding: 1.1rem 1rem 1.05rem;
         transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
       }
 
-      a.entry:hover {
-        transform: translateY(-2px);
-        box-shadow:
-          0 1px 2px rgba(15, 23, 42, 0.06),
-          0 28px 56px -28px rgba(15, 23, 42, 0.18);
-        border-color: rgba(99, 102, 241, 0.35);
+      @media (min-width: 480px) {
+        a.entry {
+          padding: 1.35rem 1.35rem 1.3rem;
+        }
+      }
+
+      @media (hover: hover) and (pointer: fine) {
+        a.entry:hover {
+          transform: translateY(-2px);
+          box-shadow:
+            0 1px 2px rgba(15, 23, 42, 0.06),
+            0 28px 56px -28px rgba(15, 23, 42, 0.18);
+          border-color: rgba(99, 102, 241, 0.35);
+        }
       }
 
       a.entry:focus-visible {
@@ -126,7 +187,14 @@
       .entry-inner {
         display: flex;
         align-items: flex-start;
-        gap: 1rem;
+        gap: 0.75rem;
+        min-width: 0;
+      }
+
+      @media (min-width: 480px) {
+        .entry-inner {
+          gap: 1rem;
+        }
       }
 
       .entry-icon {
@@ -154,15 +222,17 @@
       }
 
       .entry-title {
-        font-size: 1.12rem;
+        font-size: clamp(1rem, 4vw, 1.12rem);
         font-weight: 700;
         color: var(--ink);
         margin: 0 0 0.35rem;
+        overflow-wrap: anywhere;
+        word-break: break-word;
       }
 
       .entry-desc {
         margin: 0;
-        font-size: 0.9rem;
+        font-size: clamp(0.84rem, 3.5vw, 0.9rem);
         line-height: 1.65;
         color: var(--muted);
       }
@@ -183,13 +253,15 @@
         transition: transform 0.18s ease;
       }
 
-      a.entry:hover .entry-cta svg {
-        transform: translateX(3px);
+      @media (hover: hover) and (pointer: fine) {
+        a.entry:hover .entry-cta svg {
+          transform: translateX(3px);
+        }
       }
 
       .note {
         margin-top: 1.5rem;
-        padding: 1rem 1.15rem;
+        padding: 1rem 0.9rem;
         border-radius: 0.9rem;
         background: rgba(255, 255, 255, 0.45);
         border: 1px solid rgba(148, 163, 184, 0.25);
@@ -200,17 +272,18 @@
       }
 
       .disclaimer {
-        margin-top: 1.75rem;
+        margin: 0;
         padding-top: 1.25rem;
         border-top: 1px solid rgba(148, 163, 184, 0.28);
         text-align: center;
-        font-size: 0.78rem;
+        font-size: clamp(0.72rem, 3.2vw, 0.78rem);
         line-height: 1.65;
         color: #94a3b8;
+        padding-inline: 0.125rem;
       }
 
-      footer {
-        margin-top: 1rem;
+      .site-footer footer {
+        margin: 1rem 0 0;
         text-align: center;
         font-size: 0.8rem;
         color: #94a3b8;
@@ -219,6 +292,7 @@
   </head>
   <body>
     <div class="wrap">
+      <main class="content">
       <header class="hero">
         <div class="avatar" aria-hidden="true">R</div>
         <h1>Randy · 个人主页</h1>
@@ -256,10 +330,12 @@
       </section>
 
       <p class="note">若链接无法打开，请检查网络或稍后再试。</p>
+      </main>
 
-      <p class="disclaimer" role="note">声明：本站及站内链出的个人项目内容仅供学习与交流使用，<strong>禁止用于商业用途</strong>。</p>
-
-      <footer>qiway.site · 个人站点</footer>
+      <div class="site-footer">
+        <p class="disclaimer" role="note">声明：本站及站内链出的个人项目内容仅供学习与交流使用，<strong>禁止用于商业用途</strong>。</p>
+        <footer>qiway.site · 个人站点</footer>
+      </div>
     </div>
   </body>
 </html>

@@ -1,0 +1,35 @@
+---
+description: 移动优先 UI：布局、换行、触控与安全区（ExamMaster 全站适用）
+alwaysApply: true
+---
+
+# 移动优先 UI
+
+所有面向用户的界面（React 页面、静态页、小程序）默认按**手机竖屏**设计，再适配桌面；不要先写桌面布局再挤进小屏。
+
+## 布局与溢出
+
+- 根容器：`width: 100%`、`min-width: 0`；flex 子项需 `min-width: 0` 避免撑破父级。
+- 禁止横向滚动条：`body` 可用 `overflow-x: clip`；避免固定宽度大于视口。
+- 内边距：`padding` 与 `env(safe-area-inset-*)` 取 `max()`；`viewport` 含 `viewport-fit=cover`（刘海屏）。
+
+## 中文换行（易踩坑）
+
+- **不要**对正文/副标题同时使用 `word-break: keep-all` 与 `line-break: strict`——在 iOS/WebKit 上常导致整行不换行、右侧裁切。
+- 推荐：`overflow-wrap: anywhere`（或 `break-word`）+ `line-height: 1.65~1.75`；可选 `text-wrap: pretty`。
+- 标题过长：用 `clamp()` 缩放字号，勿依赖单行省略掩盖布局问题。
+
+## 触控与交互
+
+- 可点击区域高度/宽度 **≥ 44px**（`min-h-11 min-w-11` 或等价 CSS）。
+- 悬停效果仅写在 `@media (hover: hover) and (pointer: fine)` 内，避免手机误触「粘滞 hover」。
+- 链接/按钮：`-webkit-tap-highlight-color: transparent`、`touch-action: manipulation`（按需）。
+
+## Tailwind / React（本项目）
+
+- 优先移动样式，再用 `sm:` / `md:` 放大；底栏、全屏页考虑 `pb-[env(safe-area-inset-bottom)]`。
+- 全屏滚动页用 `min-h-dvh` 而非仅 `min-h-screen`（地址栏伸缩更稳）。
+
+## 验收
+
+改 UI 后至少在 **375px 宽**（或真机）检查：副标题/声明是否完整换行、卡片是否贴边、底部是否被 Home 条遮挡。
