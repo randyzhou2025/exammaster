@@ -12,6 +12,7 @@
     "dev:api": "npm --prefix server run dev",
     "dev:full": "concurrently -k -n bank,web,api -c yellow,blue,green \"npm run build:code-bank\" \"npm run dev\" \"npm run dev:api\"",
     "build": "node scripts/build-code-fill-bank.mjs && tsc -b && vite build",
+    "build:web": "tsc -b && vite build",
     "import-theory-bank": "node scripts/parse-theory-bank.mjs",
     "build:code-bank": "node scripts/build-code-fill-bank.mjs",
     "preview": "vite preview",
