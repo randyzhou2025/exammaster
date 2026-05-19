@@ -3,85 +3,263 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>欢迎访问</title>
+    <meta name="description" content="Randy 的个人项目集散页 — 非商业用途" />
+    <title>Randy · 个人主页</title>
     <style>
+      :root {
+        --bg0: #f4f6fb;
+        --bg1: #eef2ff;
+        --ink: #0f172a;
+        --muted: #64748b;
+        --brand: #4f46e5;
+        --brand2: #0ea5e9;
+        --card: rgba(255, 255, 255, 0.78);
+        --card-border: rgba(255, 255, 255, 0.9);
+        --shadow: 0 1px 2px rgba(15, 23, 42, 0.05), 0 22px 48px -24px rgba(15, 23, 42, 0.14);
+        --radius: 1.25rem;
+        --tap: 44px;
+      }
+
       * {
         box-sizing: border-box;
       }
+
       body {
         margin: 0;
         min-height: 100vh;
         min-height: 100dvh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: max(1.5rem, env(safe-area-inset-top)) max(1.25rem, env(safe-area-inset-right))
-          max(1.5rem, env(safe-area-inset-bottom)) max(1.25rem, env(safe-area-inset-left));
         font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
-        color: #1e293b;
+        color: var(--ink);
         background:
-          radial-gradient(ellipse 90% 55% at 50% -15%, rgba(99, 102, 241, 0.14), transparent 55%),
-          radial-gradient(ellipse 70% 45% at 100% 80%, rgba(14, 165, 233, 0.1), transparent 50%),
-          linear-gradient(165deg, #f8fafc 0%, #eef2ff 45%, #f1f5f9 100%);
+          radial-gradient(ellipse 100% 60% at 50% -20%, rgba(99, 102, 241, 0.16), transparent 55%),
+          radial-gradient(ellipse 65% 50% at 100% 100%, rgba(14, 165, 233, 0.12), transparent 50%),
+          linear-gradient(168deg, var(--bg0) 0%, var(--bg1) 42%, #f8fafc 100%);
+        padding: max(1.25rem, env(safe-area-inset-top)) max(1.25rem, env(safe-area-inset-right))
+          max(1.5rem, env(safe-area-inset-bottom)) max(1.25rem, env(safe-area-inset-left));
       }
-      main {
-        width: 100%;
-        max-width: min(92vw, 26rem);
+
+      .wrap {
+        max-width: 40rem;
+        margin: 0 auto;
+      }
+
+      header.hero {
         text-align: center;
+        padding: 0.5rem 0 1.75rem;
       }
-      .card {
-        padding: 2.25rem 1.75rem 2rem;
-        border-radius: 1.25rem;
-        background: rgba(255, 255, 255, 0.72);
-        border: 1px solid rgba(255, 255, 255, 0.85);
-        box-shadow:
-          0 1px 2px rgba(15, 23, 42, 0.04),
-          0 20px 50px -20px rgba(15, 23, 42, 0.12);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-      }
-      .mark {
+
+      .avatar {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 3rem;
-        height: 3rem;
-        margin: 0 auto 1.25rem;
-        border-radius: 0.9rem;
-        background: linear-gradient(145deg, #6366f1, #4f46e5);
+        width: 4rem;
+        height: 4rem;
+        margin-bottom: 1rem;
+        border-radius: 1.1rem;
+        background: linear-gradient(145deg, var(--brand), #6366f1);
         color: #fff;
-        font-size: 1.35rem;
-        font-weight: 600;
-        line-height: 1;
-        box-shadow: 0 10px 25px -8px rgba(79, 70, 229, 0.45);
+        font-size: 1.5rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        box-shadow: 0 14px 36px -12px rgba(79, 70, 229, 0.55);
       }
-      h1 {
-        font-size: 1.4rem;
-        font-weight: 600;
-        letter-spacing: 0.04em;
-        margin: 0 0 0.75rem;
-        color: #0f172a;
+
+      .hero h1 {
+        margin: 0 0 0.5rem;
+        font-size: clamp(1.45rem, 4.5vw, 1.85rem);
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        color: var(--ink);
       }
-      p {
-        margin: 0;
+
+      .hero .tagline {
+        margin: 0 auto;
+        max-width: 28rem;
         font-size: 0.98rem;
-        line-height: 1.75;
-        color: #64748b;
-        /* 减少在词组中间断行；过窄屏再允许自然换行 */
+        line-height: 1.7;
+        color: var(--muted);
         word-break: keep-all;
         line-break: strict;
-        overflow-wrap: break-word;
-        text-wrap: pretty;
+      }
+
+      section.block {
+        margin-top: 0.5rem;
+      }
+
+      .block h2 {
+        margin: 0 0 0.65rem;
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #94a3b8;
+      }
+
+      /* 主入口：整张卡片可点 */
+      a.entry {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        border-radius: var(--radius);
+        background: var(--card);
+        border: 1px solid var(--card-border);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        padding: 1.35rem 1.35rem 1.3rem;
+        transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+      }
+
+      a.entry:hover {
+        transform: translateY(-2px);
+        box-shadow:
+          0 1px 2px rgba(15, 23, 42, 0.06),
+          0 28px 56px -28px rgba(15, 23, 42, 0.18);
+        border-color: rgba(99, 102, 241, 0.35);
+      }
+
+      a.entry:focus-visible {
+        outline: 2px solid var(--brand);
+        outline-offset: 3px;
+      }
+
+      .entry-inner {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+
+      .entry-icon {
+        flex-shrink: 0;
+        width: var(--tap);
+        height: var(--tap);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 1rem;
+        background: linear-gradient(135deg, rgba(79, 70, 229, 0.12), rgba(14, 165, 233, 0.14));
+        border: 1px solid rgba(99, 102, 241, 0.2);
+      }
+
+      .entry-icon svg {
+        width: 1.65rem;
+        height: 1.65rem;
+        color: var(--brand);
+      }
+
+      .entry-body {
+        flex: 1;
+        min-width: 0;
+        text-align: left;
+      }
+
+      .entry-title {
+        font-size: 1.12rem;
+        font-weight: 700;
+        color: var(--ink);
+        margin: 0 0 0.35rem;
+      }
+
+      .entry-desc {
+        margin: 0;
+        font-size: 0.9rem;
+        line-height: 1.65;
+        color: var(--muted);
+      }
+
+      .entry-cta {
+        margin-top: 0.75rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: var(--brand);
+      }
+
+      .entry-cta svg {
+        width: 1rem;
+        height: 1rem;
+        transition: transform 0.18s ease;
+      }
+
+      a.entry:hover .entry-cta svg {
+        transform: translateX(3px);
+      }
+
+      .note {
+        margin-top: 1.5rem;
+        padding: 1rem 1.15rem;
+        border-radius: 0.9rem;
+        background: rgba(255, 255, 255, 0.45);
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        font-size: 0.88rem;
+        line-height: 1.65;
+        color: #64748b;
+        text-align: center;
+      }
+
+      .disclaimer {
+        margin-top: 1.75rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid rgba(148, 163, 184, 0.28);
+        text-align: center;
+        font-size: 0.78rem;
+        line-height: 1.65;
+        color: #94a3b8;
+      }
+
+      footer {
+        margin-top: 1rem;
+        text-align: center;
+        font-size: 0.8rem;
+        color: #94a3b8;
       }
     </style>
   </head>
   <body>
-    <main>
-      <div class="card">
-        <div class="mark" aria-hidden="true">站</div>
-        <h1>欢迎访问</h1>
-        <p>本站正在建设中，内容将陆续上线，敬请<span style="white-space: nowrap">期待</span>。</p>
-      </div>
-    </main>
+    <div class="wrap">
+      <header class="hero">
+        <div class="avatar" aria-hidden="true">R</div>
+        <h1>Randy · 个人主页</h1>
+        <p class="tagline">本站只用于汇总与展示<strong>个人项目</strong>入口。已上线的项目请从下方卡片进入。</p>
+      </header>
+
+      <section class="block" aria-labelledby="projects-heading">
+        <h2 id="projects-heading">项目</h2>
+        <a
+          class="entry"
+          href="https://qiway.site/examprep/"
+          rel="noopener noreferrer"
+          aria-label="进入考练宝典备考刷题平台"
+        >
+          <div class="entry-inner">
+            <div class="entry-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                <path d="M8 7h8M8 11h8M8 15h5" />
+              </svg>
+            </div>
+            <div class="entry-body">
+              <p class="entry-title">考练宝典 · 备考刷题</p>
+              <p class="entry-desc">人工智能训练师等题库练习、模拟考试与代码填空实操。整卡可点进入。</p>
+              <span class="entry-cta">
+                进入站点
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </span>
+            </div>
+          </div>
+        </a>
+      </section>
+
+      <p class="note">若链接无法打开，请检查网络或稍后再试。</p>
+
+      <p class="disclaimer" role="note">声明：本站及站内链出的个人项目内容仅供学习与交流使用，<strong>禁止用于商业用途</strong>。</p>
+
+      <footer>qiway.site · 个人站点</footer>
+    </div>
   </body>
 </html>
