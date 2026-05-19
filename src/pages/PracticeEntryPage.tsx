@@ -1,9 +1,10 @@
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { routes } from "@/lib/routes";
 
 const REDIRECT: Record<string, string> = {
-  wrong: "/wrong-book",
-  favorite: "/wrong-book?tab=favorite",
+  wrong: routes.theoryWrongBook,
+  favorite: `${routes.theoryWrongBook}?tab=favorite`,
 };
 
 /** /practice/:kind 入口：错题/收藏跳转错题本（兼容旧链接） */
@@ -14,7 +15,7 @@ export function PracticeEntryPage() {
   useEffect(() => {
     const path = kind ? REDIRECT[kind] : undefined;
     if (!path) {
-      nav("/", { replace: true });
+      nav(routes.theoryHome, { replace: true });
       return;
     }
     nav(path, { replace: true });

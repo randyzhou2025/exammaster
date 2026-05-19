@@ -1,4 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { routes } from "@/lib/routes";
 import { EXAM_TEMPLATE } from "@/types/exam";
 import type { Question } from "@/types/exam";
 import { isAnswerCorrect } from "@/domain/scoring";
@@ -19,7 +20,7 @@ export function MockExamResultPage() {
     return (
       <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-3 p-6">
         <p className="text-sm text-neutral-600">暂无成绩数据</p>
-        <Link to="/mock" className="text-brand font-medium">
+        <Link to={routes.theoryMock} className="text-brand font-medium">
           返回模考
         </Link>
       </div>
@@ -50,7 +51,7 @@ export function MockExamResultPage() {
 
       <div className="mt-6 space-y-3">
         <Link
-          to="/mock"
+          to={routes.theoryMock}
           className="block w-full rounded-xl bg-brand py-3 text-center text-sm font-semibold text-white"
         >
           再考一次

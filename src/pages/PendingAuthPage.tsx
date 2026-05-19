@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { routes } from "@/lib/routes";
 import { useAuthStore } from "@/stores/authStore";
 
 export function PendingAuthPage() {
@@ -11,7 +12,7 @@ export function PendingAuthPage() {
   useEffect(() => {
     if (!user) return;
     if (user.role === "admin" || user.isAuthorized) {
-      navigate("/", { replace: true });
+      navigate(routes.theoryHome, { replace: true });
     }
   }, [user, navigate]);
 
@@ -45,7 +46,7 @@ export function PendingAuthPage() {
           >
             退出登录
           </button>
-          <Link to="/settings" className="block text-center text-sm text-brand">
+          <Link to={routes.settings} className="block text-center text-sm text-brand">
             设置（导出备份等）
           </Link>
         </div>

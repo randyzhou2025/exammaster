@@ -6,6 +6,7 @@ import { SegmentedControl } from "@/components/SegmentedControl";
 import { TypeTag } from "@/components/TypeTag";
 import type { Question } from "@/types/exam";
 import { isAnswerCorrect } from "@/domain/scoring";
+import { routes } from "@/lib/routes";
 import {
   useAppStore,
   selectStats,
@@ -206,14 +207,14 @@ export function PracticePage() {
 
   /** 无进行中的会话时回首页（持久化未完成前由 persistReady 挡掉，避免误判） */
   if (!practice) {
-    return <Navigate to="/" replace />;
+    return <Navigate to={routes.theoryHome} replace />;
   }
 
   if (practice.orderedIds.length === 0 || !q) {
     return (
       <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-4 p-6">
         <p className="text-sm text-neutral-600">当前模式暂无可用题目</p>
-        <Link to="/sequential" className="text-brand font-medium">
+        <Link to={routes.theorySequential} className="text-brand font-medium">
           返回顺序练习
         </Link>
       </div>
@@ -384,7 +385,7 @@ export function PracticePage() {
               onChange={onChangeMode}
             />
           </div>
-          <Link to="/settings" className="px-1 text-sm text-white/90">
+          <Link to={routes.settings} className="px-1 text-sm text-white/90">
             设置
           </Link>
         </div>

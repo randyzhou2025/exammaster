@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useShallow } from "zustand/react/shallow";
+import { routes } from "@/lib/routes";
 import { useAppStore, selectStats } from "@/stores/appStore";
 
 export function SequentialDashboardPage() {
@@ -60,7 +61,7 @@ export function SequentialDashboardPage() {
               label="答错"
               valueClassName="text-red-500"
               interactive
-              onClick={() => nav("/wrong-book")}
+              onClick={() => nav(routes.theoryWrongBook)}
             />
           </div>
 
@@ -68,7 +69,7 @@ export function SequentialDashboardPage() {
             type="button"
             onClick={() => {
               startPractice("sequential");
-              nav("/practice/session");
+              nav(routes.theoryPracticeSession);
             }}
             className="mt-6 w-full rounded-xl bg-brand py-3 text-base font-semibold text-white active:bg-brand-dark"
           >
@@ -82,17 +83,17 @@ export function SequentialDashboardPage() {
           label="随机练习"
           onClick={() => {
             startPractice("random");
-            nav("/practice/session");
+            nav(routes.theoryPracticeSession);
           }}
         />
         <MiniMode
           label="未做题"
           onClick={() => {
             startPractice("unanswered");
-            nav("/practice/session");
+            nav(routes.theoryPracticeSession);
           }}
         />
-        <Link to="/" className="rounded-xl bg-white/10 py-3 backdrop-blur">
+        <Link to={routes.theoryHome} className="rounded-xl bg-white/10 py-3 backdrop-blur">
           首页
         </Link>
         <MiniMode

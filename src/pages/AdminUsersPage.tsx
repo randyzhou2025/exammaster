@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { routes } from "@/lib/routes";
 import { apiFetch } from "@/lib/api";
 import type { AuthUser } from "@/stores/authStore";
 import { useAuthStore } from "@/stores/authStore";
@@ -65,7 +66,7 @@ export function AdminUsersPage() {
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-surface p-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
       <header className="mb-6 flex items-center gap-2">
-        <Link to="/" className="text-brand">
+        <Link to={routes.theoryHome} className="text-brand">
           ← 返回
         </Link>
         <h1 className="text-lg font-bold text-neutral-900">用户管理</h1>
@@ -81,7 +82,7 @@ export function AdminUsersPage() {
             <h2 className="text-sm font-semibold text-neutral-900">管理导航</h2>
             <div className="mt-3 flex flex-wrap gap-2">
               <Link
-                to="/admin/login-logs"
+                to={routes.adminLoginLogs}
                 className="rounded-xl border border-brand/25 bg-brand-light/50 px-3 py-2 text-sm font-medium text-brand-dark"
               >
                 查看登录日志（表格）

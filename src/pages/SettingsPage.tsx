@@ -1,8 +1,10 @@
 import { useRef, useState } from "react";
 import type { ChangeEventHandler } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { routes } from "@/lib/routes";
 import { useAppStore } from "@/stores/appStore";
 import { useAuthStore } from "@/stores/authStore";
+import { useCodeFillStore } from "@/stores/codeFillStore";
 import { downloadJson, parseBackupJson } from "@/lib/backup";
 
 export function SettingsPage() {
@@ -10,6 +12,7 @@ export function SettingsPage() {
   const logout = useAuthStore((s) => s.logout);
   const user = useAuthStore((s) => s.user);
   const resetAll = useAppStore((s) => s.resetAll);
+  const resetAllCodeFill = useCodeFillStore((s) => s.resetAllCodeFill);
   const exportBackup = useAppStore((s) => s.exportBackup);
   const importBackup = useAppStore((s) => s.importBackup);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -48,7 +51,7 @@ export function SettingsPage() {
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-surface p-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
       <header className="mb-6 flex items-center gap-2">
-        <Link to="/" className="text-brand">
+        <Link to={routes.theoryHome} className="text-brand">
           ← 返回
         </Link>
         <h1 className="text-lg font-bold text-neutral-900">设置</h1>
@@ -174,9 +177,15 @@ export function SettingsPage() {
                     } catch {
                       /* ignore */
                     }
+                    try {
+                      useCodeFillStore.persist.clearStorage();
+                    } catch {
+                      /* ignore */
+                    }
+                    resetAllCodeFill();
                     resetAll();
                     setClearConfirmOpen(false);
-                    setClearSuccessMessage("已清除成功。本地备考数据与题库选择均已重置。");
+                    setClearSuccessMessage("已清除成功。理论与实操本地进度均已重置。");
                   } catch {
                     setClearConfirmOpen(false);
                     window.alert("清除失败，请稍后重试或检查浏览器是否禁止写入本地存储。");

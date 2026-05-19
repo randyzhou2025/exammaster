@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { routes } from "@/lib/routes";
 import { AuthShell } from "@/components/AuthShell";
 import { apiFetch } from "@/lib/api";
 import type { AuthUser } from "@/stores/authStore";
@@ -22,7 +23,7 @@ export function RegisterPage() {
 
   useEffect(() => {
     if (ready && existingToken) {
-      navigate("/", { replace: true });
+      navigate(routes.theoryHome, { replace: true });
     }
   }, [ready, existingToken, navigate]);
 

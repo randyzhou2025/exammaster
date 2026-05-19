@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { routes } from "@/lib/routes";
 import clsx from "clsx";
 import { DEFAULT_QUESTION_BANK_ID, QUESTION_BANKS, type QuestionBankMeta } from "@/data/questionBanks";
 import { useAppStore } from "@/stores/appStore";
@@ -17,7 +18,7 @@ export function QuestionBankPage() {
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     setSelectedQuestionBankId(chosenId);
-    nav("/", { replace: true });
+    nav(routes.theoryHome, { replace: true });
   };
 
   const allowLeaveBack = switching || Boolean(persistedId);
@@ -28,7 +29,7 @@ export function QuestionBankPage() {
       <div className="overflow-y-auto overscroll-y-contain px-4 pb-[calc(7.5rem+env(safe-area-inset-bottom,0px))] pt-[max(0.75rem,env(safe-area-inset-top,0px))]">
         <header className="flex min-h-[1.75rem] items-center">
           {allowLeaveBack ? (
-            <Link to="/" className="text-sm font-medium text-brand">
+            <Link to={routes.theoryHome} className="text-sm font-medium text-brand">
               ← 返回
             </Link>
           ) : null}

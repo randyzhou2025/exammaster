@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from "react";
 import type { ChangeEventHandler } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { routes } from "@/lib/routes";
 import { useShallow } from "zustand/react/shallow";
 import clsx from "clsx";
 import { useAppStore, selectStats, defaultRecord, isWrongBookMember } from "@/stores/appStore";
@@ -114,7 +115,7 @@ export function WrongBookPage() {
       if (favoriteQuestions.length === 0) return;
       startPractice("favorite", "answer", { startQuestionId: questionId });
     }
-    nav("/practice/session");
+    nav(routes.theoryPracticeSession);
   };
 
   const handleClear = () => {
@@ -361,7 +362,7 @@ export function WrongBookPage() {
           点击题目进入答题模式：范围为当前列表全部题目，并从所选题目开始。
         </p>
 
-        <Link to="/" className="block pb-6 text-center text-sm text-brand">
+        <Link to={routes.theoryHome} className="block pb-6 text-center text-sm text-brand">
           返回首页
         </Link>
       </main>

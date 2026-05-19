@@ -1,4 +1,5 @@
 import { Navigate, Outlet } from "react-router-dom";
+import { routes } from "@/lib/routes";
 import { useAuthStore } from "@/stores/authStore";
 
 export function RequireAdmin() {
@@ -13,7 +14,7 @@ export function RequireAdmin() {
   }
 
   if (user.role !== "admin") {
-    return <Navigate to="/" replace />;
+    return <Navigate to={routes.theoryHome} replace />;
   }
 
   return <Outlet />;

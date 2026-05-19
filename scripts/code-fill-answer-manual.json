@@ -1,0 +1,24 @@
+{
+  "1.1.4": {
+    "22": "pd.cut",
+    "23": "data['Age']"
+  },
+  "1.1.5": {
+    "23": "pd.cut",
+    "24": "data['Age']",
+    "25": "age_bins",
+    "26": "age_labels"
+  },
+  "2.1.2": {
+    "9": "train_test_split",
+    "10": "X, y, test_size=0.2",
+    "11": "pd.concat",
+    "12": "[X, y]",
+    "13": "cleaned_data.to_csv",
+    "14": "index=False"
+  },
+  "2.2.5": {
+    "6": "model",
+    "7": "RandomForestRegressor(n_estimators=100"
+  }
+}
