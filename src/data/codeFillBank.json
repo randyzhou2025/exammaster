@@ -3215,6 +3215,7 @@
           {
             "id": "b0",
             "accepted": [
+              "onnxruntime.InferenceSession('mnist.onnx')",
               "ort.InferenceSession('mnist.onnx')"
             ]
           },

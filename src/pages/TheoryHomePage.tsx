@@ -28,16 +28,21 @@ export function TheoryHomePage() {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-gradient-to-b from-brand to-brand-dark pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))] text-white">
-      <header className="flex items-center justify-between px-4 pt-3">
-        <span className="text-lg font-semibold leading-snug">人工智能训练师 · 三级</span>
-        <div className="flex items-center gap-3 text-sm text-white/90">
+      <header className="flex min-w-0 items-start justify-between gap-2 px-4 pt-3">
+        <span className="min-w-0 flex-1 text-lg font-semibold leading-snug">
+          人工智能训练师 · 三级
+        </span>
+        <nav className="flex shrink-0 flex-wrap items-center justify-end gap-x-3 gap-y-1 text-sm text-white/90">
           {user?.role === "admin" ? (
             <Link to={routes.adminUsers} className="text-white/90">
               用户管理
             </Link>
           ) : null}
+          <Link to={routes.banks} state={{ switching: true }} className="text-white/90" title={`当前题库：${bankTitle}`}>
+            切换题库
+          </Link>
           <Link to={routes.settings}>设置</Link>
-        </div>
+        </nav>
       </header>
       <p className="mt-1 px-4 text-sm leading-relaxed text-white/80">
         做题进度、错题与收藏保存在本机浏览器；请勿清除本站缓存、Cookie 或站点数据，以免丢失记录。
@@ -109,15 +114,6 @@ export function TheoryHomePage() {
             <span className="mt-1 text-xs text-violet-600">已完成 / 总题数</span>
           </Link>
         </section>
-
-        <Link
-          to={routes.banks}
-          state={{ switching: true }}
-          className="flex w-full flex-col rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-left text-white backdrop-blur transition active:bg-white/20"
-        >
-          <span className="font-medium">切换题库</span>
-          <span className="mt-1 text-xs text-white/70">当前：{bankTitle}</span>
-        </Link>
       </div>
     </div>
   );

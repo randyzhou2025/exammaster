@@ -321,7 +321,7 @@
     ""
   ],
   "3.2.2": [
-    "ort.InferenceSession('mnist.onnx')",
+    "onnxruntime.InferenceSession('mnist.onnx')",
     "Image.open('img_test.png').convert",
     "image.resize",
     "np.array",

@@ -243,7 +243,7 @@ export const SOLUTION_LINES = {
     "top5_prob = probabilities[0][top5_idx]",
   ],
   "3.2.2": [
-    "ort_session = ort.InferenceSession('mnist.onnx')",
+    "ort_session = onnxruntime.InferenceSession('mnist.onnx')",
     "image = Image.open('img_test.png').convert('L')",
     "image = image.resize((28, 28))",
     "image_array = np.array(image, dtype=np.float32)",
