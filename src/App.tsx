@@ -22,7 +22,9 @@ import { LoginPage } from "@/pages/LoginPage";
 import { RegisterPage } from "@/pages/RegisterPage";
 import { PendingAuthPage } from "@/pages/PendingAuthPage";
 import { AdminUsersPage } from "@/pages/AdminUsersPage";
+import { AdminDailyActivityPage } from "@/pages/AdminDailyActivityPage";
 import { AdminLoginLogsPage } from "@/pages/AdminLoginLogsPage";
+import { sendActivityPing } from "@/lib/activityPing";
 import { QuestionBankPage } from "@/pages/QuestionBankPage";
 import { useAuthStore } from "@/stores/authStore";
 
@@ -31,9 +33,26 @@ const routerBasename =
 
 export default function App() {
   const bootstrap = useAuthStore((s) => s.bootstrap);
+  const token = useAuthStore((s) => s.token);
+  const user = useAuthStore((s) => s.user);
+
   useEffect(() => {
     void bootstrap();
   }, [bootstrap]);
+
+  useEffect(() => {
+    if (!token || !user) return;
+    const ping = () => sendActivityPing(token);
+    const onVis = () => {
+      if (document.visibilityState === "visible") ping();
+    };
+    document.addEventListener("visibilitychange", onVis);
+    const id = window.setInterval(ping, 5 * 60 * 1000);
+    return () => {
+      document.removeEventListener("visibilitychange", onVis);
+      window.clearInterval(id);
+    };
+  }, [token, user?.id]);
 
   return (
     <BrowserRouter basename={routerBasename}>
@@ -76,6 +95,7 @@ export default function App() {
             <Route element={<RequireAdmin />}>
               <Route path="/admin/users" element={<AdminUsersPage />} />
               <Route path="/admin/login-logs" element={<AdminLoginLogsPage />} />
+              <Route path={routes.adminDailyActivity} element={<AdminDailyActivityPage />} />
             </Route>
 
             <Route path="*" element={<Navigate to={routes.theoryHome} replace />} />

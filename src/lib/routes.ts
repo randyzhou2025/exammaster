@@ -23,6 +23,7 @@ export const routes = {
   pendingAuth: "/auth/pending",
   adminUsers: "/admin/users",
   adminLoginLogs: "/admin/login-logs",
+  adminDailyActivity: "/admin/daily-activity",
 } as const;
 
 /** 旧扁平路由 → 新理论路由 */

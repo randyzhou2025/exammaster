@@ -15,6 +15,8 @@ function publicUser(u: {
   role: string;
   isAuthorized: boolean;
   createdAt: Date;
+  lastActiveAt: Date | null;
+  lastActiveIp: string | null;
 }) {
   return {
     id: u.id,
@@ -23,6 +25,8 @@ function publicUser(u: {
     role: u.role,
     isAuthorized: u.isAuthorized,
     createdAt: u.createdAt.toISOString(),
+    lastActiveAt: u.lastActiveAt?.toISOString() ?? null,
+    lastActiveIp: u.lastActiveIp ?? null,
   };
 }
 
@@ -46,6 +50,8 @@ export async function registerAdminRoutes(app: FastifyInstance, authenticate: pr
         role: users.role,
         isAuthorized: users.isAuthorized,
         createdAt: users.createdAt,
+        lastActiveAt: users.lastActiveAt,
+        lastActiveIp: users.lastActiveIp,
       })
       .from(users)
       .orderBy(asc(users.createdAt));

@@ -87,6 +87,12 @@ export function AdminUsersPage() {
               >
                 查看登录日志（表格）
               </Link>
+              <Link
+                to={routes.adminDailyActivity}
+                className="rounded-xl border border-brand/25 bg-brand-light/50 px-3 py-2 text-sm font-medium text-brand-dark"
+              >
+                每日活跃用户（按日期）
+              </Link>
             </div>
           </section>
 

@@ -3,6 +3,8 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "../db/index.js";
 import { loginLogs, users } from "../db/schema.js";
+import { touchActivity } from "../activity.js";
+import { clientIpFromRequest } from "../client-ip.js";
 import { hashPassword, verifyPassword } from "../hash.js";
 
 const registerSchema = z.object({
@@ -32,13 +34,6 @@ function publicUser(u: {
     isAuthorized: u.isAuthorized,
     createdAt: u.createdAt.toISOString(),
   };
-}
-
-function normalizeClientIp(raw: string | undefined): string {
-  if (!raw) return "unknown";
-  const ip = raw.split(",")[0]?.trim() ?? "unknown";
-  if (ip.startsWith("::ffff:")) return ip.slice(7);
-  return ip;
 }
 
 function isPrivateIp(ip: string): boolean {
@@ -80,9 +75,7 @@ async function resolveLocationByIp(ip: string): Promise<string> {
 
 /** 登录 / 注册成功后写入一条登录日志（与 POST /api/auth/login 字段一致） */
 async function recordLoginLog(request: FastifyRequest, userId: string, username: string): Promise<void> {
-  const ip = normalizeClientIp(
-    (request.headers["x-forwarded-for"] as string | undefined) ?? request.ip
-  );
+  const ip = clientIpFromRequest(request.headers as Record<string, unknown>, request.ip);
   const location = await resolveLocationByIp(ip);
   try {
     await db.insert(loginLogs).values({
@@ -179,6 +172,10 @@ export async function registerAuthRoutes(app: FastifyInstance, authenticate: pre
     if (!row) {
       return reply.code(401).send({ error: "用户不存在" });
     }
+
+    const ip = clientIpFromRequest(request.headers as Record<string, unknown>, request.ip);
+    void touchActivity(jwtUser.sub, ip);
+
     return reply.send({ user: publicUser(row) });
   });
 }

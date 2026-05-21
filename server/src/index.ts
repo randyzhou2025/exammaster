@@ -3,6 +3,7 @@ import Fastify from "fastify";
 import cors from "@fastify/cors";
 import jwt from "@fastify/jwt";
 import type { FastifyReply, FastifyRequest } from "fastify";
+import { registerActivityRoutes } from "./routes/activity.js";
 import { registerAuthRoutes } from "./routes/auth.js";
 import { registerAdminRoutes } from "./routes/admin.js";
 import { seedAdminFromEnv } from "./seed.js";
@@ -43,6 +44,7 @@ async function build() {
   };
 
   await registerAuthRoutes(app, authenticate);
+  await registerActivityRoutes(app, authenticate);
   await registerAdminRoutes(app, authenticate);
 
   app.get("/api/health", async () => ({ ok: true }));
