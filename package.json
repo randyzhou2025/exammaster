@@ -8,6 +8,7 @@
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",
     "db:push": "npm --prefix server run db:push",
+    "db:push:prod": "docker compose -f docker-compose.prod.yml --env-file .env.prod exec exam_api npm run db:push",
     "dev": "vite",
     "dev:api": "npm --prefix server run dev",
     "dev:full": "concurrently -k -n bank,web,api -c yellow,blue,green \"npm run build:code-bank\" \"npm run dev\" \"npm run dev:api\"",
