@@ -11,3 +11,6 @@ server/.env
 PythonCode/
 
 *.tsbuildinfo
+
+# 发布产物不入库
+deploy/welcome/downloads/*.zip

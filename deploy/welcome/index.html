@@ -375,6 +375,49 @@
         color: #fff;
       }
 
+      .project-card {
+        grid-template-columns: auto minmax(0, 1fr);
+      }
+
+      .project-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+      }
+
+      .project-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 2.35rem;
+        padding: 0.55rem 0.78rem;
+        border: 1px solid var(--line-strong);
+        border-radius: var(--radius);
+        background: rgba(255, 255, 255, 0.72);
+        color: var(--ink);
+        font-size: 0.84rem;
+        font-weight: 900;
+        line-height: 1.2;
+        text-decoration: none;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+      }
+
+      .project-action-primary {
+        border-color: #171717;
+        background: #171717;
+        color: #fff;
+      }
+
+      .project-local-note {
+        display: block;
+        margin-top: 0.5rem;
+        color: var(--quiet);
+        font-size: 0.78rem;
+        line-height: 1.55;
+      }
+
       .thought {
         margin-top: 2.6rem;
         padding: 1.4rem 0 0;
@@ -469,7 +512,8 @@
 
       @media (hover: hover) and (pointer: fine) {
         .top-link:hover,
-        .project-link:hover {
+        .project-link:hover,
+        .project-action:hover {
           transform: translateY(-2px);
         }
 
@@ -480,7 +524,8 @@
       }
 
       .top-link:focus-visible,
-      .project-link:focus-visible {
+      .project-link:focus-visible,
+      .project-action:focus-visible {
         outline: 2px solid var(--blue);
         outline-offset: 3px;
       }
@@ -548,6 +593,11 @@
           grid-column: 1 / -1;
           width: 100%;
           border-radius: var(--radius);
+        }
+
+        .project-actions {
+          display: grid;
+          grid-template-columns: 1fr;
         }
 
         .site-footer {
@@ -643,12 +693,7 @@
                 </span>
               </a>
 
-              <a
-                class="project-link"
-                href="https://qiway.site/privacy-blur/"
-                rel="noopener noreferrer"
-                aria-label="进入 PrivacyBlur 本地隐私打码工具"
-              >
+              <article class="project-link project-card" aria-labelledby="privacyblur-title">
                 <span class="project-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
@@ -657,18 +702,17 @@
                 </span>
                 <span>
                   <span class="project-title-row">
-                    <span class="project-title">PrivacyBlur · 本地隐私打码</span>
+                    <span class="project-title" id="privacyblur-title">PrivacyBlur · 本地隐私打码</span>
                     <span class="badge">本地处理</span>
                   </span>
                   <span class="project-desc">图片不上传服务器，支持手动框选和本地 OCR 识别手机号、邮箱、身份证号、订单号、地址、金额、姓名等隐私候选，并导出已打码新图。</span>
+                  <span class="project-actions" aria-label="PrivacyBlur 操作">
+                    <a class="project-action project-action-primary" href="https://qiway.site/privacy-blur/" rel="noopener noreferrer">打开在线版</a>
+                    <a class="project-action" href="/downloads/privacyblur-local.zip" download>下载本地版</a>
+                  </span>
+                  <span class="project-local-note">本地包约 40MB，已包含页面、脚本、OCR worker、WASM 和中英文语言包；PC/安卓解压后打开 index.html 即可使用，手机系统若限制本地文件，在线版同样只在浏览器本地处理图片。</span>
                 </span>
-                <span class="project-go" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M5 12h14" />
-                    <path d="m13 6 6 6-6 6" />
-                  </svg>
-                </span>
-              </a>
+              </article>
             </div>
           </section>
 
