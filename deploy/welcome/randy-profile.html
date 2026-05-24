@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#151316" />
+    <title>Randy Zhou · 个人主页</title>
+    <meta
+      name="description"
+      content="Randy Zhou 的个人主页，汇总考练宝典、AI提示词生成助手、PrivacyBlur 本地隐私打码等项目入口。"
+    />
+    <meta name="author" content="Randy Zhou" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <link rel="icon" href="/favicon.svg?v=20260525" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20260525" sizes="180x180" />
+
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #151316;
+        --ink: #f8f6f2;
+        --muted: rgba(248, 246, 242, 0.66);
+        --quiet: rgba(248, 246, 242, 0.42);
+        --line: rgba(248, 246, 242, 0.12);
+        --line-strong: rgba(248, 246, 242, 0.2);
+        --red: #ff3857;
+        --green: #69d6a3;
+        --blue: #77b7ff;
+        --tap: 44px;
+        --radius: 8px;
+        --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+          "Segoe UI", sans-serif;
+        --font-display: "SF Pro Display", -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
+          "Microsoft YaHei", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        min-height: 100%;
+        background: var(--bg);
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        min-height: 100dvh;
+        overflow-x: clip;
+        font-family: var(--font-sans);
+        letter-spacing: 0;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 50% 8%, rgba(255, 56, 87, 0.13), transparent 20rem),
+          linear-gradient(180deg, #171417 0%, #151316 52%, #101012 100%);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: geometricPrecision;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background:
+          linear-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.024) 1px, transparent 1px);
+        background-size: 38px 38px;
+        mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.65), transparent 72%);
+      }
+
+      a {
+        color: inherit;
+      }
+
+      svg {
+        display: block;
+      }
+
+      .page {
+        position: relative;
+        z-index: 1;
+        min-height: 100vh;
+        min-height: 100dvh;
+        padding: max(0.85rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right))
+          max(1.2rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+      }
+
+      .shell {
+        width: min(100%, 48rem);
+        margin: 0 auto;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        min-height: 3.35rem;
+      }
+
+      .home-link,
+      .top-action,
+      .social-link,
+      .project-link,
+      .text-button {
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+      }
+
+      .home-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.62rem;
+        min-width: var(--tap);
+        min-height: var(--tap);
+        text-decoration: none;
+      }
+
+      .home-mark {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.2rem;
+        height: 2.2rem;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: rgba(255, 255, 255, 0.04);
+        color: #fff;
+        font-family: var(--font-display);
+        font-size: 1rem;
+        font-weight: 760;
+      }
+
+      .home-text {
+        min-width: 0;
+        font-size: 0.92rem;
+        font-weight: 720;
+      }
+
+      .top-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.42rem;
+      }
+
+      .top-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: var(--tap);
+        height: var(--tap);
+        border-radius: var(--radius);
+        color: rgba(248, 246, 242, 0.7);
+        text-decoration: none;
+      }
+
+      .top-action svg {
+        width: 1.42rem;
+        height: 1.42rem;
+      }
+
+      .profile-hero {
+        display: grid;
+        place-items: center;
+        min-height: min(48rem, 78dvh);
+        padding: 2.4rem 0 2.15rem;
+        text-align: center;
+      }
+
+      .profile-stack {
+        display: grid;
+        justify-items: center;
+        width: 100%;
+      }
+
+      .avatar-wrap {
+        position: relative;
+        width: clamp(8.4rem, 29vw, 11.2rem);
+        aspect-ratio: 1;
+        margin-bottom: 2.05rem;
+        animation: drift 5.5s ease-in-out infinite;
+      }
+
+      .avatar {
+        width: 100%;
+        height: 100%;
+        border-radius: 999px;
+        border: 1px solid rgba(20, 18, 20, 0.38);
+        background: #f7f4ed;
+        box-shadow: 0 1.3rem 3.2rem rgba(0, 0, 0, 0.32), inset 0 0 0 0.62rem rgba(255, 255, 255, 0.34);
+        overflow: hidden;
+      }
+
+      .avatar svg {
+        width: 100%;
+        height: 100%;
+      }
+
+      .speech {
+        position: absolute;
+        top: 0.35rem;
+        right: -1.05rem;
+        display: inline-flex;
+        align-items: center;
+        min-height: 2rem;
+        padding: 0.34rem 0.72rem;
+        border-radius: 999px;
+        background: #fff;
+        color: #171417;
+        font-size: 0.82rem;
+        font-weight: 800;
+        line-height: 1;
+        transform: rotate(8deg);
+        box-shadow: 0 0.55rem 1.2rem rgba(0, 0, 0, 0.18);
+        white-space: nowrap;
+      }
+
+      .speech::after {
+        content: "";
+        position: absolute;
+        left: 1.08rem;
+        bottom: -0.18rem;
+        width: 0.58rem;
+        height: 0.58rem;
+        background: #fff;
+        transform: rotate(45deg);
+      }
+
+      .profile-title {
+        max-width: 100%;
+        margin: 0;
+        font-family: var(--font-display);
+        font-size: clamp(3.1rem, 12vw, 5.7rem);
+        line-height: 0.95;
+        letter-spacing: 0;
+        font-weight: 820;
+        overflow-wrap: anywhere;
+      }
+
+      .profile-subtitle {
+        margin: 1.02rem 0 0;
+        color: var(--quiet);
+        font-family: var(--font-display);
+        font-size: clamp(1.24rem, 4.2vw, 1.7rem);
+        line-height: 1.2;
+        font-weight: 650;
+      }
+
+      .socials {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1.05rem;
+        margin: 2rem 0 0;
+      }
+
+      .social-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: var(--tap);
+        height: var(--tap);
+        border-radius: var(--radius);
+        color: rgba(248, 246, 242, 0.62);
+        text-decoration: none;
+        transition: color 0.16s ease, transform 0.16s ease, background 0.16s ease;
+      }
+
+      .social-link svg {
+        width: 1.58rem;
+        height: 1.58rem;
+      }
+
+      .identity-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(8rem, 1fr));
+        gap: 1.75rem 2.6rem;
+        width: min(100%, 35rem);
+        margin: 3.1rem auto 0;
+      }
+
+      .identity-item {
+        min-width: 0;
+        color: rgba(248, 246, 242, 0.9);
+        font-size: clamp(1rem, 3.5vw, 1.24rem);
+        line-height: 1.28;
+        font-weight: 690;
+        overflow-wrap: anywhere;
+        text-wrap: balance;
+      }
+
+      .next-hint {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.48rem;
+        min-height: 2.35rem;
+        margin-top: 2.65rem;
+        color: var(--quiet);
+        font-size: 0.84rem;
+        font-weight: 680;
+        text-decoration: none;
+      }
+
+      .next-hint svg {
+        width: 1rem;
+        height: 1rem;
+        animation: drop 1.8s ease-in-out infinite;
+      }
+
+      .section {
+        padding: 3.2rem 0 0;
+      }
+
+      .section-head {
+        display: grid;
+        gap: 0.5rem;
+        margin-bottom: 1.25rem;
+      }
+
+      .kicker {
+        margin: 0;
+        color: var(--red);
+        font-size: 0.78rem;
+        font-weight: 800;
+        line-height: 1.2;
+        text-transform: uppercase;
+      }
+
+      .section h2 {
+        max-width: 100%;
+        margin: 0;
+        font-family: var(--font-display);
+        font-size: clamp(1.65rem, 5vw, 2.3rem);
+        line-height: 1.12;
+        letter-spacing: 0;
+        font-weight: 780;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+        text-wrap: balance;
+      }
+
+      .section-note,
+      .project-desc,
+      .local-note,
+      .footer-copy {
+        overflow-wrap: anywhere;
+        word-break: break-word;
+        text-wrap: pretty;
+      }
+
+      .section-note {
+        max-width: 38rem;
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.96rem;
+        line-height: 1.74;
+      }
+
+      .project-list {
+        display: grid;
+        gap: 0.78rem;
+      }
+
+      .project-link {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 0.9rem;
+        min-height: 6rem;
+        padding: 1rem;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: rgba(255, 255, 255, 0.035);
+        color: var(--ink);
+        text-decoration: none;
+        transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+      }
+
+      .project-icon,
+      .project-go {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+      }
+
+      .project-icon {
+        width: 3rem;
+        height: 3rem;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .project-icon svg,
+      .project-go svg {
+        width: 1.34rem;
+        height: 1.34rem;
+      }
+
+      .project-title-row {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.48rem;
+        min-width: 0;
+      }
+
+      .project-title {
+        font-size: 1.02rem;
+        line-height: 1.32;
+        font-weight: 760;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        min-height: 1.34rem;
+        padding: 0.12rem 0.48rem;
+        border: 1px solid rgba(105, 214, 163, 0.28);
+        border-radius: 999px;
+        background: rgba(105, 214, 163, 0.08);
+        color: var(--green);
+        font-size: 0.72rem;
+        font-weight: 760;
+      }
+
+      .project-desc {
+        display: block;
+        margin-top: 0.36rem;
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.62;
+      }
+
+      .project-go {
+        width: var(--tap);
+        height: var(--tap);
+        border-radius: var(--radius);
+        background: rgba(255, 255, 255, 0.08);
+        color: rgba(248, 246, 242, 0.72);
+      }
+
+      .project-card {
+        grid-template-columns: auto minmax(0, 1fr);
+      }
+
+      .project-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.55rem;
+        margin-top: 0.78rem;
+      }
+
+      .text-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 2.35rem;
+        padding: 0.55rem 0.82rem;
+        border: 1px solid var(--line-strong);
+        border-radius: var(--radius);
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--ink);
+        font-size: 0.84rem;
+        font-weight: 760;
+        line-height: 1.2;
+        text-decoration: none;
+      }
+
+      .text-button-primary {
+        border-color: var(--red);
+        background: var(--red);
+        color: #fff;
+      }
+
+      .local-note {
+        display: block;
+        margin-top: 0.58rem;
+        color: var(--quiet);
+        font-size: 0.78rem;
+        line-height: 1.58;
+      }
+
+      .contact-band {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 1rem;
+        align-items: center;
+        margin-top: 2.8rem;
+        padding: 1rem 0;
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .contact-band p {
+        margin: 0;
+      }
+
+      .contact-title {
+        color: var(--ink);
+        font-size: 0.96rem;
+        font-weight: 760;
+      }
+
+      .contact-copy {
+        margin-top: 0.28rem;
+        color: var(--muted);
+        font-size: 0.88rem;
+        line-height: 1.58;
+      }
+
+      .site-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 1.35rem 0 0.3rem;
+        color: var(--quiet);
+        font-size: 0.78rem;
+        line-height: 1.55;
+      }
+
+      .site-footer p {
+        margin: 0;
+      }
+
+      .site-footer strong {
+        color: rgba(248, 246, 242, 0.78);
+      }
+
+      @keyframes drift {
+        0%,
+        100% {
+          transform: translateY(0) rotate(-1deg);
+        }
+        50% {
+          transform: translateY(-0.42rem) rotate(1.4deg);
+        }
+      }
+
+      @keyframes drop {
+        0%,
+        100% {
+          transform: translateY(-0.12rem);
+        }
+        50% {
+          transform: translateY(0.18rem);
+        }
+      }
+
+      @media (hover: hover) and (pointer: fine) {
+        .top-action:hover,
+        .social-link:hover {
+          background: rgba(255, 255, 255, 0.06);
+          color: #fff;
+          transform: translateY(-2px);
+        }
+
+        .project-link:hover,
+        .text-button:hover {
+          transform: translateY(-2px);
+        }
+
+        .project-link:hover {
+          border-color: rgba(255, 56, 87, 0.46);
+          background: rgba(255, 255, 255, 0.055);
+        }
+      }
+
+      .home-link:focus-visible,
+      .top-action:focus-visible,
+      .social-link:focus-visible,
+      .next-hint:focus-visible,
+      .project-link:focus-visible,
+      .text-button:focus-visible {
+        outline: 2px solid var(--blue);
+        outline-offset: 3px;
+      }
+
+      @media (min-width: 760px) {
+        .page {
+          padding-left: max(1.35rem, env(safe-area-inset-left));
+          padding-right: max(1.35rem, env(safe-area-inset-right));
+        }
+
+        .profile-hero {
+          padding-top: 3rem;
+        }
+
+        .section {
+          padding-top: 3.8rem;
+        }
+      }
+
+      @media (max-width: 560px) {
+        .page {
+          padding-left: max(1rem, env(safe-area-inset-left));
+          padding-right: max(1rem, env(safe-area-inset-right));
+        }
+
+        .shell {
+          width: min(100%, 22.4rem);
+          margin-left: 0;
+          margin-right: auto;
+        }
+
+        .home-text {
+          font-size: 0.88rem;
+        }
+
+        .top-actions {
+          gap: 0.2rem;
+        }
+
+        .profile-hero {
+          min-height: 75dvh;
+          padding-top: 1.65rem;
+          padding-bottom: 1.45rem;
+        }
+
+        .profile-title {
+          font-size: clamp(2.35rem, 11vw, 3rem);
+          line-height: 1;
+        }
+
+        .avatar-wrap {
+          margin-bottom: 1.75rem;
+        }
+
+        .speech {
+          right: -0.72rem;
+          font-size: 0.76rem;
+        }
+
+        .socials {
+          gap: 0.62rem;
+          margin-top: 1.7rem;
+        }
+
+        .identity-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          max-width: 20.5rem;
+          gap: 1.35rem 0.85rem;
+          margin-top: 2.45rem;
+        }
+
+        .identity-item {
+          font-size: 0.95rem;
+        }
+
+        .next-hint {
+          margin-top: 2.05rem;
+        }
+
+        .project-link {
+          grid-template-columns: auto minmax(0, 1fr);
+          gap: 0.82rem;
+        }
+
+        .project-go {
+          grid-column: 1 / -1;
+          width: 100%;
+        }
+
+        .project-actions,
+        .contact-band,
+        .site-footer {
+          display: grid;
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="shell">
+        <header class="topbar" aria-label="站点导航">
+          <a class="home-link" href="https://qiway.site/" aria-label="Randy Zhou 个人主页">
+            <span class="home-mark" aria-hidden="true">R</span>
+            <span class="home-text">Home</span>
+          </a>
+
+          <nav class="top-actions" aria-label="快捷入口">
+            <a class="top-action" href="#projects" aria-label="查看项目">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M4 7h16" />
+                <path d="M4 12h16" />
+                <path d="M4 17h10" />
+              </svg>
+            </a>
+            <a class="top-action" href="https://github.com/randyzhou2025" rel="noopener noreferrer" aria-label="打开 GitHub">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.1-1.3-.3-2.5-1-3.5.3-1.2.3-2.3 0-3.5 0 0-1 0-3 1.5a19.2 19.2 0 0 0-8 0C6 2 5 2 5 2c-.3 1.2-.3 2.3 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.6.7-1 1.8-1 3.5v4" />
+                <path d="M9 18c-4.5 2-5-2-7-2" />
+              </svg>
+            </a>
+          </nav>
+        </header>
+
+        <main>
+          <section class="profile-hero" aria-labelledby="profile-title">
+            <div class="profile-stack">
+              <div class="avatar-wrap" aria-hidden="true">
+                <div class="avatar">
+                  <svg viewBox="0 0 180 180" role="img">
+                    <rect width="180" height="180" fill="#f7f4ed" />
+                    <path d="M38 124c21 17 78 20 104-3" fill="none" stroke="#111" stroke-width="3.6" stroke-linecap="round" />
+                    <path d="M44 126c16 7 67 8 93-1" fill="none" stroke="#111" stroke-width="2.2" stroke-linecap="round" opacity=".52" />
+                    <path d="M47 99c18-20 49-29 82-18 18 7 29 20 31 34-20 15-68 17-103 6-10-4-16-10-10-22Z" fill="#fffdf8" stroke="#111" stroke-width="3.2" />
+                    <path d="M61 85c-5-22 5-41 5-41 14 13 21 28 24 40" fill="#f0a64a" stroke="#111" stroke-width="3.2" stroke-linejoin="round" />
+                    <path d="M112 80c8-22 25-35 25-35 5 19 1 35-8 47" fill="#f0a64a" stroke="#111" stroke-width="3.2" stroke-linejoin="round" />
+                    <path d="M68 57c6 7 12 17 15 29M132 56c-3 10-8 22-15 31" fill="none" stroke="#c46b20" stroke-width="4.2" stroke-linecap="round" />
+                    <path d="M71 101c3-10 17-10 20 0M109 101c3-10 17-10 20 0" fill="none" stroke="#111" stroke-width="3.5" stroke-linecap="round" />
+                    <circle cx="82" cy="105" r="4.2" fill="#111" />
+                    <circle cx="120" cy="105" r="4.2" fill="#111" />
+                    <path d="M97 112c3.5-3 9-3 12 0-1 6-9 8-12 0Z" fill="#ff8b3d" stroke="#111" stroke-width="2.6" stroke-linejoin="round" />
+                    <path d="M103 121c-6 6-14 6-20 1M106 121c7 7 17 6 23-1" fill="none" stroke="#111" stroke-width="2.4" stroke-linecap="round" />
+                    <path d="M58 105c-17-4-31-4-45 1M60 114c-18 2-32 7-43 15M132 105c15-6 30-9 43-9M132 115c16 1 31 5 42 13" fill="none" stroke="#111" stroke-width="2.2" stroke-linecap="round" opacity=".74" />
+                    <path d="M43 137c-4 8-7 17-8 26M135 132c4 9 8 19 9 30" fill="none" stroke="#111" stroke-width="2.4" stroke-linecap="round" opacity=".58" />
+                  </svg>
+                </div>
+                <span class="speech">ok, fine</span>
+              </div>
+
+              <h1 class="profile-title" id="profile-title">Randy Zhou</h1>
+              <p class="profile-subtitle">AI Tools · Product Builder</p>
+
+              <div class="socials" aria-label="个人链接">
+                <a class="social-link" href="https://qiway.site/" aria-label="打开 qiway.site">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9" />
+                    <path d="M3 12h18" />
+                    <path d="M12 3c2.4 2.6 3.6 5.6 3.6 9S14.4 18.4 12 21c-2.4-2.6-3.6-5.6-3.6-9S9.6 5.6 12 3Z" />
+                  </svg>
+                </a>
+                <a class="social-link" href="https://github.com/randyzhou2025" rel="noopener noreferrer" aria-label="打开 GitHub">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.1-1.3-.3-2.5-1-3.5.3-1.2.3-2.3 0-3.5 0 0-1 0-3 1.5a19.2 19.2 0 0 0-8 0C6 2 5 2 5 2c-.3 1.2-.3 2.3 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.6.7-1 1.8-1 3.5v4" />
+                    <path d="M9 18c-4.5 2-5-2-7-2" />
+                  </svg>
+                </a>
+                <a class="social-link" href="#projects" aria-label="查看项目入口">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                    <path d="M9 7h7M9 11h7M9 15h4" />
+                  </svg>
+                </a>
+                <a class="social-link" href="#contact" aria-label="联系 Randy">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="3" y="5" width="18" height="14" rx="2" />
+                    <path d="m3 7 9 7 9-7" />
+                  </svg>
+                </a>
+              </div>
+
+              <div class="identity-grid" aria-label="个人身份标签">
+                <span class="identity-item">Independent Builder</span>
+                <span class="identity-item">AI Toolmaker</span>
+                <span class="identity-item">Exam Prep</span>
+                <span class="identity-item">Privacy Tools</span>
+              </div>
+
+              <a class="next-hint" href="#projects">
+                <span>项目入口</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 5v14" />
+                  <path d="m19 12-7 7-7-7" />
+                </svg>
+              </a>
+            </div>
+          </section>
+
+          <section class="section" id="projects" aria-labelledby="projects-heading">
+            <div class="section-head">
+              <p class="kicker">Projects</p>
+              <h2 id="projects-heading">把真实需求做成入口。</h2>
+              <p class="section-note">这里放的是正在使用和打磨的个人项目，优先解决具体问题，再慢慢把体验做顺。</p>
+            </div>
+
+            <div class="project-list">
+              <a class="project-link" href="https://qiway.site/examprep/" rel="noopener noreferrer" aria-label="进入考练宝典备考刷题平台">
+                <span class="project-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                    <path d="M8 7h8M8 11h8M8 15h5" />
+                  </svg>
+                </span>
+                <span>
+                  <span class="project-title-row">
+                    <span class="project-title">考练宝典 · 备考刷题</span>
+                    <span class="badge">已上线</span>
+                  </span>
+                  <span class="project-desc">人工智能训练师题库练习、模拟考试与代码填空实操。</span>
+                </span>
+                <span class="project-go" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14" />
+                    <path d="m13 6 6 6-6 6" />
+                  </svg>
+                </span>
+              </a>
+
+              <a class="project-link" href="https://qiway.site/prompt-tool/" rel="noopener noreferrer" aria-label="进入 AI提示词生成助手">
+                <span class="project-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 3l1.7 4.7L18 9.4l-4.3 1.7L12 16l-1.7-4.9L6 9.4l4.3-1.7L12 3z" />
+                    <path d="M19 14l.8 2.2L22 17l-2.2.8L19 20l-.8-2.2L16 17l2.2-.8L19 14z" />
+                    <path d="M5 13l.6 1.6L7 15l-1.4.4L5 17l-.6-1.6L3 15l1.4-.4L5 13z" />
+                  </svg>
+                </span>
+                <span>
+                  <span class="project-title-row">
+                    <span class="project-title">AI提示词生成助手</span>
+                    <span class="badge">新项目</span>
+                  </span>
+                  <span class="project-desc">一句话生成可用提示词，前后对比清晰，输入仅在本地处理更安心。</span>
+                </span>
+                <span class="project-go" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14" />
+                    <path d="m13 6 6 6-6 6" />
+                  </svg>
+                </span>
+              </a>
+
+              <article class="project-link project-card" aria-labelledby="privacyblur-title">
+                <span class="project-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    <path d="m8.8 12 2.1 2.1 4.6-5" />
+                  </svg>
+                </span>
+                <span>
+                  <span class="project-title-row">
+                    <span class="project-title" id="privacyblur-title">PrivacyBlur · 图片隐私打码</span>
+                    <span class="badge">本地处理</span>
+                  </span>
+                  <span class="project-desc">图片不上传服务器，支持手动框选和本地 OCR 识别手机号、邮箱、身份证号、订单号、地址、金额、姓名等隐私候选，并导出已打码新图。</span>
+                  <span class="project-actions" aria-label="PrivacyBlur 操作">
+                    <a class="text-button text-button-primary" href="https://qiway.site/privacy-blur/" rel="noopener noreferrer">打开在线版</a>
+                    <a class="text-button" href="downloads/privacyblur-local.zip" download>下载本地版</a>
+                  </span>
+                  <span class="local-note">本地包约35MB，已包含页面、脚本、OCR worker、WASM 和中英文语言包；解压后打开index.html即可使用。手机建议使用在线版，在线版同样只在浏览器本地处理图片。</span>
+                </span>
+              </article>
+            </div>
+          </section>
+
+          <section class="contact-band" id="contact" aria-label="联系与说明">
+            <div>
+              <p class="contact-title">联系与更新</p>
+              <p class="contact-copy">新项目会继续放在这里。最快的联系方式是 GitHub，项目入口不可用时也可以先回到 qiway.site。</p>
+            </div>
+            <a class="text-button" href="https://github.com/randyzhou2025" rel="noopener noreferrer">GitHub</a>
+          </section>
+        </main>
+
+        <footer class="site-footer">
+          <p class="footer-copy">qiway.site · Randy Zhou</p>
+          <p class="footer-copy">站内个人项目内容仅供学习与交流使用，<strong>禁止用于商业用途</strong>。</p>
+        </footer>
+      </div>
+    </div>
+  </body>
+</html>
