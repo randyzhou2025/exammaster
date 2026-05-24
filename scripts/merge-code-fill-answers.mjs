@@ -124,15 +124,20 @@ export function mergeAllAnswers() {
 
     const blankTotal = countBlanksInIpynb(ipynb);
 
+    let solCursor = 0;
     templates.forEach((tmpl, lineIdx) => {
       const n = countBlanks(tmpl);
       let chunk = null;
+      let matchedSolLine = null;
 
-      const solLine = solLines[lineIdx];
-      if (solLine) {
-        const fromSol = extractFromPair(tmpl, solLine);
+      // 按空行模板在完整答案行中顺序匹配（勿用 lineIdx 对 solLines，二者常不对齐）
+      for (let j = solCursor; j < solLines.length; j++) {
+        const fromSol = extractFromPair(tmpl, solLines[j]);
         if (fromSol && fromSol.length === n && fromSol.every((a) => a)) {
           chunk = fromSol;
+          matchedSolLine = solLines[j];
+          solCursor = j + 1;
+          break;
         }
       }
 
@@ -147,7 +152,7 @@ export function mergeAllAnswers() {
           lineIndex: lineIdx + 1,
           blankCount: n,
           template: tmpl.trim(),
-          solutionLine: solLine ?? null,
+          solutionLine: matchedSolLine ?? solLines[solCursor] ?? null,
           pdfHint: pdf.slice(merged.length, merged.length + n),
         });
       }

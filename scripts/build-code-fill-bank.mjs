@@ -5,6 +5,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { auditSolutionThresholds } from "./audit-code-fill-thresholds.mjs";
 import { mergeAllAnswers } from "./merge-code-fill-answers.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -73,6 +74,21 @@ function extractWorkTaskSection(html) {
   return htmlToPlainText(sectionHtml);
 }
 
+/** 素材目录内 HTML：优先 {id}.html，否则匹配 {id}_*.html / {id}-*.html */
+function resolveMaterialHtmlPath(dir, id) {
+  const exact = path.join(dir, `${id}.html`);
+  if (fs.existsSync(exact)) return exact;
+  if (!fs.existsSync(dir)) return null;
+  const candidates = fs
+    .readdirSync(dir)
+    .filter((name) => {
+      if (!name.endsWith(".html")) return false;
+      return name === `${id}.html` || name.startsWith(`${id}_`) || name.startsWith(`${id}-`);
+    })
+    .sort((a, b) => b.localeCompare(a));
+  return candidates[0] ? path.join(dir, candidates[0]) : null;
+}
+
 function parseHtmlStem(htmlPath) {
   const html = fs.readFileSync(htmlPath, "utf8");
   const titleMatch = html.match(/<title>([^<]*)<\/title>/i);
@@ -109,6 +125,10 @@ function buildCellsWithAnswers(cells, answers) {
 
 async function main() {
   const report = { ok: true, questions: [], errors: [], unparsed: [] };
+  for (const issue of auditSolutionThresholds()) {
+    report.errors.push(`${issue.id}: ${issue.message}`);
+    report.ok = false;
+  }
   const { answers: mergedAnswers, unparsed } = mergeAllAnswers();
   report.unparsed = unparsed;
   const bank = [];
@@ -116,7 +136,6 @@ async function main() {
   for (const id of QUESTION_IDS) {
     const dir = path.join(root, "PythonCode", `${id}-素材`);
     const ipynbPath = path.join(dir, `${id}.ipynb`);
-    const htmlPath = path.join(dir, `${id}.html`);
     if (!fs.existsSync(ipynbPath)) {
       report.errors.push(`missing ipynb: ${id}`);
       continue;
@@ -135,9 +154,13 @@ async function main() {
       answers.length = blankCount;
     }
 
-    const { title, stem } = fs.existsSync(htmlPath)
-      ? parseHtmlStem(htmlPath)
-      : { title: id, stem: "" };
+    const htmlPath = resolveMaterialHtmlPath(dir, id);
+    const { title, stem } = htmlPath ? parseHtmlStem(htmlPath) : { title: id, stem: "" };
+    if (!stem.trim()) {
+      report.errors.push(
+        `${id}: empty stem${htmlPath ? ` (from ${path.basename(htmlPath)})` : " (no html found)"}`
+      );
+    }
 
     const outCells = buildCellsWithAnswers(cells, answers);
 
