@@ -88,6 +88,10 @@
         --radius: 8px;
         --tap: 44px;
         --shadow: 0 22px 58px rgba(47, 36, 23, 0.12);
+        --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+          "Segoe UI", sans-serif;
+        --font-display: "SF Pro Display", -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
+          "Microsoft YaHei", sans-serif;
       }
 
       * {
@@ -103,7 +107,12 @@
         min-height: 100vh;
         min-height: 100dvh;
         overflow-x: clip;
-        font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+        font-family: var(--font-sans);
+        font-weight: 400;
+        letter-spacing: 0;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: geometricPrecision;
         color: var(--ink);
         background:
           linear-gradient(rgba(23, 23, 23, 0.035) 1px, transparent 1px),
@@ -170,7 +179,8 @@
         border-radius: var(--radius);
         background: #171717;
         color: #f9fafb;
-        font-weight: 800;
+        font-family: var(--font-display);
+        font-weight: 700;
         font-size: 1rem;
         box-shadow: 0 10px 26px rgba(23, 23, 23, 0.16);
       }
@@ -182,7 +192,7 @@
 
       .brand-name {
         font-size: 0.95rem;
-        font-weight: 800;
+        font-weight: 700;
         line-height: 1.2;
       }
 
@@ -204,7 +214,7 @@
         background: rgba(255, 255, 255, 0.42);
         color: var(--ink);
         font-size: 0.86rem;
-        font-weight: 700;
+        font-weight: 650;
         text-decoration: none;
         -webkit-tap-highlight-color: transparent;
         touch-action: manipulation;
@@ -226,13 +236,14 @@
       }
 
       .eyebrow {
-        display: inline-flex;
+        display: flex;
         align-items: center;
-        gap: 0.5rem;
+        flex-wrap: wrap;
+        gap: 0.5rem 0.62rem;
         margin: 0 0 1rem;
         color: var(--green);
-        font-size: 0.82rem;
-        font-weight: 800;
+        font-size: 0.8rem;
+        font-weight: 700;
       }
 
       .eyebrow::before {
@@ -244,12 +255,27 @@
         box-shadow: 0 0 0 6px rgba(17, 135, 93, 0.12);
       }
 
+      .eyebrow-tag {
+        display: inline-flex;
+        align-items: center;
+        min-height: 1.55rem;
+        padding: 0 0.58rem;
+        border: 1px solid rgba(17, 135, 93, 0.18);
+        border-radius: 999px;
+        background: rgba(17, 135, 93, 0.07);
+        color: #0f7355;
+        font-size: 0.68rem;
+        font-weight: 750;
+        letter-spacing: 0;
+      }
+
       .hero h1 {
         margin: 0;
+        font-family: var(--font-display);
         font-size: clamp(2.05rem, 9vw, 4rem);
         line-height: 1.08;
         letter-spacing: 0;
-        font-weight: 900;
+        font-weight: 760;
         text-wrap: balance;
       }
 
@@ -268,8 +294,8 @@
         width: min(100%, 31rem);
         margin: 1rem 0 0;
         color: var(--muted);
-        font-size: 1rem;
-        line-height: 1.76;
+        font-size: 1.01rem;
+        line-height: 1.72;
       }
 
       .section {
@@ -280,14 +306,16 @@
         margin: 0 0 0.42rem;
         color: var(--amber);
         font-size: 0.82rem;
-        font-weight: 900;
+        font-weight: 750;
       }
 
       .section h2 {
         margin: 0 0 1rem;
+        font-family: var(--font-display);
         font-size: 1.45rem;
         line-height: 1.28;
         letter-spacing: 0;
+        font-weight: 760;
       }
 
       .project-list {
@@ -340,7 +368,7 @@
       .project-title {
         font-size: 1.03rem;
         line-height: 1.35;
-        font-weight: 900;
+        font-weight: 760;
       }
 
       .badge {
@@ -353,7 +381,7 @@
         background: rgba(17, 135, 93, 0.08);
         color: var(--green);
         font-size: 0.72rem;
-        font-weight: 900;
+        font-weight: 700;
       }
 
       .project-desc {
@@ -397,7 +425,7 @@
         background: rgba(255, 255, 255, 0.72);
         color: var(--ink);
         font-size: 0.84rem;
-        font-weight: 900;
+        font-weight: 700;
         line-height: 1.2;
         text-decoration: none;
         -webkit-tap-highlight-color: transparent;
@@ -464,13 +492,15 @@
         background: #171717;
         color: #fff;
         font-size: 0.78rem;
-        font-weight: 900;
+        font-weight: 760;
       }
 
       .principle h3 {
         margin: 0;
+        font-family: var(--font-display);
         font-size: 1rem;
         line-height: 1.45;
+        font-weight: 760;
       }
 
       .principle p {
@@ -627,9 +657,12 @@
 
         <main>
           <section class="hero" aria-labelledby="hero-title">
-            <p class="eyebrow">个人主页</p>
-            <h1 id="hero-title">Randy · 个人项目</h1>
-            <p class="tagline">我是 Randy，这里放的是正在打磨的个人项目。</p>
+            <p class="eyebrow">
+              <span>个人实验室</span>
+              <span class="eyebrow-tag">BUILDING IN PUBLIC</span>
+            </p>
+            <h1 id="hero-title">Randy’s Lab</h1>
+            <p class="tagline">一些从真实需求长出来的项目，边用边打磨，也把过程公开记录下来。</p>
           </section>
 
           <section class="section" id="projects" aria-labelledby="projects-heading">
