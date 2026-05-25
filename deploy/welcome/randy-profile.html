@@ -198,20 +198,20 @@
       .avatar-wrap::before {
         inset: -0.64rem;
         border: 1px solid rgba(119, 183, 255, 0.32);
-        background:
-          linear-gradient(90deg, transparent 48%, rgba(119, 183, 255, 0.38) 49%, transparent 51%),
-          linear-gradient(0deg, transparent 48%, rgba(119, 183, 255, 0.28) 49%, transparent 51%);
         opacity: 0.78;
-        animation: blueprint-spin 9s linear infinite;
+        box-shadow: 0 0 1.55rem rgba(119, 183, 255, 0.14);
+        z-index: 0;
       }
 
       .avatar-wrap::after {
         inset: -0.34rem;
         border: 1px dashed rgba(248, 246, 242, 0.22);
-        animation: blueprint-pulse 3.2s ease-in-out infinite;
+        z-index: 0;
       }
 
       .avatar {
+        position: relative;
+        z-index: 1;
         width: 100%;
         height: 100%;
         border-radius: 999px;
@@ -227,6 +227,38 @@
         height: 100%;
         object-fit: cover;
         object-position: center;
+      }
+
+      .speech {
+        position: absolute;
+        top: 0.35rem;
+        right: -1.05rem;
+        z-index: 2;
+        display: inline-flex;
+        align-items: center;
+        min-height: 2rem;
+        padding: 0.34rem 0.72rem;
+        border-radius: 999px;
+        background: #fff;
+        color: #171417;
+        font-size: 0.82rem;
+        font-weight: 800;
+        line-height: 1;
+        transform: rotate(8deg);
+        box-shadow: 0 0.55rem 1.2rem rgba(0, 0, 0, 0.18);
+        white-space: nowrap;
+        animation: speech-pop 3.6s ease-in-out infinite;
+      }
+
+      .speech::after {
+        content: "";
+        position: absolute;
+        left: 1.08rem;
+        bottom: -0.18rem;
+        width: 0.58rem;
+        height: 0.58rem;
+        background: #fff;
+        transform: rotate(45deg);
       }
 
       .profile-title {
@@ -495,21 +527,13 @@
         color: rgba(248, 246, 242, 0.78);
       }
 
-      @keyframes blueprint-spin {
-        to {
-          transform: rotate(360deg);
-        }
-      }
-
-      @keyframes blueprint-pulse {
+      @keyframes speech-pop {
         0%,
         100% {
-          opacity: 0.38;
-          transform: scale(0.96);
+          transform: translateY(0) rotate(8deg);
         }
         50% {
-          opacity: 0.82;
-          transform: scale(1.04);
+          transform: translateY(-0.24rem) rotate(5deg);
         }
       }
 
@@ -612,6 +636,11 @@
           margin-bottom: 1.75rem;
         }
 
+        .speech {
+          right: -0.72rem;
+          font-size: 0.76rem;
+        }
+
         .identity-grid {
           grid-template-columns: repeat(2, minmax(0, 1fr));
           max-width: 20.5rem;
@@ -681,6 +710,7 @@
                     preload="metadata"
                   ></video>
                 </div>
+                <span class="speech">make it real</span>
               </div>
 
               <h1 class="profile-title" id="profile-title">Randy</h1>
