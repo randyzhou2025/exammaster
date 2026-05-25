@@ -18,3 +18,4 @@ deploy/welcome/downloads/*.zip
 # 头像/视频原始素材（不入库；已处理产物在 deploy/welcome/typing-cat-avatar.*）
 /0525.mp4
 /575.mp4
+/cat_typing_animation.gif

@@ -239,72 +239,19 @@
         height: 100%;
         border-radius: 999px;
         border: 1px solid rgba(20, 18, 20, 0.38);
-        background: #1c1a1c;
+        background: #373343;
         box-shadow: 0 1.3rem 3.2rem rgba(0, 0, 0, 0.32), inset 0 0 0 0.62rem rgba(255, 255, 255, 0.06);
         overflow: hidden;
       }
 
-      .avatar-svg {
+      .avatar-img {
         display: block;
         width: 100%;
         height: 100%;
-        background: #1c1a1c;
-      }
-
-      .avatar-svg .paw-l {
-        transform-origin: 68px 164px;
-        transform-box: fill-box;
-        animation: paw-tap 0.62s ease-in-out infinite;
-      }
-
-      .avatar-svg .paw-r {
-        transform-origin: 130px 162px;
-        transform-box: fill-box;
-        animation: paw-tap 0.62s ease-in-out infinite;
-        animation-delay: 0.31s;
-      }
-
-      .avatar-svg .cat-head {
-        transform-origin: 82px 110px;
-        transform-box: fill-box;
-        animation: cat-bob 0.62s ease-in-out infinite;
-      }
-
-      .avatar-svg .cat-tail {
-        transform-origin: 50px 130px;
-        transform-box: fill-box;
-        animation: cat-sway 2.6s ease-in-out infinite;
-      }
-
-      @keyframes paw-tap {
-        0%,
-        60%,
-        100% {
-          transform: translateY(0);
-        }
-        20% {
-          transform: translateY(-3.5px);
-        }
-      }
-
-      @keyframes cat-bob {
-        0%,
-        100% {
-          transform: translateY(0);
-        }
-        50% {
-          transform: translateY(-1.2px);
-        }
-      }
-
-      @keyframes cat-sway {
-        0%,
-        100% {
-          transform: rotate(-4deg);
-        }
-        50% {
-          transform: rotate(8deg);
-        }
+        object-fit: cover;
+        background: #373343;
+        -webkit-user-drag: none;
+        user-select: none;
       }
 
       @keyframes ring-pulse {
@@ -674,11 +621,7 @@
         .avatar-wrap::before,
         .avatar-wrap::after,
         .key-echo,
-        .speech,
-        .avatar-svg .paw-l,
-        .avatar-svg .paw-r,
-        .avatar-svg .cat-head,
-        .avatar-svg .cat-tail {
+        .speech {
           animation: none;
         }
       }
@@ -852,60 +795,15 @@
                 <span class="key-echo key-echo-1"></span>
                 <span class="key-echo key-echo-2"></span>
                 <div class="avatar">
-                  <svg class="avatar-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <path d="M 134 60 L 188 56 L 192 158 L 138 162 Z" fill="#c8c8ca" stroke="#1f1a17" stroke-width="2.5" stroke-linejoin="round" />
-                    <path d="M 140 66 L 182 62 L 186 154 L 144 158 Z" fill="none" stroke="#1f1a17" stroke-width="0.8" opacity="0.4" />
-                    <g transform="translate(163 110) scale(0.2)" fill="#9a9a9c">
-                      <ellipse cx="0" cy="0" rx="26" ry="24" />
-                      <path d="M -20 -14 L -14 -32 L -4 -14 Z" />
-                      <path d="M 4 -14 L 14 -32 L 20 -14 Z" />
-                    </g>
-
-                    <path d="M 30 188 L 56 162 L 192 158 L 196 188 Z" fill="#a8a8aa" stroke="#1f1a17" stroke-width="2.5" stroke-linejoin="round" />
-                    <path d="M 56 162 L 192 158" stroke="#1f1a17" stroke-width="0.8" opacity="0.4" fill="none" />
-                    <g stroke="#1f1a17" stroke-width="0.7" opacity="0.3" fill="none">
-                      <path d="M 50 170 L 194 166" />
-                      <path d="M 42 178 L 196 174" />
-                    </g>
-
-                    <path class="cat-tail" d="M 50 130 C 24 138 16 158 30 180" stroke="#1f1a17" stroke-width="11" fill="none" stroke-linecap="round" />
-                    <path class="cat-tail" d="M 50 130 C 24 138 16 158 30 180" stroke="#c89e7d" stroke-width="7.2" fill="none" stroke-linecap="round" />
-
-                    <ellipse cx="80" cy="138" rx="38" ry="32" fill="#fcfaf3" stroke="#1f1a17" stroke-width="2.5" />
-                    <path d="M 56 122 Q 80 108 108 124 Q 94 132 80 132 Q 66 132 56 122 Z" fill="#c89e7d" />
-
-                    <!-- 右前腿（伸向键盘的猫腿，从身体右肩到右爪） -->
-                    <path d="M 102 130 Q 116 142 124 154 L 134 158 Q 138 156 138 160 Q 122 138 108 124 Z"
-                          fill="#fcfaf3" stroke="#1f1a17" stroke-width="2.3" stroke-linejoin="round" />
-
-                    <g class="cat-head">
-                      <path d="M 44 76 Q 42 36 64 28 Q 82 22 100 28 Q 122 36 120 76 Q 112 110 82 116 Q 52 110 44 76 Z" fill="#fcfaf3" stroke="#1f1a17" stroke-width="2.5" stroke-linejoin="round" />
-                      <path d="M 46 74 Q 42 36 64 28 Q 82 22 100 28 Q 122 36 118 74 Q 112 84 100 82 Q 92 78 82 82 Q 72 78 64 82 Q 52 84 46 74 Z" fill="#c89e7d" stroke="#1f1a17" stroke-width="2.5" stroke-linejoin="round" />
-
-                      <path d="M 40 50 L 50 8 L 74 42 Z" fill="#c89e7d" stroke="#1f1a17" stroke-width="2.5" stroke-linejoin="round" />
-                      <path d="M 50 42 L 55 18 L 68 38 Z" fill="#f0c4b8" />
-                      <path d="M 90 42 L 112 8 L 122 50 Z" fill="#c89e7d" stroke="#1f1a17" stroke-width="2.5" stroke-linejoin="round" />
-                      <path d="M 96 38 L 109 18 L 114 42 Z" fill="#f0c4b8" />
-
-                      <ellipse cx="67" cy="88" rx="3.2" ry="5" fill="#1a1612" />
-                      <ellipse cx="97" cy="88" rx="3.2" ry="5" fill="#1a1612" />
-                      <circle cx="67.8" cy="86.4" r="0.9" fill="#fff" opacity="0.9" />
-                      <circle cx="97.8" cy="86.4" r="0.9" fill="#fff" opacity="0.9" />
-
-                      <path d="M 78 98 L 86 98 L 82 102 Z" fill="#a8625a" />
-                      <path d="M 74 106 Q 78 110.5 82 106.5 Q 86 110.5 90 106" fill="none" stroke="#1a1612" stroke-width="2" stroke-linecap="round" />
-
-                      <g stroke="#1f1a17" stroke-width="1.4" stroke-linecap="round" fill="none">
-                        <line x1="60" y1="96" x2="40" y2="92" />
-                        <line x1="60" y1="101" x2="40" y2="104" />
-                        <line x1="104" y1="96" x2="124" y2="92" />
-                        <line x1="104" y1="101" x2="124" y2="104" />
-                      </g>
-                    </g>
-
-                    <ellipse class="paw-l" cx="68" cy="164" rx="9" ry="6.5" fill="#fcfaf3" stroke="#1f1a17" stroke-width="2.3" />
-                    <ellipse class="paw-r" cx="134" cy="162" rx="9" ry="6.5" fill="#fcfaf3" stroke="#1f1a17" stroke-width="2.3" />
-                  </svg>
+                  <img
+                    class="avatar-img"
+                    src="randy-cat-typing.gif"
+                    alt="Randy 正在敲键盘的卡通头像"
+                    width="480"
+                    height="480"
+                    decoding="async"
+                    loading="eager"
+                  />
                 </div>
                 <span class="speech">make it real</span>
               </div>
