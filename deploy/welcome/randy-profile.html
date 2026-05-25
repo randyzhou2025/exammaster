@@ -226,6 +226,32 @@
         height: 100%;
       }
 
+      .typing-paw-left,
+      .typing-paw-right {
+        transform-box: fill-box;
+        transform-origin: center;
+      }
+
+      .typing-paw-left {
+        animation: paw-tap-left 0.72s ease-in-out infinite;
+      }
+
+      .typing-paw-right {
+        animation: paw-tap-right 0.72s ease-in-out infinite;
+      }
+
+      .typing-key {
+        animation: key-blink 1.08s ease-in-out infinite;
+      }
+
+      .typing-key:nth-of-type(2n) {
+        animation-delay: 0.18s;
+      }
+
+      .typing-key:nth-of-type(3n) {
+        animation-delay: 0.36s;
+      }
+
       .speech {
         position: absolute;
         top: 0.35rem;
@@ -551,6 +577,36 @@
         }
       }
 
+      @keyframes paw-tap-left {
+        0%,
+        100% {
+          transform: translateY(0) rotate(-2deg);
+        }
+        50% {
+          transform: translateY(3px) rotate(3deg);
+        }
+      }
+
+      @keyframes paw-tap-right {
+        0%,
+        100% {
+          transform: translateY(2px) rotate(3deg);
+        }
+        50% {
+          transform: translateY(-1px) rotate(-3deg);
+        }
+      }
+
+      @keyframes key-blink {
+        0%,
+        100% {
+          opacity: 0.35;
+        }
+        48% {
+          opacity: 1;
+        }
+      }
+
       @keyframes drop {
         0%,
         100% {
@@ -715,19 +771,28 @@
                 <div class="avatar">
                   <svg viewBox="0 0 180 180" role="img">
                     <rect width="180" height="180" fill="#f7f4ed" />
-                    <path d="M43 125c19 16 77 20 102-2" fill="none" stroke="#111" stroke-width="3.5" stroke-linecap="round" />
-                    <path d="M50 127c17 7 65 8 88-1" fill="none" stroke="#111" stroke-width="2.1" stroke-linecap="round" opacity=".52" />
-                    <path d="M54 96c16-26 58-32 84-12 16 13 19 34 6 48-22 15-72 15-93-1-10-10-8-23 3-35Z" fill="#fffdf8" stroke="#111" stroke-width="3.2" />
-                    <path d="M58 78c-22-15-25-35-25-35 21-5 42 8 51 31 2 8-10 13-26 4Z" fill="#f0a64a" stroke="#111" stroke-width="3.2" stroke-linejoin="round" />
-                    <path d="M126 75c14-22 35-27 35-27 4 23-7 43-29 52-9 2-15-11-6-25Z" fill="#f0a64a" stroke="#111" stroke-width="3.2" stroke-linejoin="round" />
-                    <path d="M44 52c12 5 25 14 35 27M153 57c-5 13-14 25-27 35" fill="none" stroke="#c46b20" stroke-width="4.1" stroke-linecap="round" />
-                    <path d="M72 103c3-9 16-9 20 0M111 103c4-9 17-9 20 0" fill="none" stroke="#111" stroke-width="3.5" stroke-linecap="round" />
-                    <circle cx="82" cy="106" r="4" fill="#111" />
-                    <circle cx="121" cy="106" r="4" fill="#111" />
-                    <ellipse cx="102" cy="116" rx="17" ry="12" fill="#fff4e6" stroke="#111" stroke-width="2.6" />
-                    <path d="M96 112c4-4 12-4 16 0-2 6-12 8-16 0Z" fill="#ff8b3d" stroke="#111" stroke-width="2.5" stroke-linejoin="round" />
-                    <path d="M103 120c-4 7-12 7-17 2M105 120c5 7 14 7 19 2" fill="none" stroke="#111" stroke-width="2.2" stroke-linecap="round" />
-                    <path d="M73 130c-5 10-8 21-9 34M127 130c5 10 9 21 10 33" fill="none" stroke="#111" stroke-width="2.4" stroke-linecap="round" opacity=".56" />
+                    <g transform="translate(-4 4) scale(1.08)">
+                      <path d="M35 119c-18-7-26-22-23-37 19 3 31 18 34 36" fill="#c4a892" stroke="#111" stroke-width="3.1" stroke-linejoin="round" />
+                      <path d="M38 122c16 12 61 15 84 2" fill="none" stroke="#111" stroke-width="3.2" stroke-linecap="round" opacity=".62" />
+                      <path d="M51 82c-3-18 8-34 8-34 11 5 19 14 24 28" fill="#c4a892" stroke="#111" stroke-width="3.1" stroke-linejoin="round" />
+                      <path d="M103 76c6-18 20-27 20-27 7 14 5 29-6 43" fill="#c4a892" stroke="#111" stroke-width="3.1" stroke-linejoin="round" />
+                      <path d="M47 84c11-24 49-32 76-14 15 10 22 27 17 43-15 20-61 23-83 7-12-8-16-22-10-36Z" fill="#fffdf8" stroke="#111" stroke-width="3.2" />
+                      <path d="M50 84c4-20 21-30 39-31 3 14-2 28-16 36-9 5-17 3-23-5Z" fill="#c4a892" />
+                      <path d="M77 103c3-8 15-8 18 0M108 102c3-8 15-8 18 0" fill="none" stroke="#111" stroke-width="3.3" stroke-linecap="round" />
+                      <circle cx="86" cy="105" r="3.7" fill="#111" />
+                      <circle cx="116" cy="104" r="3.7" fill="#111" />
+                      <path d="M99 111l7 7 7-8" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                      <path d="M74 112h-13M77 119H59M124 110h14M123 118h16" fill="none" stroke="#111" stroke-width="2.2" stroke-linecap="round" opacity=".86" />
+                      <path d="M93 121c4 3 12 3 17 0" fill="none" stroke="#111" stroke-width="2.3" stroke-linecap="round" />
+                      <path d="M42 136h52l8-29h51c4 0 6 3 5 7l-8 35H56c-9 0-14-5-14-13Z" fill="#dedede" stroke="#111" stroke-width="3.1" stroke-linejoin="round" />
+                      <path d="M102 107h51l-8 34H94Z" fill="#cfcfcf" stroke="#111" stroke-width="3.1" stroke-linejoin="round" />
+                      <path d="M112 122h21M109 130h25M48 139h36M49 145h88" fill="none" stroke="#898989" stroke-width="2.2" stroke-linecap="round" />
+                      <circle cx="125" cy="123" r="4.5" fill="#9a9a9a" opacity=".9" />
+                      <ellipse class="typing-paw-left" cx="70" cy="132" rx="10" ry="7" fill="#c4a892" stroke="#111" stroke-width="2.8" />
+                      <ellipse class="typing-paw-right" cx="94" cy="132" rx="10" ry="7" fill="#fffdf8" stroke="#111" stroke-width="2.8" />
+                      <path class="typing-key" d="M58 133h9M82 134h8M106 135h9" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" />
+                      <path class="typing-key" d="M134 80l5-5M142 90h8M135 99l5 5" fill="none" stroke="#77b7ff" stroke-width="2.6" stroke-linecap="round" />
+                    </g>
                   </svg>
                 </div>
                 <span class="speech">make it real</span>
