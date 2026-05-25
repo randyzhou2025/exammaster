@@ -330,10 +330,16 @@
 
       .kicker {
         margin: 0;
+        padding: 0;
+        border: 0;
+        background: transparent;
         color: var(--red);
+        cursor: pointer;
+        font-family: inherit;
         font-size: 0.78rem;
         font-weight: 800;
         line-height: 1.2;
+        text-align: left;
         text-transform: uppercase;
       }
 
@@ -494,7 +500,7 @@
       }
 
       .site-footer {
-        display: flex;
+        display: none;
         align-items: center;
         justify-content: space-between;
         gap: 1rem;
@@ -502,6 +508,11 @@
         color: var(--quiet);
         font-size: 0.78rem;
         line-height: 1.55;
+      }
+
+      body.projects-open .site-footer {
+        display: flex;
+        animation: projects-reveal 0.28s ease-out both;
       }
 
       .site-footer p {
@@ -581,6 +592,7 @@
 
       .home-link:focus-visible,
       .top-action:focus-visible,
+      .kicker:focus-visible,
       .next-hint:focus-visible,
       .project-link:focus-visible,
       .text-button:focus-visible {
@@ -669,7 +681,7 @@
         }
 
         .project-actions,
-        .site-footer {
+        body.projects-open .site-footer {
           display: grid;
           grid-template-columns: 1fr;
         }
@@ -686,7 +698,7 @@
           </a>
 
           <nav class="top-actions" aria-label="快捷入口">
-            <button class="top-action project-toggle" type="button" aria-label="Show projects" aria-controls="projects" aria-expanded="false">
+            <button class="top-action project-toggle" type="button" aria-label="展开项目入口" aria-controls="projects" aria-expanded="false">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M4 7h16" />
                 <path d="M4 12h16" />
@@ -731,7 +743,7 @@
               </div>
 
               <button class="next-hint project-toggle" type="button" aria-controls="projects" aria-expanded="false">
-                <span>Projects</span>
+                <span>项目入口</span>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <path d="M12 5v14" />
                   <path d="m19 12-7 7-7-7" />
@@ -742,7 +754,7 @@
 
           <section class="section projects-section" id="projects" aria-labelledby="projects-heading">
             <div class="section-head">
-              <p class="kicker">Projects</p>
+              <button class="kicker project-toggle" type="button" aria-label="展开项目入口" aria-controls="projects" aria-expanded="false">项目入口</button>
               <h2 id="projects-heading">把真实需求做成入口。</h2>
               <p class="section-note">这里放的是正在使用和打磨的个人项目，优先解决具体问题，再慢慢把体验做顺。</p>
             </div>
@@ -828,6 +840,7 @@
     <script>
       (() => {
         const projects = document.querySelector("#projects");
+        const hero = document.querySelector(".profile-hero");
         const toggles = document.querySelectorAll(".project-toggle");
 
         if (!projects || !toggles.length) {
@@ -838,16 +851,24 @@
           window.history.replaceState(null, "", window.location.href.replace(/#projects$/, ""));
         }
 
-        const showProjects = () => {
-          document.body.classList.add("projects-open");
-          toggles.forEach((toggle) => toggle.setAttribute("aria-expanded", "true"));
+        const syncToggles = (isOpen) => {
+          toggles.forEach((toggle) => {
+            toggle.setAttribute("aria-expanded", String(isOpen));
+            toggle.setAttribute("aria-label", isOpen ? "收起项目入口" : "展开项目入口");
+          });
+        };
+
+        const toggleProjects = () => {
+          const willOpen = !document.body.classList.contains("projects-open");
+          document.body.classList.toggle("projects-open", willOpen);
+          syncToggles(willOpen);
           window.requestAnimationFrame(() => {
-            projects.scrollIntoView({ behavior: "smooth", block: "start" });
+            (willOpen ? projects : hero)?.scrollIntoView({ behavior: "smooth", block: "start" });
           });
         };
 
         toggles.forEach((toggle) => {
-          toggle.addEventListener("click", showProjects);
+          toggle.addEventListener("click", toggleProjects);
         });
       })();
     </script>
