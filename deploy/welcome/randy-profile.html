@@ -152,8 +152,12 @@
         justify-content: center;
         width: var(--tap);
         height: var(--tap);
+        border: 0;
         border-radius: var(--radius);
+        background: transparent;
         color: rgba(248, 246, 242, 0.7);
+        cursor: pointer;
+        font: inherit;
         text-decoration: none;
       }
 
@@ -288,7 +292,12 @@
         gap: 0.48rem;
         min-height: 2.35rem;
         margin-top: 2.65rem;
+        padding: 0;
+        border: 0;
+        background: transparent;
         color: var(--quiet);
+        cursor: pointer;
+        font-family: inherit;
         font-size: 0.84rem;
         font-weight: 680;
         text-decoration: none;
@@ -302,6 +311,15 @@
 
       .section {
         padding: 3.2rem 0 0;
+      }
+
+      .projects-section {
+        display: none;
+      }
+
+      body.projects-open .projects-section {
+        display: block;
+        animation: projects-reveal 0.28s ease-out both;
       }
 
       .section-head {
@@ -532,6 +550,17 @@
         }
       }
 
+      @keyframes projects-reveal {
+        from {
+          opacity: 0;
+          transform: translateY(0.65rem);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
       @media (hover: hover) and (pointer: fine) {
         .top-action:hover {
           background: rgba(255, 255, 255, 0.06);
@@ -657,13 +686,13 @@
           </a>
 
           <nav class="top-actions" aria-label="快捷入口">
-            <a class="top-action" href="#projects" aria-label="查看项目">
+            <button class="top-action project-toggle" type="button" aria-label="Show projects" aria-controls="projects" aria-expanded="false">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M4 7h16" />
                 <path d="M4 12h16" />
                 <path d="M4 17h10" />
               </svg>
-            </a>
+            </button>
           </nav>
         </header>
 
@@ -701,17 +730,17 @@
                 <span class="identity-item">System Designer</span>
               </div>
 
-              <a class="next-hint" href="#projects">
-                <span>项目入口</span>
+              <button class="next-hint project-toggle" type="button" aria-controls="projects" aria-expanded="false">
+                <span>Projects</span>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <path d="M12 5v14" />
                   <path d="m19 12-7 7-7-7" />
                 </svg>
-              </a>
+              </button>
             </div>
           </section>
 
-          <section class="section" id="projects" aria-labelledby="projects-heading">
+          <section class="section projects-section" id="projects" aria-labelledby="projects-heading">
             <div class="section-head">
               <p class="kicker">Projects</p>
               <h2 id="projects-heading">把真实需求做成入口。</h2>
@@ -796,5 +825,31 @@
         </footer>
       </div>
     </div>
+    <script>
+      (() => {
+        const projects = document.querySelector("#projects");
+        const toggles = document.querySelectorAll(".project-toggle");
+
+        if (!projects || !toggles.length) {
+          return;
+        }
+
+        if (window.location.hash === "#projects") {
+          window.history.replaceState(null, "", window.location.href.replace(/#projects$/, ""));
+        }
+
+        const showProjects = () => {
+          document.body.classList.add("projects-open");
+          toggles.forEach((toggle) => toggle.setAttribute("aria-expanded", "true"));
+          window.requestAnimationFrame(() => {
+            projects.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        };
+
+        toggles.forEach((toggle) => {
+          toggle.addEventListener("click", showProjects);
+        });
+      })();
+    </script>
   </body>
 </html>
