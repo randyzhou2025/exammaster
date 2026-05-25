@@ -201,12 +201,35 @@
         opacity: 0.78;
         box-shadow: 0 0 1.55rem rgba(119, 183, 255, 0.14);
         z-index: 0;
+        animation: ring-pulse 2.73s ease-in-out infinite;
+        transform-origin: 50% 50%;
+        will-change: transform, opacity;
       }
 
       .avatar-wrap::after {
         inset: -0.34rem;
         border: 1px dashed rgba(248, 246, 242, 0.22);
         z-index: 0;
+        animation: ring-spin 18s linear infinite;
+        transform-origin: 50% 50%;
+        will-change: transform;
+      }
+
+      .key-echo {
+        position: absolute;
+        inset: -0.78rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 56, 87, 0.42);
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0;
+        animation: key-echo 2.73s ease-out infinite;
+        will-change: transform, opacity;
+      }
+
+      .key-echo.key-echo-2 {
+        border-color: rgba(119, 183, 255, 0.4);
+        animation-delay: 1.36s;
       }
 
       .avatar {
@@ -216,8 +239,8 @@
         height: 100%;
         border-radius: 999px;
         border: 1px solid rgba(20, 18, 20, 0.38);
-        background: #f7f4ed;
-        box-shadow: 0 1.3rem 3.2rem rgba(0, 0, 0, 0.32), inset 0 0 0 0.62rem rgba(255, 255, 255, 0.34);
+        background: #1c1a1c;
+        box-shadow: 0 1.3rem 3.2rem rgba(0, 0, 0, 0.32), inset 0 0 0 0.62rem rgba(255, 255, 255, 0.06);
         overflow: hidden;
       }
 
@@ -227,6 +250,41 @@
         height: 100%;
         object-fit: cover;
         object-position: center;
+        background: #1c1a1c;
+      }
+
+      @keyframes ring-pulse {
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 0.72;
+          box-shadow: 0 0 1.4rem rgba(119, 183, 255, 0.12);
+        }
+        50% {
+          transform: scale(1.035);
+          opacity: 1;
+          box-shadow: 0 0 2rem rgba(119, 183, 255, 0.26);
+        }
+      }
+
+      @keyframes ring-spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes key-echo {
+        0% {
+          transform: scale(0.95);
+          opacity: 0;
+        }
+        18% {
+          opacity: 0.55;
+        }
+        100% {
+          transform: scale(1.42);
+          opacity: 0;
+        }
       }
 
       .speech {
@@ -558,6 +616,23 @@
         }
       }
 
+      @media (prefers-reduced-motion: reduce) {
+        .avatar-wrap::before,
+        .avatar-wrap::after,
+        .key-echo,
+        .speech {
+          animation: none;
+        }
+        .avatar-video {
+          display: none;
+        }
+        .avatar {
+          background-image: url("typing-cat-avatar-poster.jpg");
+          background-size: cover;
+          background-position: center;
+        }
+      }
+
       @media (hover: hover) and (pointer: fine) {
         .top-action:hover {
           background: rgba(255, 255, 255, 0.06);
@@ -698,17 +773,22 @@
           <section class="profile-hero" aria-labelledby="profile-title">
             <div class="profile-stack">
               <div class="avatar-wrap" aria-hidden="true">
+                <span class="key-echo key-echo-1"></span>
+                <span class="key-echo key-echo-2"></span>
                 <div class="avatar">
                   <video
                     class="avatar-video"
-                    src="typing-cat-avatar.mp4"
                     poster="typing-cat-avatar-poster.jpg"
                     autoplay
                     muted
                     loop
                     playsinline
                     preload="metadata"
-                  ></video>
+                    disableremoteplayback
+                  >
+                    <source src="typing-cat-avatar.webm" type="video/webm" />
+                    <source src="typing-cat-avatar.mp4" type="video/mp4" />
+                  </video>
                 </div>
                 <span class="speech">make it real</span>
               </div>
