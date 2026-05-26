@@ -8,6 +8,45 @@ import { PDFParse } from "pdf-parse";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, "..");
+
+/** @type {Record<string, string>} */
+const JUDGMENT_OVERRIDES = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "theory-judgment-overrides.json"), "utf8")
+);
+
+/** @type {Record<string, string>} */
+const SINGLE_OVERRIDES = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "theory-single-overrides.json"), "utf8")
+);
+
+function applyJudgmentOverrides(questions) {
+  let n = 0;
+  for (const q of questions) {
+    if (q.type !== "judgment") continue;
+    const qn = q.id.replace(/^t3-j-/, "");
+    const ans = JUDGMENT_OVERRIDES[qn];
+    if (ans && q.answer !== ans) {
+      q.answer = ans;
+      n++;
+    }
+  }
+  return n;
+}
+
+function applySingleOverrides(questions) {
+  let n = 0;
+  for (const q of questions) {
+    if (q.type !== "single") continue;
+    const qn = q.id.replace(/^t3-s-/, "");
+    const ans = SINGLE_OVERRIDES[qn];
+    if (ans && q.answer !== ans) {
+      q.answer = ans;
+      n++;
+    }
+  }
+  return n;
+}
+
 function normalizeRaw(text) {
   return text
     .replace(/-- \d+ of \d+ --/g, "\n")
@@ -323,6 +362,8 @@ async function main() {
   const multiple = parseMultiple(multiLines);
 
   const bank = [...judgment, ...single, ...multiple];
+  const judgmentOverrideCount = applyJudgmentOverrides(bank);
+  const singleOverrideCount = applySingleOverrides(bank);
   const outPath = path.join(root, "src", "data", "theoryBank.json");
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   fs.writeFileSync(outPath, JSON.stringify(bank, null, 0), "utf8");
@@ -334,6 +375,8 @@ async function main() {
         single: single.length,
         multiple: multiple.length,
         total: bank.length,
+        judgmentOverrides: judgmentOverrideCount,
+        singleOverrides: singleOverrideCount,
         outPath,
       },
       null,
