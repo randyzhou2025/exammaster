@@ -269,9 +269,8 @@ export function normalizePersistedPractice(
 
 function migratePersistedSlice(persistedState: unknown): PersistedSlice {
   const p = (persistedState ?? {}) as Partial<PersistedSlice>;
-  const pb = p.bank as Question[] | undefined;
-  const usePersistedBank = Array.isArray(pb) && pb.length > 0;
-  const bank = usePersistedBank ? pb : THEORY_BANK;
+  /** 标答以当前构建内嵌的 THEORY_BANK 为准，不恢复 localStorage 里的旧 bank 快照 */
+  const bank = THEORY_BANK;
   const byId = normalizeById(p.byId);
   const sel = p.selectedQuestionBankId;
   const selectedQuestionBankId =
@@ -588,6 +587,7 @@ export const useAppStore = create<AppState>()(
 
       resetAll: () =>
         set({
+          bank: THEORY_BANK,
           byId: {},
           mockHistory: [],
           practice: null,
@@ -610,7 +610,6 @@ export const useAppStore = create<AppState>()(
       partialize: (s) => ({
         byId: s.byId,
         mockHistory: s.mockHistory,
-        bank: s.bank,
         prefs: s.prefs,
         sequentialResumeQuestionId: s.sequentialResumeQuestionId,
         selectedQuestionBankId: s.selectedQuestionBankId,
@@ -619,18 +618,14 @@ export const useAppStore = create<AppState>()(
       merge: (persisted, current) => {
         if (!persisted || typeof persisted !== "object") return current;
         const p = persisted as Partial<PersistedSlice>;
-        const pb = p.bank as Question[] | undefined;
-        const usePersisted =
-          Array.isArray(pb) &&
-          pb.length > 0 &&
-          !pb.some((q) => q.id === "j1" || q.id === "s1");
         const resume =
           typeof p.sequentialResumeQuestionId === "string" || p.sequentialResumeQuestionId === null
             ? p.sequentialResumeQuestionId
             : current.sequentialResumeQuestionId;
         const mergedById =
           p.byId !== undefined && p.byId !== null ? normalizeById(p.byId) : normalizeById(current.byId);
-        const bankMerged = usePersisted ? pb : current.bank;
+        /** 始终使用当前 JS 包内嵌题库（含最新标答）；localStorage 只持久化进度，不持久化 bank 快照 */
+        const bankMerged = current.bank;
         return {
           ...current,
           bank: bankMerged,

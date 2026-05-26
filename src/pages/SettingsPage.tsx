@@ -185,7 +185,7 @@ export function SettingsPage() {
                     resetAllCodeFill();
                     resetAll();
                     setClearConfirmOpen(false);
-                    setClearSuccessMessage("已清除成功。理论与实操本地进度均已重置。");
+                    window.location.reload();
                   } catch {
                     setClearConfirmOpen(false);
                     window.alert("清除失败，请稍后重试或检查浏览器是否禁止写入本地存储。");
