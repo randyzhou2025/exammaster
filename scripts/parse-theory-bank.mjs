@@ -19,6 +19,11 @@ const SINGLE_OVERRIDES = JSON.parse(
   fs.readFileSync(path.join(__dirname, "theory-single-overrides.json"), "utf8")
 );
 
+/** @type {Record<string, string>} */
+const MULTIPLE_OVERRIDES = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "theory-multiple-overrides.json"), "utf8")
+);
+
 function applyJudgmentOverrides(questions) {
   let n = 0;
   for (const q of questions) {
@@ -41,6 +46,27 @@ function applySingleOverrides(questions) {
     const ans = SINGLE_OVERRIDES[qn];
     if (ans && q.answer !== ans) {
       q.answer = ans;
+      n++;
+    }
+  }
+  return n;
+}
+
+function lettersToSortedArray(letters) {
+  return [...letters].filter((c) => /[A-E]/.test(c)).sort();
+}
+
+function applyMultipleOverrides(questions) {
+  let n = 0;
+  for (const q of questions) {
+    if (q.type !== "multiple") continue;
+    const qn = q.id.replace(/^t3-m-/, "");
+    const ans = MULTIPLE_OVERRIDES[qn];
+    if (!ans) continue;
+    const next = lettersToSortedArray(ans);
+    const prev = [...q.answer].sort().join("");
+    if (prev !== next.join("")) {
+      q.answer = next;
       n++;
     }
   }
@@ -364,6 +390,7 @@ async function main() {
   const bank = [...judgment, ...single, ...multiple];
   const judgmentOverrideCount = applyJudgmentOverrides(bank);
   const singleOverrideCount = applySingleOverrides(bank);
+  const multipleOverrideCount = applyMultipleOverrides(bank);
   const outPath = path.join(root, "src", "data", "theoryBank.json");
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   fs.writeFileSync(outPath, JSON.stringify(bank, null, 0), "utf8");
@@ -377,6 +404,7 @@ async function main() {
         total: bank.length,
         judgmentOverrides: judgmentOverrideCount,
         singleOverrides: singleOverrideCount,
+        multipleOverrides: multipleOverrideCount,
         outPath,
       },
       null,
