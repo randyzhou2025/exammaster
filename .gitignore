@@ -19,3 +19,6 @@ deploy/welcome/downloads/*.zip
 /0525.mp4
 /575.mp4
 /cat_typing_animation.gif
+
+# 移动端验证脚本输出（scripts/mobile-shot.mjs）
+.tmp-mobile/
