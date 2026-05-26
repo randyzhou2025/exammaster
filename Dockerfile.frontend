@@ -5,8 +5,6 @@ ARG VITE_BASE_PATH=/
 ENV VITE_BASE_PATH=$VITE_BASE_PATH
 WORKDIR /app
 COPY package.json package-lock.json ./
-# puppeteer 仅用于本地 scripts/mobile-shot.mjs；生产 build:web 不需要 Chromium
-ENV PUPPETEER_SKIP_DOWNLOAD=true
 RUN npm ci
 COPY tsconfig.json tsconfig.node.json index.html vite.config.ts postcss.config.js tailwind.config.js ./
 COPY src ./src
