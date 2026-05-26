@@ -131,6 +131,9 @@ interface AppState {
   exportBackup: () => string;
   importBackup: (payload: BackupPayload) => void;
 
+  /** 同步当前包内最新 THEORY_BANK；不清除 byId / 模考 / 偏好等进度 */
+  syncLatestTheoryBank: () => void;
+
   resetAll: () => void;
 }
 
@@ -582,6 +585,26 @@ export const useAppStore = create<AppState>()(
           mockHistory: Array.isArray(payload.mockHistory) ? payload.mockHistory : [],
           prefs: normalizePrefs(payload.prefs),
           practice: null,
+        });
+      },
+
+      syncLatestTheoryBank: () => {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (raw) {
+            const parsed = JSON.parse(raw) as { state?: Record<string, unknown>; version?: number };
+            if (parsed.state && "bank" in parsed.state) {
+              delete parsed.state.bank;
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+            }
+          }
+        } catch {
+          /* ignore */
+        }
+        set({
+          bank: THEORY_BANK,
+          practice: null,
+          mockExam: null,
         });
       },
 

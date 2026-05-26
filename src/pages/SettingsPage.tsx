@@ -12,13 +12,12 @@ export function SettingsPage() {
   const logout = useAuthStore((s) => s.logout);
   const user = useAuthStore((s) => s.user);
   const resetAll = useAppStore((s) => s.resetAll);
+  const syncLatestTheoryBank = useAppStore((s) => s.syncLatestTheoryBank);
   const resetAllCodeFill = useCodeFillStore((s) => s.resetAllCodeFill);
   const exportBackup = useAppStore((s) => s.exportBackup);
   const importBackup = useAppStore((s) => s.importBackup);
   const fileRef = useRef<HTMLInputElement>(null);
   const [clearConfirmOpen, setClearConfirmOpen] = useState(false);
-  /** 原生 confirm 在部分手机浏览器/WebView 不弹出，易被误以为「点了没反应」 */
-  const [clearSuccessMessage, setClearSuccessMessage] = useState<string | null>(null);
 
   const handleExport = () => {
     const json = exportBackup();
@@ -109,25 +108,34 @@ export function SettingsPage() {
         </section>
 
         <section className="rounded-2xl bg-white p-4 shadow-card">
-          <h2 className="text-sm font-semibold text-neutral-900">存储说明</h2>
+          <h2 className="text-sm font-semibold text-neutral-900">题库更新</h2>
+          <p className="mt-2 text-sm leading-relaxed text-neutral-600">
+            从服务器刷新最新题目与标答（含线上修正）。您的做题进度、错题本、收藏与模考记录均会保留。
+          </p>
+          <button
+            type="button"
+            className="mt-4 w-full rounded-xl border border-brand/30 bg-brand/5 py-3 text-sm font-semibold text-brand active:opacity-90"
+            onClick={() => {
+              syncLatestTheoryBank();
+              window.location.reload();
+            }}
+          >
+            更新最新题库
+          </button>
+        </section>
+
+        <section className="rounded-2xl bg-white p-4 shadow-card">
+          <h2 className="text-sm font-semibold text-neutral-900">存储与清除</h2>
           <p className="mt-2 text-sm text-neutral-700">
             做题进度、错题与收藏保存在本机浏览器 localStorage；更换设备可用上方备份文件迁移。
           </p>
           <p className="mt-2 text-xs text-neutral-500">
             背题模式不写入最新作答状态与错题本；多选题须选项集合与标准答案完全一致才得分。
           </p>
-          {clearSuccessMessage ? (
-            <p className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2.5 text-sm leading-relaxed text-emerald-900">
-              {clearSuccessMessage}
-            </p>
-          ) : null}
           <button
             type="button"
             className="mt-4 w-full rounded-xl border border-red-200 bg-red-50 py-3 text-sm font-semibold text-red-700"
-            onClick={() => {
-              setClearSuccessMessage(null);
-              setClearConfirmOpen(true);
-            }}
+            onClick={() => setClearConfirmOpen(true)}
           >
             清除全部数据
           </button>
