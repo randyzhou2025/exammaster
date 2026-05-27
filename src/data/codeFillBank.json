@@ -1164,7 +1164,7 @@
           {
             "id": "b7",
             "accepted": [
-              "data.dropna()"
+              "data.dropna(subset=['horsepower'])"
             ]
           },
           {
@@ -1176,7 +1176,7 @@
           {
             "id": "b9",
             "accepted": [
-              "numerical_features + ['cylinders', 'model year', 'origin']"
+              "['cylinders', 'displacement', 'horsepower', 'weight', 'acceleration', 'model year', 'origin']"
             ]
           },
           {
@@ -1287,7 +1287,7 @@
           {
             "id": "b1",
             "accepted": [
-              "len(data)"
+              "data.shape[0]"
             ]
           },
           {
@@ -1299,7 +1299,7 @@
           {
             "id": "b3",
             "accepted": [
-              "len(data)"
+              "data.shape[0]"
             ]
           },
           {
@@ -1317,7 +1317,7 @@
           {
             "id": "b6",
             "accepted": [
-              "'A1', 'A2', 'A3', 'A4', 'A5'"
+              "'1.您的性别○男性 ○女性', '2.您的年级○大一 ○大二 ○大三 ○大四', '3.您的生源地○农村 ○城镇（乡镇） ○地县级城市 ○省会城市及直辖市', '4.您的月生活费○≦1,000元 ○1,001-2,000元 ○2,001-3,000元 ○≧3,001元', '5.您进行过绿色低碳的相关生活方式吗?', '6.您觉得“低碳”，与你的生活关系密切吗？', '7.低碳生活是否会成为未来的主流生活方式？', '8.您是否认为低碳生活会提高您的生活质量？'"
             ]
           },
           {
@@ -1329,7 +1329,7 @@
           {
             "id": "b8",
             "accepted": [
-              "data['低碳行为意向']"
+              "data['低碳行为积极性']"
             ]
           },
           {
@@ -1473,7 +1473,7 @@
           {
             "id": "b1",
             "accepted": [
-              "numeric_cols = data.select_dtypes(include=[np.number]).columns"
+              "print(data.head())"
             ]
           },
           {
@@ -1491,7 +1491,7 @@
           {
             "id": "b4",
             "accepted": [
-              "Q3 - Q1"
+              "Q3-Q1"
             ]
           },
           {
@@ -1509,7 +1509,7 @@
           {
             "id": "b7",
             "accepted": [
-              "data_cleaned.duplicated().sum"
+              "data_cleaned.duplicated"
             ]
           },
           {
@@ -1521,7 +1521,7 @@
           {
             "id": "b9",
             "accepted": [
-              "'target'"
+              "'SeriousDlqin2yrs'"
             ]
           },
           {
@@ -1563,7 +1563,7 @@
           {
             "id": "b16",
             "accepted": [
-              "'2.1.3_cleaned_data.csv'"
+              "cleaned_file_path"
             ]
           }
         ]
@@ -1694,7 +1694,7 @@
           {
             "id": "b3",
             "accepted": [
-              "columns={'病人ID': '患者ID'}"
+              "columns={'病人ID':'患者ID'}"
             ]
           },
           {
@@ -1724,7 +1724,7 @@
           {
             "id": "b8",
             "accepted": [
-              "data['病程']"
+              "data['年龄']"
             ]
           },
           {
@@ -1736,7 +1736,7 @@
           {
             "id": "b10",
             "accepted": [
-              "'年龄', '疾病严重程度', '诊断延迟'"
+              "'年龄', '体重', '身高'"
             ]
           },
           {
@@ -1888,13 +1888,13 @@
           {
             "id": "b1",
             "accepted": [
-              "data.head()"
+              "data.info()"
             ]
           },
           {
             "id": "b2",
             "accepted": [
-              "data.info()"
+              "data.isnull().sum()"
             ]
           },
           {
@@ -1918,13 +1918,13 @@
           {
             "id": "b6",
             "accepted": [
-              "fillna(data_cleaned['Your age'].median())"
+              "astype(int)"
             ]
           },
           {
             "id": "b7",
             "accepted": [
-              "data_cleaned.dropna()"
+              "data_cleaned.drop_duplicates()"
             ]
           },
           {
@@ -1954,7 +1954,7 @@
           {
             "id": "b12",
             "accepted": [
-              "data_cleaned, test_size=0.2"
+              "data_filled, test_size=0.2"
             ]
           },
           {
@@ -1966,7 +1966,7 @@
           {
             "id": "b14",
             "accepted": [
-              "data_cleaned.to_csv"
+              "data_filled.to_csv"
             ]
           },
           {
@@ -2086,7 +2086,7 @@
           {
             "id": "b4",
             "accepted": [
-              "RandomForestClassifier(random_state=42)"
+              "LogisticRegression(max_iter=1000)"
             ]
           },
           {
@@ -2098,7 +2098,7 @@
           {
             "id": "b6",
             "accepted": [
-              "dump(model, open('model.pkl', 'wb'))"
+              "dump(model, file)"
             ]
           },
           {
@@ -2110,13 +2110,13 @@
           {
             "id": "b8",
             "accepted": [
-              "accuracy_score(y_test, y_pred)"
+              "(y_test==y_pred).mean()"
             ]
           },
           {
             "id": "b9",
             "accepted": [
-              "SMOTE().fit_resample(X_train, y_train)"
+              "smote.fit_resample(X_train, y_train)"
             ]
           },
           {
@@ -2134,7 +2134,7 @@
           {
             "id": "b12",
             "accepted": [
-              "accuracy_score(y_test, y_pred_resampled)"
+              "(y_test== y_pred_resampled).mean()"
             ]
           }
         ]
@@ -2263,7 +2263,7 @@
           {
             "id": "b5",
             "accepted": [
-              "df[selected_features]"
+              "df[['cylinders', 'displacement', 'horsepower', 'weight', 'acceleration', 'model year', 'origin']]"
             ]
           },
           {
@@ -2311,7 +2311,7 @@
           {
             "id": "b13",
             "accepted": [
-              "dump(pipeline, open('2.2.2_model.pkl', 'wb'))"
+              "dump(pipeline, model_file)"
             ]
           },
           {
@@ -2323,7 +2323,7 @@
           {
             "id": "b15",
             "accepted": [
-              "pd.DataFrame(y_pred).to_csv"
+              "results_df.to_csv"
             ]
           },
           {
@@ -2353,7 +2353,7 @@
           {
             "id": "b20",
             "accepted": [
-              "pd.DataFrame(y_pred_rf).to_csv"
+              "results_rf_df.to_csv"
             ]
           }
         ]
@@ -2485,7 +2485,7 @@
           {
             "id": "b3",
             "accepted": [
-              "df['Age'].apply"
+              "df['Your age'].apply"
             ]
           },
           {
@@ -2521,7 +2521,7 @@
           {
             "id": "b9",
             "accepted": [
-              "dump(rf_model, open('rf_model.pkl', 'wb'))"
+              "dump(rf_model, model_file)"
             ]
           },
           {
@@ -2557,7 +2557,7 @@
           {
             "id": "b15",
             "accepted": [
-              "XGBRegressor"
+              "xgb.XGBRegressor"
             ]
           },
           {
@@ -2728,25 +2728,25 @@
           {
             "id": "b4",
             "accepted": [
-              "pd.get_dummies"
+              "data_cleaned.drop"
             ]
           },
           {
             "id": "b5",
             "accepted": [
-              "data_cleaned.drop(columns"
+              "columns"
             ]
           },
           {
             "id": "b6",
             "accepted": [
-              "['低碳行为意向'])"
+              "[target]"
             ]
           },
           {
             "id": "b7",
             "accepted": [
-              "data_cleaned['低碳行为意向']"
+              "data_cleaned[target]"
             ]
           },
           {
@@ -2776,7 +2776,7 @@
           {
             "id": "b12",
             "accepted": [
-              "dump(model, 'model.joblib')"
+              "dump(model,model_filename)"
             ]
           },
           {
@@ -2788,13 +2788,13 @@
           {
             "id": "b14",
             "accepted": [
-              "pd.DataFrame"
+              "results.to_csv"
             ]
           },
           {
             "id": "b15",
             "accepted": [
-              "y_pred).to_csv('predictions.txt'"
+              "results_filename"
             ]
           },
           {
@@ -2818,7 +2818,7 @@
           {
             "id": "b19",
             "accepted": [
-              "n_estimators=100, learning_rate=0.1"
+              "n_estimators=1000, learning_rate=0.05,max_depth=5"
             ]
           },
           {
@@ -2940,7 +2940,7 @@
           {
             "id": "b3",
             "accepted": [
-              "df['Calories']"
+              "df['daily_steps']"
             ]
           },
           {
@@ -2958,49 +2958,49 @@
           {
             "id": "b6",
             "accepted": [
-              "model"
+              "dt_model"
             ]
           },
           {
             "id": "b7",
             "accepted": [
-              "RandomForestRegressor(n_estimators=100"
+              "DecisionTreeRegressor"
             ]
           },
           {
             "id": "b8",
             "accepted": [
-              "model = RandomForestRegressor(n_estimators=100, random_state=42)"
+              "dt_model.fit(X_train, y_train)"
             ]
           },
           {
             "id": "b9",
             "accepted": [
-              "dump(model, open('model.pkl', 'wb'))"
+              "dump(dt_model, model_file)"
             ]
           },
           {
             "id": "b10",
             "accepted": [
-              "model.predict(X_test)"
+              "dt_model.predict(X_test)"
             ]
           },
           {
             "id": "b11",
             "accepted": [
-              "pd.DataFrame"
+              "results.to_csv"
             ]
           },
           {
             "id": "b12",
             "accepted": [
-              "y_pred).to_csv('results.txt'"
+              "results_filename"
             ]
           },
           {
             "id": "b13",
             "accepted": [
-              "'metrics.txt', 'w'"
+              "report_filename, 'w'"
             ]
           },
           {
@@ -3233,7 +3233,7 @@
           {
             "id": "b3",
             "accepted": [
-              "np.array"
+              "np.asarray"
             ]
           },
           {
@@ -3358,7 +3358,7 @@
           {
             "id": "b0",
             "accepted": [
-              "0:'neutral', 1:'happiness', 2:'surprise', 3:'sadness', 4:'anger', 5:'disgust', 6:'fear', 7:'contempt'"
+              "'neutral':0, 'happiness':1, 'surprise':2, 'sadness':3, 'anger':4, 'disgust':5, 'fear':6, 'contempt':7"
             ]
           },
           {
@@ -3370,7 +3370,7 @@
           {
             "id": "b2",
             "accepted": [
-              "preprocess(image)"
+              "preprocess('img_test.png')"
             ]
           },
           {
@@ -3382,7 +3382,7 @@
           {
             "id": "b4",
             "accepted": [
-              "{ort_session.get_inputs()[0].name: input_data}"
+              "ort_inputs"
             ]
           },
           {
@@ -3394,7 +3394,7 @@
           {
             "id": "b6",
             "accepted": [
-              "emotion_table"
+              "list(emotion_table.keys())"
             ]
           }
         ]
@@ -3541,7 +3541,7 @@
           {
             "id": "b7",
             "accepted": [
-              "accuracy[0][predicted_idx] * 100"
+              "accuracy[0,predicted_idx]*100"
             ]
           },
           {
@@ -3715,7 +3715,7 @@
           {
             "id": "b6",
             "accepted": [
-              "orig_image"
+              "image"
             ]
           },
           {
