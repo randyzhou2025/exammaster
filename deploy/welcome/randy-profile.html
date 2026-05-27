@@ -835,7 +835,7 @@
             </div>
 
             <div class="project-list">
-              <a class="project-link" href="https://qiway.site/examprep/" rel="noopener noreferrer" aria-label="进入考练宝典备考刷题平台">
+              <a class="project-link" href="https://qiway.site/examprep/" rel="noopener noreferrer" aria-label="进入考练宝典备考刷题平台" data-track-project="examprep">
                 <span class="project-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
@@ -858,7 +858,7 @@
                 </span>
               </a>
 
-              <a class="project-link" href="https://qiway.site/prompt-tool/" rel="noopener noreferrer" aria-label="进入 AI提示词生成助手">
+              <a class="project-link" href="https://qiway.site/prompt-tool/" rel="noopener noreferrer" aria-label="进入 AI提示词生成助手" data-track-project="prompt-tool">
                 <span class="project-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M12 3l1.7 4.7L18 9.4l-4.3 1.7L12 16l-1.7-4.9L6 9.4l4.3-1.7L12 3z" />
@@ -895,8 +895,8 @@
                   </span>
                   <span class="project-desc">图片不上传服务器，支持手动框选和本地 OCR 识别手机号、邮箱、身份证号、订单号、地址、金额、姓名等隐私候选，并导出已打码新图。</span>
                   <span class="project-actions" aria-label="PrivacyBlur 操作">
-                    <a class="text-button text-button-primary" href="https://qiway.site/privacy-blur/" rel="noopener noreferrer">打开在线版</a>
-                    <a class="text-button" href="downloads/privacyblur-local.zip" download>下载本地版</a>
+                    <a class="text-button text-button-primary" href="https://qiway.site/privacy-blur/" rel="noopener noreferrer" data-track-project="privacy-blur-online">打开在线版</a>
+                    <a class="text-button" href="downloads/privacyblur-local.zip" download data-track-project="privacy-blur-download">下载本地版</a>
                   </span>
                   <span class="local-note">本地包约35MB，已包含页面、脚本、OCR worker、WASM 和中英文语言包；解压后打开index.html即可使用。手机建议使用在线版，在线版同样只在浏览器本地处理图片。</span>
                 </span>
@@ -950,14 +950,32 @@
     <script>
       (function () {
         var token = localStorage.getItem("exam-auth-token");
-        var headers = { "Content-Type": "application/json" };
-        if (token) headers.Authorization = "Bearer " + token;
+
+        function authHeaders() {
+          var headers = { "Content-Type": "application/json" };
+          if (token) headers.Authorization = "Bearer " + token;
+          return headers;
+        }
+
         fetch("/api/analytics/homepage-view", {
           method: "POST",
-          headers: headers,
+          headers: authHeaders(),
           body: "{}",
           keepalive: true,
         }).catch(function () {});
+
+        document.querySelectorAll("[data-track-project]").forEach(function (el) {
+          el.addEventListener("click", function () {
+            var projectId = el.getAttribute("data-track-project");
+            if (!projectId) return;
+            fetch("/api/analytics/homepage-project-click", {
+              method: "POST",
+              headers: authHeaders(),
+              body: JSON.stringify({ projectId: projectId }),
+              keepalive: true,
+            }).catch(function () {});
+          });
+        });
       })();
     </script>
   </body>

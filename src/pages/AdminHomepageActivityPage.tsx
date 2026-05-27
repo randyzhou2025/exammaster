@@ -17,6 +17,23 @@ interface HomepageVisitor {
   visitCount: number;
 }
 
+interface ProjectBreakdownItem {
+  label: string;
+  uniqueVisitors: number;
+  totalClicks: number;
+}
+
+interface ProjectSummary {
+  projectId: string;
+  label: string;
+  uniqueVisitors: number;
+  totalClicks: number;
+  breakdown?: {
+    online: ProjectBreakdownItem;
+    download: ProjectBreakdownItem;
+  };
+}
+
 const PAGE_SIZE = 20;
 
 function formatTime(iso: string): string {
@@ -36,6 +53,7 @@ export function AdminHomepageActivityPage() {
   const token = useAuthStore((s) => s.token);
   const [date, setDate] = useState(shanghaiToday());
   const [visitors, setVisitors] = useState<HomepageVisitor[]>([]);
+  const [projects, setProjects] = useState<ProjectSummary[]>([]);
   const [summary, setSummary] = useState({ registeredCount: 0, anonymousCount: 0 });
   const [query, setQuery] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -55,6 +73,7 @@ export function AdminHomepageActivityPage() {
       const data = (await res.json()) as {
         error?: string;
         visitors?: HomepageVisitor[];
+        projects?: ProjectSummary[];
         registeredCount?: number;
         anonymousCount?: number;
       };
@@ -63,6 +82,7 @@ export function AdminHomepageActivityPage() {
         return;
       }
       setVisitors(data.visitors ?? []);
+      setProjects(data.projects ?? []);
       setSummary({
         registeredCount: data.registeredCount ?? 0,
         anonymousCount: data.anonymousCount ?? 0,
@@ -140,7 +160,43 @@ export function AdminHomepageActivityPage() {
         <p className="mt-3 text-xs leading-relaxed text-neutral-500">
           统计口径：访问 <strong>https://qiway.site/</strong> 根站主页的访客，与考练宝典内活跃分开。
           已登录用户按账号去重；未登录按 IP 去重。同一访客 60 秒内重复打开只计一次。
+          项目点击统计来自主页「项目入口」卡片上的点击。
         </p>
+      </section>
+
+      <section className="mb-4 rounded-2xl bg-white p-4 shadow-card">
+        <h2 className="mb-3 text-sm font-semibold text-neutral-800">项目入口点击</h2>
+        {loading ? (
+          <p className="text-sm text-neutral-500">加载中…</p>
+        ) : (
+          <div className="grid gap-3 sm:grid-cols-3">
+            {projects.map((p) => (
+              <div
+                key={p.projectId}
+                className="rounded-xl border border-neutral-200 bg-neutral-50/80 p-3"
+              >
+                <p className="text-sm font-medium text-neutral-900">{p.label}</p>
+                <p className="mt-2 text-2xl font-bold tabular-nums text-brand-dark">{p.totalClicks}</p>
+                <p className="text-xs text-neutral-500">
+                  点击次数 · {p.uniqueVisitors} 位访客
+                  {p.breakdown ? "（在线+下载合计，可能重复计数）" : null}
+                </p>
+                {p.breakdown ? (
+                  <ul className="mt-2 space-y-1 text-xs text-neutral-600">
+                    <li>
+                      {p.breakdown.online.label}：{p.breakdown.online.totalClicks} 次 /{" "}
+                      {p.breakdown.online.uniqueVisitors} 人
+                    </li>
+                    <li>
+                      {p.breakdown.download.label}：{p.breakdown.download.totalClicks} 次 /{" "}
+                      {p.breakdown.download.uniqueVisitors} 人
+                    </li>
+                  </ul>
+                ) : null}
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="rounded-2xl bg-white p-4 shadow-card">

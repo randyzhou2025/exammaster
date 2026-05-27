@@ -1,10 +1,23 @@
 import { eq, sql } from "drizzle-orm";
 import { db } from "./db/index.js";
-import { homepageDailyVisits } from "./db/schema.js";
+import { homepageDailyVisits, homepageProjectClicks } from "./db/schema.js";
 import { shanghaiDateString } from "./activity.js";
 
 const lastHomepageViewAt = new Map<string, number>();
 const MIN_INTERVAL_MS = 60_000;
+
+export const HOMEPAGE_PROJECT_IDS = [
+  "examprep",
+  "prompt-tool",
+  "privacy-blur-online",
+  "privacy-blur-download",
+] as const;
+
+export type HomepageProjectId = (typeof HOMEPAGE_PROJECT_IDS)[number];
+
+export function isHomepageProjectId(id: string): id is HomepageProjectId {
+  return (HOMEPAGE_PROJECT_IDS as readonly string[]).includes(id);
+}
 
 function shouldRecordHomepageView(visitorKey: string): boolean {
   const now = Date.now();
@@ -57,4 +70,71 @@ export async function touchHomepageVisit(
   } catch {
     return { recorded: false };
   }
+}
+
+/** 记录主页项目入口点击 */
+export async function touchProjectClick(
+  projectId: HomepageProjectId,
+  userId: string | null,
+  ip: string
+): Promise<{ recorded: boolean }> {
+  const visitorKey = homepageVisitorKey(userId, ip);
+  const activityDate = shanghaiDateString();
+  const now = new Date();
+
+  try {
+    await db
+      .insert(homepageProjectClicks)
+      .values({
+        activityDate,
+        projectId,
+        visitorKey,
+        userId: userId ?? null,
+        ip,
+        firstSeenAt: now,
+        lastSeenAt: now,
+        clickCount: 1,
+      })
+      .onConflictDoUpdate({
+        target: [
+          homepageProjectClicks.activityDate,
+          homepageProjectClicks.projectId,
+          homepageProjectClicks.visitorKey,
+        ],
+        set: {
+          lastSeenAt: now,
+          ip,
+          clickCount: sql`${homepageProjectClicks.clickCount} + 1`,
+          ...(userId ? { userId } : {}),
+        },
+      });
+    return { recorded: true };
+  } catch {
+    return { recorded: false };
+  }
+}
+
+export interface ProjectClickStat {
+  projectId: string;
+  uniqueVisitors: number;
+  totalClicks: number;
+}
+
+/** 按项目汇总某日点击（原始 project_id 粒度） */
+export async function getProjectClickStats(activityDate: string): Promise<ProjectClickStat[]> {
+  const rows = await db
+    .select({
+      projectId: homepageProjectClicks.projectId,
+      uniqueVisitors: sql<number>`count(*)::int`,
+      totalClicks: sql<number>`coalesce(sum(${homepageProjectClicks.clickCount}), 0)::int`,
+    })
+    .from(homepageProjectClicks)
+    .where(eq(homepageProjectClicks.activityDate, activityDate))
+    .groupBy(homepageProjectClicks.projectId);
+
+  return rows.map((r) => ({
+    projectId: r.projectId,
+    uniqueVisitors: r.uniqueVisitors,
+    totalClicks: r.totalClicks,
+  }));
 }

@@ -63,3 +63,21 @@ export const homepageDailyVisits = pgTable(
 );
 
 export type HomepageDailyVisitRow = typeof homepageDailyVisits.$inferSelect;
+
+/** 主页项目入口点击（按日 + 项目 + 访客去重，可累计次数） */
+export const homepageProjectClicks = pgTable(
+  "homepage_project_clicks",
+  {
+    activityDate: date("activity_date").notNull(),
+    projectId: varchar("project_id", { length: 32 }).notNull(),
+    visitorKey: varchar("visitor_key", { length: 128 }).notNull(),
+    userId: uuid("user_id").references(() => users.id, { onDelete: "set null" }),
+    ip: varchar("ip", { length: 64 }).notNull().default("unknown"),
+    firstSeenAt: timestamp("first_seen_at", { withTimezone: true }).notNull(),
+    lastSeenAt: timestamp("last_seen_at", { withTimezone: true }).notNull(),
+    clickCount: integer("click_count").notNull().default(1),
+  },
+  (t) => [primaryKey({ columns: [t.activityDate, t.projectId, t.visitorKey] })]
+);
+
+export type HomepageProjectClickRow = typeof homepageProjectClicks.$inferSelect;

@@ -5,9 +5,18 @@ import { shanghaiDateString } from "../activity.js";
 import { clientIpFromRequest } from "../client-ip.js";
 import { db } from "../db/index.js";
 import { homepageDailyVisits, users } from "../db/schema.js";
-import { touchHomepageVisit } from "../homepage-analytics.js";
+import {
+  getProjectClickStats,
+  isHomepageProjectId,
+  touchHomepageVisit,
+  touchProjectClick,
+} from "../homepage-analytics.js";
 
 const dateQuerySchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
+
+const projectClickSchema = z.object({
+  projectId: z.string().min(1).max(32),
+});
 
 async function optionalUserId(request: FastifyRequest): Promise<string | null> {
   const auth = request.headers.authorization;
@@ -29,6 +38,49 @@ async function requireAdmin(request: FastifyRequest, reply: FastifyReply): Promi
   return true;
 }
 
+function buildProjectSummaries(stats: Awaited<ReturnType<typeof getProjectClickStats>>) {
+  const byId = new Map(stats.map((s) => [s.projectId, s]));
+  const pick = (id: string) => byId.get(id) ?? { projectId: id, uniqueVisitors: 0, totalClicks: 0 };
+
+  const examprep = pick("examprep");
+  const promptTool = pick("prompt-tool");
+  const pbOnline = pick("privacy-blur-online");
+  const pbDownload = pick("privacy-blur-download");
+
+  return [
+    {
+      projectId: "examprep",
+      label: "考练宝典 · 备考刷题",
+      uniqueVisitors: examprep.uniqueVisitors,
+      totalClicks: examprep.totalClicks,
+    },
+    {
+      projectId: "prompt-tool",
+      label: "AI提示词生成助手",
+      uniqueVisitors: promptTool.uniqueVisitors,
+      totalClicks: promptTool.totalClicks,
+    },
+    {
+      projectId: "privacy-blur",
+      label: "PrivacyBlur · 图片隐私打码",
+      uniqueVisitors: pbOnline.uniqueVisitors + pbDownload.uniqueVisitors,
+      totalClicks: pbOnline.totalClicks + pbDownload.totalClicks,
+      breakdown: {
+        online: {
+          label: "打开在线版",
+          uniqueVisitors: pbOnline.uniqueVisitors,
+          totalClicks: pbOnline.totalClicks,
+        },
+        download: {
+          label: "下载本地版",
+          uniqueVisitors: pbDownload.uniqueVisitors,
+          totalClicks: pbDownload.totalClicks,
+        },
+      },
+    },
+  ];
+}
+
 export async function registerHomepageAnalyticsRoutes(
   app: FastifyInstance,
   authenticate: preHandlerHookHandler
@@ -37,6 +89,18 @@ export async function registerHomepageAnalyticsRoutes(
     const userId = await optionalUserId(request);
     const ip = clientIpFromRequest(request.headers as Record<string, unknown>, request.ip);
     const result = await touchHomepageVisit(userId, ip);
+    return reply.send({ ok: true, recorded: result.recorded });
+  });
+
+  app.post("/api/analytics/homepage-project-click", async (request, reply) => {
+    const parsed = projectClickSchema.safeParse(request.body ?? {});
+    if (!parsed.success || !isHomepageProjectId(parsed.data.projectId)) {
+      return reply.code(400).send({ error: "无效的 projectId" });
+    }
+
+    const userId = await optionalUserId(request);
+    const ip = clientIpFromRequest(request.headers as Record<string, unknown>, request.ip);
+    const result = await touchProjectClick(parsed.data.projectId, userId, ip);
     return reply.send({ ok: true, recorded: result.recorded });
   });
 
@@ -49,21 +113,24 @@ export async function registerHomepageAnalyticsRoutes(
       return reply.code(400).send({ error: "date 须为 YYYY-MM-DD" });
     }
 
-    const rows = await db
-      .select({
-        visitorKey: homepageDailyVisits.visitorKey,
-        userId: homepageDailyVisits.userId,
-        email: users.email,
-        displayName: users.displayName,
-        ip: homepageDailyVisits.ip,
-        firstSeenAt: homepageDailyVisits.firstSeenAt,
-        lastSeenAt: homepageDailyVisits.lastSeenAt,
-        visitCount: homepageDailyVisits.visitCount,
-      })
-      .from(homepageDailyVisits)
-      .leftJoin(users, eq(users.id, homepageDailyVisits.userId))
-      .where(eq(homepageDailyVisits.activityDate, dateStr))
-      .orderBy(desc(homepageDailyVisits.lastSeenAt));
+    const [rows, projectStats] = await Promise.all([
+      db
+        .select({
+          visitorKey: homepageDailyVisits.visitorKey,
+          userId: homepageDailyVisits.userId,
+          email: users.email,
+          displayName: users.displayName,
+          ip: homepageDailyVisits.ip,
+          firstSeenAt: homepageDailyVisits.firstSeenAt,
+          lastSeenAt: homepageDailyVisits.lastSeenAt,
+          visitCount: homepageDailyVisits.visitCount,
+        })
+        .from(homepageDailyVisits)
+        .leftJoin(users, eq(users.id, homepageDailyVisits.userId))
+        .where(eq(homepageDailyVisits.activityDate, dateStr))
+        .orderBy(desc(homepageDailyVisits.lastSeenAt)),
+      getProjectClickStats(dateStr),
+    ]);
 
     const visitors = rows.map((r) => ({
       visitorKey: r.visitorKey,
@@ -86,6 +153,7 @@ export async function registerHomepageAnalyticsRoutes(
       registeredCount,
       anonymousCount,
       visitors,
+      projects: buildProjectSummaries(projectStats),
     });
   });
 }
