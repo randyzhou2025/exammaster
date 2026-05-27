@@ -9,6 +9,7 @@ interface DailyActivityUser {
   userId: string;
   email: string;
   displayName: string | null;
+  registeredAt: string;
   firstSeenAt: string;
   lastSeenAt: string;
   pingCount: number;
@@ -30,6 +31,14 @@ function formatFlags(flags: Record<string, boolean> | null): string {
 function formatTime(iso: string): string {
   try {
     return new Date(iso).toLocaleString("zh-CN", { timeZone: "Asia/Shanghai", hour12: false });
+  } catch {
+    return iso;
+  }
+}
+
+function formatDate(iso: string): string {
+  try {
+    return new Date(iso).toLocaleDateString("zh-CN", { timeZone: "Asia/Shanghai" });
   } catch {
     return iso;
   }
@@ -158,29 +167,37 @@ export function AdminDailyActivityPage() {
           <p className="text-sm text-neutral-500">该日期暂无活跃记录</p>
         ) : (
           <>
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[640px] border-collapse text-left text-sm">
+            <div className="overflow-x-auto rounded-xl border border-neutral-200">
+              <table className="w-full min-w-[720px] border-collapse text-left text-sm md:min-w-0">
                 <thead>
-                  <tr className="border-b border-neutral-200 text-xs text-neutral-500">
-                    <th className="py-2 pr-3 font-medium">邮箱</th>
-                    <th className="py-2 pr-3 font-medium">昵称</th>
-                    <th className="py-2 pr-3 font-medium">首次活跃</th>
-                    <th className="py-2 pr-3 font-medium">末次活跃</th>
-                    <th className="py-2 pr-3 font-medium">次数</th>
-                    <th className="py-2 pr-3 font-medium">IP</th>
-                    <th className="py-2 font-medium">模块</th>
+                  <tr className="border-b border-neutral-200 bg-neutral-50 text-xs text-neutral-500">
+                    <th className="px-3 py-2 font-medium">邮箱</th>
+                    <th className="px-3 py-2 font-medium">昵称</th>
+                    <th className="whitespace-nowrap px-3 py-2 font-medium">注册日期</th>
+                    <th className="whitespace-nowrap px-3 py-2 font-medium">首次活跃</th>
+                    <th className="whitespace-nowrap px-3 py-2 font-medium">末次活跃</th>
+                    <th className="px-3 py-2 font-medium">次数</th>
+                    <th className="px-3 py-2 font-medium">IP</th>
+                    <th className="px-3 py-2 font-medium">模块</th>
                   </tr>
                 </thead>
                 <tbody>
                   {rows.map((u) => (
                     <tr key={u.userId} className="border-b border-neutral-100">
-                      <td className="py-2.5 pr-3 font-medium text-neutral-900">{u.email}</td>
-                      <td className="py-2.5 pr-3 text-neutral-600">{u.displayName ?? "—"}</td>
-                      <td className="py-2.5 pr-3 tabular-nums text-neutral-600">{formatTime(u.firstSeenAt)}</td>
-                      <td className="py-2.5 pr-3 tabular-nums text-neutral-600">{formatTime(u.lastSeenAt)}</td>
-                      <td className="py-2.5 pr-3 tabular-nums">{u.pingCount}</td>
-                      <td className="py-2.5 pr-3 text-neutral-600">{u.lastIp}</td>
-                      <td className="py-2.5 text-neutral-600">{formatFlags(u.flags)}</td>
+                      <td className="px-3 py-2.5 font-medium text-neutral-900">{u.email}</td>
+                      <td className="px-3 py-2.5 text-neutral-600">{u.displayName ?? "—"}</td>
+                      <td className="whitespace-nowrap px-3 py-2.5 tabular-nums text-neutral-600">
+                        {formatDate(u.registeredAt)}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-2.5 tabular-nums text-neutral-600">
+                        {formatTime(u.firstSeenAt)}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-2.5 tabular-nums text-neutral-600">
+                        {formatTime(u.lastSeenAt)}
+                      </td>
+                      <td className="px-3 py-2.5 tabular-nums">{u.pingCount}</td>
+                      <td className="px-3 py-2.5 font-mono text-[13px] text-neutral-600">{u.lastIp}</td>
+                      <td className="px-3 py-2.5 text-neutral-600">{formatFlags(u.flags)}</td>
                     </tr>
                   ))}
                 </tbody>
