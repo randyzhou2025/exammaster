@@ -46,3 +46,20 @@ export type UserRow = typeof users.$inferSelect;
 export type UserInsert = typeof users.$inferInsert;
 export type LoginLogRow = typeof loginLogs.$inferSelect;
 export type UserDailyActivityRow = typeof userDailyActivity.$inferSelect;
+
+/** 根站主页 qiway.site/ 每日访问（与 examprep 活跃分开） */
+export const homepageDailyVisits = pgTable(
+  "homepage_daily_visits",
+  {
+    activityDate: date("activity_date").notNull(),
+    visitorKey: varchar("visitor_key", { length: 128 }).notNull(),
+    userId: uuid("user_id").references(() => users.id, { onDelete: "set null" }),
+    ip: varchar("ip", { length: 64 }).notNull().default("unknown"),
+    firstSeenAt: timestamp("first_seen_at", { withTimezone: true }).notNull(),
+    lastSeenAt: timestamp("last_seen_at", { withTimezone: true }).notNull(),
+    visitCount: integer("visit_count").notNull().default(1),
+  },
+  (t) => [primaryKey({ columns: [t.activityDate, t.visitorKey] })]
+);
+
+export type HomepageDailyVisitRow = typeof homepageDailyVisits.$inferSelect;

@@ -23,6 +23,7 @@ import { RegisterPage } from "@/pages/RegisterPage";
 import { PendingAuthPage } from "@/pages/PendingAuthPage";
 import { AdminUsersPage } from "@/pages/AdminUsersPage";
 import { AdminDailyActivityPage } from "@/pages/AdminDailyActivityPage";
+import { AdminHomepageActivityPage } from "@/pages/AdminHomepageActivityPage";
 import { AdminLoginLogsPage } from "@/pages/AdminLoginLogsPage";
 import { sendActivityPing } from "@/lib/activityPing";
 import { QuestionBankPage } from "@/pages/QuestionBankPage";
@@ -96,6 +97,7 @@ export default function App() {
               <Route path="/admin/users" element={<AdminUsersPage />} />
               <Route path="/admin/login-logs" element={<AdminLoginLogsPage />} />
               <Route path={routes.adminDailyActivity} element={<AdminDailyActivityPage />} />
+              <Route path={routes.adminHomepageActivity} element={<AdminHomepageActivityPage />} />
             </Route>
 
             <Route path="*" element={<Navigate to={routes.theoryHome} replace />} />

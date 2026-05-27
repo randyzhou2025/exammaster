@@ -1,0 +1,36 @@
+---
+description: 基本开发原则：改完必测、再交付
+alwaysApply: true
+---
+
+# 基本开发原则
+
+## 代码质量
+
+1. **最小改动** — 只改与任务相关的代码，不做无关重构。
+2. **避免过度设计** — 不为极少见场景加抽象或冗长错误处理。
+3. **遵循现有约定** — 命名、类型、目录结构、组件风格与周边代码一致。
+4. **注释克制** — 仅解释非显而易见的业务或技术细节。
+
+## 开发后测试（必做）
+
+功能改完、**push 或告知用户「已完成」之前**，须在本机跑通与改动相关的验证，不能只做静态检查：
+
+| 改动类型 | 最低验证 |
+|----------|----------|
+| 前端页面/路由 | `npm run build:web`（或 `npm run build`） |
+| 后端 API / 数据库 | `npm --prefix server run build`；有表结构变更时确认 schema/SQL 与 `db:push` 或 `deploy/sql/*.sql` 一致 |
+| 纯逻辑脚本 | 运行对应 `scripts/test-*.mjs` 或最小复现命令 |
+| 静态主页 `deploy/welcome/` | 确认埋点/链接在**实际上线文件**（如 `randy-profile.html`）中 |
+| 关键用户路径 | 能测则测：本地 API 冒烟、Puppeteer/脚本，或说明已手动点验的路径 |
+
+**交付前自检：**
+
+- 构建无 TypeScript / 构建错误。
+- 新 API 至少一次请求验证（服务未起则跑单元测试并注明 SKIP）。
+- 不向用户声称「已测试」 unless 上述项已执行。
+
+## 测试脚本
+
+- `node scripts/test-user-access.mjs` — 订阅与访问权限
+- `node scripts/test-homepage-analytics.mjs` — 主页访问统计（可选 `API_BASE`）

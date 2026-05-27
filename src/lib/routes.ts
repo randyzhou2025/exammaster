@@ -24,6 +24,7 @@ export const routes = {
   adminUsers: "/admin/users",
   adminLoginLogs: "/admin/login-logs",
   adminDailyActivity: "/admin/daily-activity",
+  adminHomepageActivity: "/admin/homepage-activity",
 } as const;
 
 /** 旧扁平路由 → 新理论路由 */

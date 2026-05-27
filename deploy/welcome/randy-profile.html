@@ -947,5 +947,18 @@
         });
       })();
     </script>
+    <script>
+      (function () {
+        var token = localStorage.getItem("exam-auth-token");
+        var headers = { "Content-Type": "application/json" };
+        if (token) headers.Authorization = "Bearer " + token;
+        fetch("/api/analytics/homepage-view", {
+          method: "POST",
+          headers: headers,
+          body: "{}",
+          keepalive: true,
+        }).catch(function () {});
+      })();
+    </script>
   </body>
 </html>

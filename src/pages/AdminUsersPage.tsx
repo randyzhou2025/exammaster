@@ -168,6 +168,12 @@ export function AdminUsersPage() {
           >
             每日活跃用户
           </Link>
+          <Link
+            to={routes.adminHomepageActivity}
+            className="rounded-xl border border-brand/25 bg-brand-light/50 px-3 py-2 text-sm font-medium text-brand-dark"
+          >
+            主页访问
+          </Link>
         </div>
         <p className="mt-3 text-xs leading-relaxed text-neutral-500">
           订阅到期日留空表示永不到期；设置日期后，用户在该日（含当日，上海时区）之后将无法访问练习功能，需与「授权」同时满足。
