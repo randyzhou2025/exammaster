@@ -25,3 +25,8 @@ deploy/welcome/downloads/*.zip
 
 # 本地维护脚本依赖（pdf-parse、puppeteer；不参与 Docker 前端构建）
 scripts/node_modules/
+
+# 实操题 PDF 对比临时产物（本地核对用，不入库）
+scripts/compare-code-fill-pdf-answers.py
+src/data/codeFillPdfComparisonReport.json
+src/data/codeFillReviewChecklist-1x2x.json
