@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { hasExamAccess } from "@/lib/examAccess";
 import { routes } from "@/lib/routes";
 import { AuthShell } from "@/components/AuthShell";
 import { apiFetch } from "@/lib/api";
@@ -50,7 +51,7 @@ export function RegisterPage() {
         return;
       }
       setSession(data.token, data.user);
-      navigate(data.user.isAuthorized || data.user.role === "admin" ? "/" : "/auth/pending", {
+      navigate(hasExamAccess(data.user) ? routes.theoryHome : "/auth/pending", {
         replace: true,
       });
     } catch {

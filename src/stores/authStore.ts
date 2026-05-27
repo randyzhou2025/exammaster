@@ -10,6 +10,8 @@ export interface AuthUser {
   role: string;
   isAuthorized: boolean;
   createdAt: string;
+  /** YYYY-MM-DD；null 表示永不到期 */
+  subscriptionExpiresOn: string | null;
 }
 
 interface AuthState {

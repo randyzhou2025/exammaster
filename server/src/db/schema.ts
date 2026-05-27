@@ -10,6 +10,8 @@ export const users = pgTable("users", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   lastActiveAt: timestamp("last_active_at", { withTimezone: true }),
   lastActiveIp: varchar("last_active_ip", { length: 64 }),
+  /** 订阅到期日（上海日历日）；NULL 表示永不到期 */
+  subscriptionExpiresOn: date("subscription_expires_on"),
 });
 
 /** 按用户 + 日历日汇总活跃（上海时区日期） */

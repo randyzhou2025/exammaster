@@ -1,12 +1,25 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest, preHandlerHookHandler } from "fastify";
-import { asc, desc, eq } from "drizzle-orm";
+import { count, desc, eq, ilike, or, type SQL } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "../db/index.js";
 import { loginLogs, users } from "../db/schema.js";
 
 const patchSchema = z.object({
   isAuthorized: z.boolean().optional(),
+  subscriptionExpiresOn: z.union([z.string().regex(/^\d{4}-\d{2}-\d{2}$/), z.null()]).optional(),
 });
+
+const listQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  pageSize: z.coerce.number().int().min(1).max(100).default(20),
+  q: z.string().optional(),
+});
+
+function formatDateOnly(d: Date | string | null): string | null {
+  if (d == null) return null;
+  if (typeof d === "string") return d.slice(0, 10);
+  return d.toISOString().slice(0, 10);
+}
 
 function publicUser(u: {
   id: string;
@@ -17,6 +30,7 @@ function publicUser(u: {
   createdAt: Date;
   lastActiveAt: Date | null;
   lastActiveIp: string | null;
+  subscriptionExpiresOn: Date | string | null;
 }) {
   return {
     id: u.id,
@@ -27,6 +41,7 @@ function publicUser(u: {
     createdAt: u.createdAt.toISOString(),
     lastActiveAt: u.lastActiveAt?.toISOString() ?? null,
     lastActiveIp: u.lastActiveIp ?? null,
+    subscriptionExpiresOn: formatDateOnly(u.subscriptionExpiresOn),
   };
 }
 
@@ -39,23 +54,49 @@ async function requireAdmin(request: FastifyRequest, reply: FastifyReply): Promi
   return true;
 }
 
+const userSelect = {
+  id: users.id,
+  email: users.email,
+  displayName: users.displayName,
+  role: users.role,
+  isAuthorized: users.isAuthorized,
+  createdAt: users.createdAt,
+  lastActiveAt: users.lastActiveAt,
+  lastActiveIp: users.lastActiveIp,
+  subscriptionExpiresOn: users.subscriptionExpiresOn,
+};
+
 export async function registerAdminRoutes(app: FastifyInstance, authenticate: preHandlerHookHandler) {
   app.get("/api/admin/users", { preHandler: [authenticate] }, async (request, reply) => {
     if (!(await requireAdmin(request, reply))) return;
+
+    const parsed = listQuerySchema.safeParse(request.query ?? {});
+    if (!parsed.success) {
+      return reply.code(400).send({ error: "查询参数无效" });
+    }
+    const { page, pageSize, q } = parsed.data;
+    const search = q?.trim();
+    const where: SQL | undefined = search
+      ? or(ilike(users.email, `%${search}%`), ilike(users.displayName, `%${search}%`))
+      : undefined;
+
+    const [{ total }] = await db.select({ total: count() }).from(users).where(where);
+    const offset = (page - 1) * pageSize;
     const rows = await db
-      .select({
-        id: users.id,
-        email: users.email,
-        displayName: users.displayName,
-        role: users.role,
-        isAuthorized: users.isAuthorized,
-        createdAt: users.createdAt,
-        lastActiveAt: users.lastActiveAt,
-        lastActiveIp: users.lastActiveIp,
-      })
+      .select(userSelect)
       .from(users)
-      .orderBy(asc(users.createdAt));
-    return reply.send({ users: rows.map(publicUser) });
+      .where(where)
+      .orderBy(desc(users.createdAt))
+      .limit(pageSize)
+      .offset(offset);
+
+    return reply.send({
+      users: rows.map(publicUser),
+      total,
+      page,
+      pageSize,
+      totalPages: Math.max(1, Math.ceil(total / pageSize)),
+    });
   });
 
   app.patch("/api/admin/users/:id", { preHandler: [authenticate] }, async (request, reply) => {
@@ -65,11 +106,22 @@ export async function registerAdminRoutes(app: FastifyInstance, authenticate: pr
     if (!parsed.success) {
       return reply.code(400).send({ error: "请求参数无效" });
     }
-    if (parsed.data.isAuthorized === undefined) {
+    const { isAuthorized, subscriptionExpiresOn } = parsed.data;
+    if (isAuthorized === undefined && subscriptionExpiresOn === undefined) {
       return reply.code(400).send({ error: "无可更新字段" });
     }
 
-    const rows = await db.update(users).set({ isAuthorized: parsed.data.isAuthorized }).where(eq(users.id, id)).returning();
+    const rows = await db
+      .update(users)
+      .set({
+        ...(isAuthorized !== undefined ? { isAuthorized } : {}),
+        ...(subscriptionExpiresOn !== undefined
+          ? { subscriptionExpiresOn: subscriptionExpiresOn === null ? null : subscriptionExpiresOn }
+          : {}),
+      })
+      .where(eq(users.id, id))
+      .returning();
+
     const row = rows[0];
     if (!row) {
       return reply.code(404).send({ error: "用户不存在" });

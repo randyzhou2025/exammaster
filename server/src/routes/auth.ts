@@ -25,7 +25,14 @@ function publicUser(u: {
   role: string;
   isAuthorized: boolean;
   createdAt: Date;
+  subscriptionExpiresOn?: Date | string | null;
 }) {
+  const expires =
+    u.subscriptionExpiresOn == null
+      ? null
+      : typeof u.subscriptionExpiresOn === "string"
+        ? u.subscriptionExpiresOn.slice(0, 10)
+        : u.subscriptionExpiresOn.toISOString().slice(0, 10);
   return {
     id: u.id,
     email: u.email,
@@ -33,6 +40,7 @@ function publicUser(u: {
     role: u.role,
     isAuthorized: u.isAuthorized,
     createdAt: u.createdAt.toISOString(),
+    subscriptionExpiresOn: expires,
   };
 }
 
@@ -120,6 +128,7 @@ export async function registerAuthRoutes(app: FastifyInstance, authenticate: pre
         role: users.role,
         isAuthorized: users.isAuthorized,
         createdAt: users.createdAt,
+        subscriptionExpiresOn: users.subscriptionExpiresOn,
       });
 
     const token = await reply.jwtSign({ sub: created.id, role: created.role });

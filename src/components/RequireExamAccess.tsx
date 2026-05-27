@@ -1,7 +1,8 @@
 import { Navigate, Outlet } from "react-router-dom";
+import { getAccessBlockReason } from "@/lib/examAccess";
 import { useAuthStore } from "@/stores/authStore";
 
-/** 模考/练习等：需已授权，或管理员 */
+/** 模考/练习等：需已授权且订阅未过期，或管理员 */
 export function RequireExamAccess() {
   const user = useAuthStore((s) => s.user);
 
@@ -13,9 +14,9 @@ export function RequireExamAccess() {
     );
   }
 
-  const allowed = user.role === "admin" || user.isAuthorized;
-  if (!allowed) {
-    return <Navigate to="/auth/pending" replace />;
+  const block = getAccessBlockReason(user);
+  if (block) {
+    return <Navigate to={`/auth/pending?reason=${block}`} replace />;
   }
 
   return <Outlet />;
