@@ -5,6 +5,7 @@ import { db } from "../db/index.js";
 import { loginLogs, users } from "../db/schema.js";
 import { touchActivity } from "../activity.js";
 import { clientIpFromRequest } from "../client-ip.js";
+import { resolveLocationByIp } from "../ip-location.js";
 import { hashPassword, verifyPassword } from "../hash.js";
 
 const registerSchema = z.object({
@@ -42,43 +43,6 @@ function publicUser(u: {
     createdAt: u.createdAt.toISOString(),
     subscriptionExpiresOn: expires,
   };
-}
-
-function isPrivateIp(ip: string): boolean {
-  if (!ip || ip === "unknown") return true;
-  if (ip === "127.0.0.1" || ip === "::1" || ip === "localhost") return true;
-  if (ip.startsWith("10.") || ip.startsWith("192.168.")) return true;
-  if (ip.startsWith("172.")) {
-    const seg = Number(ip.split(".")[1] ?? "0");
-    if (seg >= 16 && seg <= 31) return true;
-  }
-  if (ip.startsWith("fc") || ip.startsWith("fd")) return true;
-  return false;
-}
-
-async function resolveLocationByIp(ip: string): Promise<string> {
-  if (isPrivateIp(ip)) return "内网IP";
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 1800);
-  try {
-    const res = await fetch(`http://ip-api.com/json/${encodeURIComponent(ip)}?lang=zh-CN&fields=status,country,regionName,city`, {
-      signal: controller.signal,
-    });
-    if (!res.ok) return "未知";
-    const data = (await res.json()) as {
-      status?: string;
-      country?: string;
-      regionName?: string;
-      city?: string;
-    };
-    if (data.status !== "success") return "未知";
-    const parts = [data.country, data.regionName, data.city].filter(Boolean);
-    return parts.length > 0 ? parts.join(" / ") : "未知";
-  } catch {
-    return "未知";
-  } finally {
-    clearTimeout(timer);
-  }
 }
 
 /** 登录 / 注册成功后写入一条登录日志（与 POST /api/auth/login 字段一致） */

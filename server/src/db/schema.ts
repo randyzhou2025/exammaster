@@ -26,7 +26,8 @@ export const userDailyActivity = pgTable(
     lastSeenAt: timestamp("last_seen_at", { withTimezone: true }).notNull(),
     pingCount: integer("ping_count").notNull().default(1),
     lastIp: varchar("last_ip", { length: 64 }).notNull().default("unknown"),
-    flags: jsonb("flags").$type<Record<string, boolean>>(),
+    /** 各模块当日进入次数：{ theory: 3, operate: 1, mock: 2 } */
+    flags: jsonb("flags").$type<Record<string, number>>(),
   },
   (t) => [primaryKey({ columns: [t.userId, t.activityDate] })]
 );

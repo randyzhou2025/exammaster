@@ -1,8 +1,9 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest, preHandlerHookHandler } from "fastify";
-import { count, desc, eq, ilike, or, type SQL } from "drizzle-orm";
+import { count, desc, eq, ilike, or, sql, type SQL } from "drizzle-orm";
 import { z } from "zod";
+import { shanghaiDateString } from "../activity.js";
 import { db } from "../db/index.js";
-import { loginLogs, users } from "../db/schema.js";
+import { loginLogs, userDailyActivity, users } from "../db/schema.js";
 
 const patchSchema = z.object({
   isAuthorized: z.boolean().optional(),
@@ -66,6 +67,24 @@ const userSelect = {
   subscriptionExpiresOn: users.subscriptionExpiresOn,
 };
 
+async function getTodayUserStats() {
+  const today = shanghaiDateString();
+  const [activeRow, registeredRow] = await Promise.all([
+    db
+      .select({ total: count() })
+      .from(userDailyActivity)
+      .where(eq(userDailyActivity.activityDate, today)),
+    db
+      .select({ total: count() })
+      .from(users)
+      .where(sql`(${users.createdAt} AT TIME ZONE 'Asia/Shanghai')::date = ${today}::date`),
+  ]);
+  return {
+    todayActiveCount: activeRow[0]?.total ?? 0,
+    todayRegisteredCount: registeredRow[0]?.total ?? 0,
+  };
+}
+
 export async function registerAdminRoutes(app: FastifyInstance, authenticate: preHandlerHookHandler) {
   app.get("/api/admin/users", { preHandler: [authenticate] }, async (request, reply) => {
     if (!(await requireAdmin(request, reply))) return;
@@ -82,17 +101,21 @@ export async function registerAdminRoutes(app: FastifyInstance, authenticate: pr
 
     const [{ total }] = await db.select({ total: count() }).from(users).where(where);
     const offset = (page - 1) * pageSize;
-    const rows = await db
-      .select(userSelect)
-      .from(users)
-      .where(where)
-      .orderBy(desc(users.createdAt))
-      .limit(pageSize)
-      .offset(offset);
+    const [rows, todayStats] = await Promise.all([
+      db
+        .select(userSelect)
+        .from(users)
+        .where(where)
+        .orderBy(desc(users.createdAt))
+        .limit(pageSize)
+        .offset(offset),
+      getTodayUserStats(),
+    ]);
 
     return reply.send({
       users: rows.map(publicUser),
       total,
+      ...todayStats,
       page,
       pageSize,
       totalPages: Math.max(1, Math.ceil(total / pageSize)),

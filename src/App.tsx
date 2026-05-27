@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { ActivityPingWatcher } from "@/components/ActivityPingWatcher";
 import { AppShell } from "@/components/AppShell";
 import { LegacyRedirect } from "@/components/LegacyRedirect";
 import { RequireAdmin } from "@/components/RequireAdmin";
@@ -25,7 +26,6 @@ import { AdminUsersPage } from "@/pages/AdminUsersPage";
 import { AdminDailyActivityPage } from "@/pages/AdminDailyActivityPage";
 import { AdminHomepageActivityPage } from "@/pages/AdminHomepageActivityPage";
 import { AdminLoginLogsPage } from "@/pages/AdminLoginLogsPage";
-import { sendActivityPing } from "@/lib/activityPing";
 import { QuestionBankPage } from "@/pages/QuestionBankPage";
 import { useAuthStore } from "@/stores/authStore";
 
@@ -34,29 +34,14 @@ const routerBasename =
 
 export default function App() {
   const bootstrap = useAuthStore((s) => s.bootstrap);
-  const token = useAuthStore((s) => s.token);
-  const user = useAuthStore((s) => s.user);
 
   useEffect(() => {
     void bootstrap();
   }, [bootstrap]);
 
-  useEffect(() => {
-    if (!token || !user) return;
-    const ping = () => sendActivityPing(token);
-    const onVis = () => {
-      if (document.visibilityState === "visible") ping();
-    };
-    document.addEventListener("visibilitychange", onVis);
-    const id = window.setInterval(ping, 5 * 60 * 1000);
-    return () => {
-      document.removeEventListener("visibilitychange", onVis);
-      window.clearInterval(id);
-    };
-  }, [token, user?.id]);
-
   return (
     <BrowserRouter basename={routerBasename}>
+      <ActivityPingWatcher />
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />

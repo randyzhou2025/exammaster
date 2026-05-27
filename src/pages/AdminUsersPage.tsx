@@ -14,6 +14,8 @@ interface UsersListResponse {
   error?: string;
   users?: AdminUserRow[];
   total?: number;
+  todayActiveCount?: number;
+  todayRegisteredCount?: number;
   page?: number;
   pageSize?: number;
   totalPages?: number;
@@ -47,6 +49,8 @@ export function AdminUsersPage() {
   const [searchInput, setSearchInput] = useState("");
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
+  const [todayActiveCount, setTodayActiveCount] = useState(0);
+  const [todayRegisteredCount, setTodayRegisteredCount] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -70,6 +74,8 @@ export function AdminUsersPage() {
       }
       setUsers(data.users ?? []);
       setTotal(data.total ?? 0);
+      setTodayActiveCount(data.todayActiveCount ?? 0);
+      setTodayRegisteredCount(data.todayRegisteredCount ?? 0);
       setTotalPages(data.totalPages ?? 1);
     } catch {
       setError("网络错误");
@@ -183,7 +189,17 @@ export function AdminUsersPage() {
       <section className="rounded-2xl bg-white p-4 shadow-card">
         <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <p className="text-sm text-neutral-600">
-            {loading ? "加载中…" : `共 ${total} 位用户`}
+            {loading ? (
+              "加载中…"
+            ) : (
+              <>
+                共 {total} 位用户
+                <span className="text-neutral-500">
+                  {" "}
+                  · 今日活跃 {todayActiveCount} 人 · 今日注册 {todayRegisteredCount} 人
+                </span>
+              </>
+            )}
           </p>
           <form onSubmit={onSearch} className="flex w-full gap-2 sm:max-w-md">
             <input

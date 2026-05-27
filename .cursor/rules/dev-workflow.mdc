@@ -34,3 +34,4 @@ alwaysApply: true
 
 - `node scripts/test-user-access.mjs` — 订阅与访问权限
 - `node scripts/test-homepage-analytics.mjs` — 主页访问统计（可选 `API_BASE`）
+- `node scripts/test-module-visit-counts.mjs` — 模块进入次数合并

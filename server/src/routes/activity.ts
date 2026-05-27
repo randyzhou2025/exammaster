@@ -3,6 +3,7 @@ import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { touchActivity, shanghaiDateString, type ActivityFlags } from "../activity.js";
 import { clientIpFromRequest } from "../client-ip.js";
+import { resolveLocationsByIps } from "../ip-location.js";
 import { db } from "../db/index.js";
 import { userDailyActivity, users } from "../db/schema.js";
 
@@ -79,6 +80,8 @@ export async function registerActivityRoutes(app: FastifyInstance, authenticate:
       .where(eq(userDailyActivity.activityDate, dateStr))
       .orderBy(desc(userDailyActivity.lastSeenAt));
 
+    const locationByIp = await resolveLocationsByIps(rows.map((r) => r.lastIp));
+
     return reply.send({
       date: dateStr,
       count: rows.length,
@@ -91,6 +94,7 @@ export async function registerActivityRoutes(app: FastifyInstance, authenticate:
         lastSeenAt: r.lastSeenAt.toISOString(),
         pingCount: r.pingCount,
         lastIp: r.lastIp,
+        lastLocation: locationByIp.get(r.lastIp) ?? "未知",
         flags: r.flags ?? null,
       })),
     });

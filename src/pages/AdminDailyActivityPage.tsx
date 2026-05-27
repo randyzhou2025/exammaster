@@ -14,17 +14,27 @@ interface DailyActivityUser {
   lastSeenAt: string;
   pingCount: number;
   lastIp: string;
-  flags: Record<string, boolean> | null;
+  lastLocation: string;
+  flags: Record<string, number | boolean> | null;
 }
 
 const PAGE_SIZE = 20;
 
-function formatFlags(flags: Record<string, boolean> | null): string {
+function moduleCount(value: unknown): number {
+  if (typeof value === "number" && value > 0) return value;
+  if (value === true) return 1;
+  return 0;
+}
+
+function formatModuleCounts(flags: Record<string, number | boolean> | null): string {
   if (!flags) return "—";
   const parts: string[] = [];
-  if (flags.theory) parts.push("理论");
-  if (flags.operate) parts.push("实操");
-  if (flags.mock) parts.push("模考");
+  const theory = moduleCount(flags.theory);
+  const operate = moduleCount(flags.operate);
+  const mock = moduleCount(flags.mock);
+  if (theory > 0) parts.push(`理论${theory}`);
+  if (operate > 0) parts.push(`实操${operate}`);
+  if (mock > 0) parts.push(`模考${mock}`);
   return parts.length > 0 ? parts.join("、") : "—";
 }
 
@@ -46,7 +56,7 @@ function formatDate(iso: string): string {
 
 export function AdminDailyActivityPage() {
   const token = useAuthStore((s) => s.token);
-  const [date, setDate] = useState(shanghaiToday);
+  const [date, setDate] = useState(shanghaiToday());
   const [users, setUsers] = useState<DailyActivityUser[]>([]);
   const [query, setQuery] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -87,7 +97,8 @@ export function AdminDailyActivityPage() {
       return (
         u.email.toLowerCase().includes(q) ||
         (u.displayName ?? "").toLowerCase().includes(q) ||
-        u.lastIp.toLowerCase().includes(q)
+        u.lastIp.toLowerCase().includes(q) ||
+        u.lastLocation.toLowerCase().includes(q)
       );
     });
   }, [users, query]);
@@ -141,6 +152,7 @@ export function AdminDailyActivityPage() {
         <p className="mt-3 text-xs text-neutral-500">
           统计口径：当日登录态下至少访问过一次（打开站点触发 /api/auth/me，或心跳 /api/activity/ping）。
           打开页面即记为活跃，不代表一定刷题。
+          「模块」列记录当日进入各练习区的次数（切换路由 +1；停留期间定时心跳不计入）。
         </p>
       </section>
 
@@ -152,7 +164,7 @@ export function AdminDailyActivityPage() {
           </p>
           <input
             type="search"
-            placeholder="搜索邮箱、昵称、IP"
+            placeholder="搜索邮箱、昵称、地点、IP"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             className="w-full rounded-xl border border-neutral-200 px-3 py-2 text-sm sm:max-w-xs"
@@ -177,7 +189,8 @@ export function AdminDailyActivityPage() {
                     <th className="whitespace-nowrap px-3 py-2 font-medium">首次活跃</th>
                     <th className="whitespace-nowrap px-3 py-2 font-medium">末次活跃</th>
                     <th className="px-3 py-2 font-medium">次数</th>
-                    <th className="px-3 py-2 font-medium">IP</th>
+                    <th className="px-3 py-2 font-medium">地点</th>
+                    <th className="hidden px-3 py-2 font-medium sm:table-cell">IP</th>
                     <th className="px-3 py-2 font-medium">模块</th>
                   </tr>
                 </thead>
@@ -196,8 +209,14 @@ export function AdminDailyActivityPage() {
                         {formatTime(u.lastSeenAt)}
                       </td>
                       <td className="px-3 py-2.5 tabular-nums">{u.pingCount}</td>
-                      <td className="px-3 py-2.5 font-mono text-[13px] text-neutral-600">{u.lastIp}</td>
-                      <td className="px-3 py-2.5 text-neutral-600">{formatFlags(u.flags)}</td>
+                      <td className="px-3 py-2.5 text-neutral-600">
+                        <div>{u.lastLocation}</div>
+                        <div className="mt-0.5 font-mono text-[11px] text-neutral-500 sm:hidden">{u.lastIp}</div>
+                      </td>
+                      <td className="hidden px-3 py-2.5 font-mono text-[13px] text-neutral-600 sm:table-cell">
+                        {u.lastIp}
+                      </td>
+                      <td className="px-3 py-2.5 text-neutral-600">{formatModuleCounts(u.flags)}</td>
                     </tr>
                   ))}
                 </tbody>
