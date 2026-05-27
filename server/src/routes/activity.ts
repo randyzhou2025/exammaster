@@ -39,19 +39,26 @@ async function requireAdmin(request: FastifyRequest, reply: FastifyReply): Promi
 
 const dateQuerySchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 
+function hasModuleVisitFlags(flags: ActivityFlags | undefined): boolean {
+  return Boolean(flags && (flags.theory || flags.operate || flags.mock));
+}
+
 export async function registerActivityRoutes(app: FastifyInstance, authenticate: preHandlerHookHandler) {
   app.post("/api/activity/ping", { preHandler: [authenticate] }, async (request, reply) => {
     const jwtUser = request.user as { sub: string };
-    if (!shouldRecordPing(jwtUser.sub)) {
+    const parsed = pingSchema.safeParse(request.body ?? {});
+    const flags = parsed.success ? parsed.data.flags : undefined;
+    const moduleVisit = hasModuleVisitFlags(flags as ActivityFlags | undefined);
+
+    // 普通心跳 60s 节流；模块进入上报不受限，避免刚打开 App 后切路由被丢弃
+    if (!moduleVisit && !shouldRecordPing(jwtUser.sub)) {
       return reply.send({ ok: true, skipped: true });
     }
 
-    const parsed = pingSchema.safeParse(request.body ?? {});
-    const flags = parsed.success ? parsed.data.flags : undefined;
     const ip = clientIpFromRequest(request.headers as Record<string, unknown>, request.ip);
 
     await touchActivity(jwtUser.sub, ip, flags as ActivityFlags | undefined);
-    return reply.send({ ok: true });
+    return reply.send({ ok: true, recorded: true, moduleVisit });
   });
 
   app.get("/api/admin/daily-activity", { preHandler: [authenticate] }, async (request, reply) => {

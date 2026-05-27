@@ -153,6 +153,7 @@ export function AdminDailyActivityPage() {
           统计口径：当日登录态下至少访问过一次（打开站点触发 /api/auth/me，或心跳 /api/activity/ping）。
           打开页面即记为活跃，不代表一定刷题。
           「模块」列记录当日进入各练习区的次数（切换路由 +1；停留期间定时心跳不计入）。
+          本页不会自动刷新，测试后请点击「查询」或切换日期再切回。
         </p>
       </section>
 

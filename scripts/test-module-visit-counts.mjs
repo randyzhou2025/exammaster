@@ -33,4 +33,11 @@ assert(JSON.stringify(normalizeModuleCounts({ theory: true })) === JSON.stringif
 assert(JSON.stringify(mergeModuleCounts({ theory: 2 }, { operate: 1 })) === JSON.stringify({ theory: 2, operate: 1 }), "merge new");
 assert(JSON.stringify(mergeModuleCounts({ theory: true }, { theory: 1, mock: 1 })) === JSON.stringify({ theory: 2, mock: 1 }), "legacy bool + increment");
 
+function hasModuleVisitFlags(flags) {
+  return Boolean(flags && (flags.theory || flags.operate || flags.mock));
+}
+
+assert(hasModuleVisitFlags({ operate: true }) === true, "operate is module visit");
+assert(hasModuleVisitFlags(undefined) === false, "empty is not module visit");
+
 console.log("PASS: module visit counts tests");
