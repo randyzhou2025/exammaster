@@ -157,7 +157,7 @@ export function OperateSessionPage() {
         {visibleCells.map((cell) => (
           <div
             key={cell.cellIndex}
-            className="mb-4 min-w-0 max-w-full overflow-hidden rounded-xl border border-neutral-200 bg-white p-3 shadow-sm"
+            className="mb-4 min-w-0 max-w-full overflow-x-auto rounded-xl border border-neutral-200 bg-white p-3 shadow-sm"
           >
             {visibleCells.length > 1 ? (
               <p className="mb-2 text-[11px] font-medium text-neutral-400">Cell {cell.cellIndex + 1}</p>

@@ -1,0 +1,5 @@
+{
+  "python.languageServer": "None",
+  "python.analysis.diagnosticMode": "off",
+  "python.analysis.indexing": false
+}

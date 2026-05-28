@@ -3505,7 +3505,7 @@
           {
             "id": "b1",
             "accepted": [
-              "open('labels.txt')"
+              "open('labels.txt', 'r')"
             ]
           },
           {

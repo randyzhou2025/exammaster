@@ -263,7 +263,7 @@ export const SOLUTION_LINES = {
   ],
   "3.2.4": [
     "session = ort.InferenceSession('flower-detection.onnx')",
-    "with open('labels.txt') as f:",
+    "with open('labels.txt', 'r') as f:",
     "image = Image.open('flower_test.png').convert('RGB')",
     "processed_image = preprocess_image(image)",
     "output = session.run([output_name], {input_name: processed_image})[0]",

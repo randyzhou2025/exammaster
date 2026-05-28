@@ -5,12 +5,16 @@ import clsx from "clsx";
 const BLANK_SPLIT = /_{5,}/;
 
 const LINE_CLASS =
-  "max-w-full font-mono text-[13px] text-neutral-800 [overflow-wrap:anywhere] [word-break:break-word]";
+  "max-w-full font-mono text-[13px] text-neutral-800";
 
-const BLANK_ROW_CLASS = "flex flex-wrap items-baseline gap-x-1 gap-y-1";
+/** 含填空：单行展示，过长时横向滑动，避免 (X) 等后缀被 flex-wrap 挤到下一行 */
+const BLANK_ROW_CLASS =
+  "flex max-w-full flex-nowrap items-baseline gap-x-1 overflow-x-auto overscroll-x-contain [-webkit-overflow-scrolling:touch]";
+
+const TEXT_SEGMENT_CLASS = "shrink-0 whitespace-pre";
 
 const INPUT_CLASS =
-  "box-border max-w-full min-w-[5rem] rounded border bg-white px-1.5 py-0.5 font-mono text-[13px] leading-normal w-[min(14rem,calc(100%-0.5rem))]";
+  "box-border min-w-[5rem] max-w-[14rem] shrink-0 rounded border bg-white px-1.5 py-0.5 font-mono text-[13px] leading-normal";
 
 function lineHasBlank(line: string) {
   return /_{5,}/.test(line);
@@ -46,7 +50,7 @@ export function CodeFillLine({
   for (let i = 0; i < parts.length; i++) {
     if (parts[i]) {
       nodes.push(
-        <span key={`t-${i}`} className="min-w-0 shrink break-words">
+        <span key={`t-${i}`} className={TEXT_SEGMENT_CLASS}>
           {parts[i]}
         </span>
       );
@@ -58,10 +62,12 @@ export function CodeFillLine({
       const val = values[blank.id] ?? "";
       const graded = results !== null;
       const ok = results?.[blank.id];
+      const inputSize = Math.max(8, Math.min(28, Math.max(val.length, 8) + 1));
       nodes.push(
         <input
           key={blank.id}
           type="text"
+          size={inputSize}
           value={val}
           disabled={disabled}
           onChange={(e) => onChange(blank.id, e.target.value)}
