@@ -37,7 +37,7 @@ export function QuestionBankPage() {
 
         <h1 className="mt-4 text-xl font-bold text-neutral-900">选择题库</h1>
         <p className="mt-2 text-sm leading-relaxed text-neutral-600">
-          请确认备考题库。当前仅开放一套题库，后续将在本页增加更多工种与级别。
+          请选择备考级别。三级含理论 900 题与 Python 实操 20 题；四级含理论 750 题（暂无实操）。
         </p>
 
         <ul className="mt-6 space-y-3">

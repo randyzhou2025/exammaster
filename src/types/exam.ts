@@ -16,7 +16,7 @@ export interface Question {
   tip?: string;
 }
 
-/** 官方模考结构（常量） */
+/** 官方模考结构（三级，常量别名） */
 export const EXAM_TEMPLATE = {
   totalScore: 100,
   passScore: 60,
@@ -27,6 +27,20 @@ export const EXAM_TEMPLATE = {
     { type: "multiple" as const, count: 10, score: 10, perScore: 1 },
   ],
 } as const;
+
+export type ExamTemplateSection = {
+  type: QuestionType;
+  count: number;
+  score: number;
+  perScore: number;
+};
+
+export interface ExamTemplateConfig {
+  totalScore: number;
+  passScore: number;
+  durationMinutes: number;
+  sections: readonly ExamTemplateSection[];
+}
 
 export type FirstOutcome = "unset" | "correct" | "wrong";
 

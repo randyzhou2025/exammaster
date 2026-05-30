@@ -1,9 +1,11 @@
 import { useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import { useShallow } from "zustand/react/shallow";
 import { routes } from "@/lib/routes";
 import { CODE_FILL_BANK } from "@/data/codeFillBank";
+import { getQuestionBankMeta } from "@/data/questionBanks";
+import { useAppStore } from "@/stores/appStore";
 import {
   selectCodeFillStats,
   useCodeFillStore,
@@ -15,6 +17,11 @@ const ALL_IDS = CODE_FILL_BANK.map((q) => q.id);
 
 export function OperateDashboardPage() {
   const nav = useNavigate();
+  const bankId = useAppStore((s) => s.selectedQuestionBankId);
+  const bankMeta = getQuestionBankMeta(bankId);
+  if (bankMeta?.operate === false) {
+    return <Navigate to={routes.theoryHome} replace />;
+  }
   const hydrated = useCodeFillStoreHydrated();
   const stats = useCodeFillStore(useShallow(selectCodeFillStats));
   const byId = useCodeFillStore((s) => s.byId);

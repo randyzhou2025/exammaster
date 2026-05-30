@@ -1,4 +1,4 @@
-import type { Question, QuestionType } from "@/types/exam";
+import type { Question, QuestionType, ExamTemplateConfig } from "@/types/exam";
 import { EXAM_TEMPLATE } from "@/types/exam";
 
 export type AssemblyError =
@@ -18,13 +18,14 @@ export function shuffle<T>(arr: T[], random: () => number = Math.random): T[] {
  */
 export function assembleMockExamPaper(
   bank: Question[],
+  template: ExamTemplateConfig = EXAM_TEMPLATE,
   random: () => number = Math.random
 ): { ok: true; paper: Question[] } | { ok: false; error: AssemblyError } {
   const byType = (t: QuestionType) => bank.filter((q) => q.type === t);
   const missing: Partial<Record<QuestionType, number>> = {};
 
   const paper: Question[] = [];
-  for (const sec of EXAM_TEMPLATE.sections) {
+  for (const sec of template.sections) {
     const pool = byType(sec.type);
     if (pool.length < sec.count) {
       missing[sec.type] = sec.count - pool.length;
@@ -35,7 +36,7 @@ export function assembleMockExamPaper(
     return { ok: false, error: { code: "INSUFFICIENT_BANK", missing } };
   }
 
-  for (const sec of EXAM_TEMPLATE.sections) {
+  for (const sec of template.sections) {
     const pool = byType(sec.type);
     const picked = shuffle(pool, random).slice(0, sec.count);
     paper.push(...picked);

@@ -3,9 +3,9 @@ import { Navigate, useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import { TypeTag } from "@/components/TypeTag";
 import { routes } from "@/lib/routes";
+import { getExamTemplateForBank } from "@/data/questionBanks";
 import { useAppStore } from "@/stores/appStore";
 import { totalScoreForPaper } from "@/domain/scoring";
-import { EXAM_TEMPLATE } from "@/types/exam";
 
 function formatMmSs(sec: number) {
   const m = Math.floor(sec / 60);
@@ -32,6 +32,8 @@ function countUnanswered(
 
 export function MockExamPage() {
   const nav = useNavigate();
+  const bankId = useAppStore((s) => s.selectedQuestionBankId);
+  const examTemplate = getExamTemplateForBank(bankId);
   const mock = useAppStore((s) => s.mockExam);
   const examStartedAt = useAppStore((s) => s.mockExam?.startedAt ?? 0);
   const bank = useAppStore((s) => s.bank);
@@ -106,16 +108,16 @@ export function MockExamPage() {
       const fullPaper = snap.paperIds
         .map((id) => useAppStore.getState().bank.find((x) => x.id === id))
         .filter(Boolean) as typeof bank;
-      const { score, max } = totalScoreForPaper(fullPaper, snap.answers);
+      const { score, max } = totalScoreForPaper(fullPaper, snap.answers, examTemplate);
       const used = timedOut
-        ? EXAM_TEMPLATE.durationMinutes * 60
-        : Math.min(EXAM_TEMPLATE.durationMinutes * 60, Math.floor((Date.now() - snap.startedAt) / 1000));
+        ? examTemplate.durationMinutes * 60
+        : Math.min(examTemplate.durationMinutes * 60, Math.floor((Date.now() - snap.startedAt) / 1000));
       submitMockExam({
         startedAt: new Date(snap.startedAt).toISOString(),
         submittedAt: new Date().toISOString(),
         score,
         maxScore: max,
-        passed: score >= EXAM_TEMPLATE.passScore,
+        passed: score >= examTemplate.passScore,
         durationUsedSec: used,
         questionIds: snap.paperIds,
       });
@@ -124,7 +126,7 @@ export function MockExamPage() {
         state: { score, max, paper: fullPaper, answers: snap.answers },
       });
     },
-    [nav, submitMockExam]
+    [nav, submitMockExam, examTemplate]
   );
 
   useEffect(() => {

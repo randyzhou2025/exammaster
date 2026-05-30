@@ -1,13 +1,15 @@
 import { Link, useNavigate } from "react-router-dom";
 import { routes } from "@/lib/routes";
 import { assembleMockExamPaper } from "@/domain/examAssembly";
-import { EXAM_TEMPLATE } from "@/types/exam";
+import { formatExamTemplateSummary, getExamTemplateForBank } from "@/data/questionBanks";
 import { useAppStore } from "@/stores/appStore";
 import { useMemo, useState } from "react";
 
 export function MockExamIntroPage() {
   const nav = useNavigate();
   const bank = useAppStore((s) => s.bank);
+  const bankId = useAppStore((s) => s.selectedQuestionBankId);
+  const examTemplate = getExamTemplateForBank(bankId);
   const startMockExam = useAppStore((s) => s.startMockExam);
   const [err, setErr] = useState<string | null>(null);
 
@@ -18,15 +20,24 @@ export function MockExamIntroPage() {
     return { j, s, m };
   }, [bank]);
 
+  const templateDesc = examTemplate.sections
+    .map((sec) => {
+      const label = sec.type === "judgment" ? "判断" : sec.type === "single" ? "单选" : "多选";
+      return `${label} ${sec.count}×${sec.perScore}`;
+    })
+    .join(" + ");
+
   const start = () => {
-    const res = assembleMockExamPaper(bank);
+    const res = assembleMockExamPaper(bank, examTemplate);
     if (!res.ok) {
       const m = res.error.missing;
       const parts: string[] = [];
       if (m.judgment) parts.push(`判断缺 ${m.judgment}`);
       if (m.single) parts.push(`单选缺 ${m.single}`);
       if (m.multiple) parts.push(`多选缺 ${m.multiple}`);
-      setErr(`题库不足以组卷（需 ${EXAM_TEMPLATE.sections.map((s) => `${s.count} 道${labelType(s.type)}`).join("、")}）。${parts.join("；")}`);
+      setErr(
+        `题库不足以组卷（需 ${examTemplate.sections.map((s) => `${s.count} 道${labelType(s.type)}`).join("、")}）。${parts.join("；")}`
+      );
       return;
     }
     setErr(null);
@@ -47,19 +58,21 @@ export function MockExamIntroPage() {
       <div className="mt-4 px-4 text-sm text-white/90">
         <p className="text-lg font-bold">练习多一点，考试稳一点</p>
         <p className="mt-2 text-xs leading-relaxed text-white/75">
-          满分 {EXAM_TEMPLATE.totalScore}，合格 {EXAM_TEMPLATE.passScore}；{EXAM_TEMPLATE.durationMinutes}{" "}
-          分钟；共 190 题（判断 40×0.5 + 单选 140×0.5 + 多选 10×1）。多选判分：选项集合与标准答案完全一致才得分。
+          满分 {examTemplate.totalScore}，合格 {examTemplate.passScore}；{examTemplate.durationMinutes}{" "}
+          分钟；{formatExamTemplateSummary(examTemplate)}。多选题（如有）判分：选项集合与标准答案完全一致才得分。
         </p>
       </div>
 
       <div className="mt-6 flex-1 px-4">
         <div className="rounded-2xl bg-white p-5 text-sm text-neutral-800 shadow-card">
-          <p className="font-semibold text-neutral-900">当前演示题库</p>
+          <p className="font-semibold text-neutral-900">当前题库</p>
           <p className="mt-2 text-neutral-600">
-            判断 {counts.j} / 单选 {counts.s} / 多选 {counts.m}
+            判断 {counts.j} / 单选 {counts.s}
+            {counts.m > 0 ? ` / 多选 ${counts.m}` : ""}
           </p>
+          <p className="mt-2 text-xs text-neutral-500">组卷配比：{templateDesc}</p>
           <p className="mt-3 text-xs text-neutral-500">
-            正式环境需导入完整 190 题配比题库后方可开考；组卷失败时不缩卷、不换算满分，避免分数争议。
+            组卷失败时不缩卷、不换算满分，避免分数争议。
           </p>
           {err ? <p className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-xs text-red-700">{err}</p> : null}
           <button

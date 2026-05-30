@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useShallow } from "zustand/react/shallow";
-import { getQuestionBankMeta } from "@/data/questionBanks";
+import { formatExamTemplateSummary, getExamTemplateForBank, getQuestionBankMeta } from "@/data/questionBanks";
 import { routes } from "@/lib/routes";
 import { useAppStore, selectStats } from "@/stores/appStore";
 import { useAuthStore } from "@/stores/authStore";
@@ -13,7 +13,12 @@ export function TheoryHomePage() {
   const nav = useNavigate();
   const user = useAuthStore((s) => s.user);
   const bankId = useAppStore((s) => s.selectedQuestionBankId);
-  const bankTitle = getQuestionBankMeta(bankId)?.title ?? "备考题库";
+  const bankMeta = getQuestionBankMeta(bankId);
+  const bankTitle = bankMeta?.title ?? "备考题库";
+  const levelLabel = bankMeta?.levelLabel ?? "三级";
+  const showOperate = bankMeta?.operate !== false;
+  const examTemplate = getExamTemplateForBank(bankId);
+  const mockSummary = formatExamTemplateSummary(examTemplate);
   const startPractice = useAppStore((s) => s.startPractice);
   const stats = useAppStore(useShallow(selectStats));
   const codeFillHydrated = useCodeFillStoreHydrated();
@@ -33,7 +38,7 @@ export function TheoryHomePage() {
     <div className="flex min-h-0 flex-1 flex-col bg-gradient-to-b from-brand to-brand-dark pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))] text-white">
       <header className="flex min-w-0 items-start justify-between gap-2 px-4 pt-3">
         <span className="min-w-0 flex-1 text-lg font-semibold leading-snug">
-          人工智能训练师 · 三级
+          人工智能训练师 · {levelLabel}
         </span>
         <nav className="flex shrink-0 flex-wrap items-center justify-end gap-x-3 gap-y-1 text-sm text-white/90">
           {user?.role === "admin" ? (
@@ -54,7 +59,7 @@ export function TheoryHomePage() {
       <div className="mt-6 space-y-4 px-4">
         <section className="rounded-2xl bg-white p-5 text-neutral-900 shadow-card">
           <h2 className="text-center text-base font-bold text-neutral-800">理论练习</h2>
-          <p className="mt-2 text-center text-xs text-neutral-500">顺序练习 · 模拟考试 · 错题收藏</p>
+          <p className="mt-2 text-center text-xs text-neutral-500">{bankTitle}</p>
 
           <div className="mt-8 flex flex-col items-center gap-6">
             {neverPracticed ? (
@@ -81,7 +86,7 @@ export function TheoryHomePage() {
               <span className="relative flex h-[8.25rem] w-[8.25rem] flex-col items-center justify-center rounded-full bg-gradient-to-br from-teal-500 via-emerald-500 to-cyan-800 px-3 text-center text-white shadow-inner">
                 <span className="text-sm font-bold tracking-wide">模拟考试</span>
                 <span className="mt-1.5 text-[11px] font-normal leading-snug text-white/95">
-                  限时仿真 · 190 题 / 60 分
+                  限时仿真 · {mockSummary}
                 </span>
               </span>
             </Link>
@@ -105,18 +110,20 @@ export function TheoryHomePage() {
           </div>
         </section>
 
-        <section className="rounded-2xl bg-white p-5 text-neutral-900 shadow-card">
-          <h2 className="text-center text-base font-bold text-neutral-800">实操练习</h2>
-          <p className="mt-2 text-center text-xs text-neutral-500">Python 代码填空 · 20 题</p>
-          <Link
-            to={routes.operateHome}
-            className="mt-6 flex flex-col items-center justify-center rounded-xl border border-violet-200 bg-gradient-to-br from-violet-50 to-indigo-50 py-8"
-          >
-            <span className="text-sm font-medium text-violet-800">代码填空练习</span>
-            <span className="mt-2 text-2xl font-bold tabular-nums text-violet-900">{codeDone}</span>
-            <span className="mt-1 text-xs text-violet-600">已完成 / 总题数</span>
-          </Link>
-        </section>
+        {showOperate ? (
+          <section className="rounded-2xl bg-white p-5 text-neutral-900 shadow-card">
+            <h2 className="text-center text-base font-bold text-neutral-800">实操练习</h2>
+            <p className="mt-2 text-center text-xs text-neutral-500">Python 代码填空 · 20 题</p>
+            <Link
+              to={routes.operateHome}
+              className="mt-6 flex flex-col items-center justify-center rounded-xl border border-violet-200 bg-gradient-to-br from-violet-50 to-indigo-50 py-8"
+            >
+              <span className="text-sm font-medium text-violet-800">代码填空练习</span>
+              <span className="mt-2 text-2xl font-bold tabular-nums text-violet-900">{codeDone}</span>
+              <span className="mt-1 text-xs text-violet-600">已完成 / 总题数</span>
+            </Link>
+          </section>
+        ) : null}
       </div>
     </div>
   );

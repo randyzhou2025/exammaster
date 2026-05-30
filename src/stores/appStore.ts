@@ -2,8 +2,8 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { Question } from "@/types/exam";
 import type { MockExamRecord } from "@/types/exam";
-import { DEFAULT_QUESTION_BANK_ID } from "@/data/questionBanks";
-import { THEORY_BANK } from "@/data/theoryBank";
+import { DEFAULT_QUESTION_BANK_ID, getExamTemplateForBank, QUESTION_BANKS } from "@/data/questionBanks";
+import { normalizeQuestionBankId, resolveTheoryBank } from "@/data/resolveTheoryBank";
 import { isAnswerCorrect } from "@/domain/scoring";
 import type { BackupPayload } from "@/lib/backup";
 import { BACKUP_FORMAT_VERSION } from "@/lib/backup";
@@ -272,12 +272,13 @@ export function normalizePersistedPractice(
 
 function migratePersistedSlice(persistedState: unknown): PersistedSlice {
   const p = (persistedState ?? {}) as Partial<PersistedSlice>;
-  /** 标答以当前构建内嵌的 THEORY_BANK 为准，不恢复 localStorage 里的旧 bank 快照 */
-  const bank = THEORY_BANK;
-  const byId = normalizeById(p.byId);
-  const sel = p.selectedQuestionBankId;
+  /** 标答以当前构建内嵌题库为准，不恢复 localStorage 里的旧 bank 快照 */
   const selectedQuestionBankId =
-    sel === null ? null : typeof sel === "string" ? sel : DEFAULT_QUESTION_BANK_ID;
+    p.selectedQuestionBankId === null
+      ? null
+      : normalizeQuestionBankId(p.selectedQuestionBankId as string | undefined);
+  const bank = resolveTheoryBank(selectedQuestionBankId ?? DEFAULT_QUESTION_BANK_ID);
+  const byId = normalizeById(p.byId);
   return {
     bank,
     byId,
@@ -294,12 +295,12 @@ function migratePersistedSlice(persistedState: unknown): PersistedSlice {
 
 function mergeSelectedQuestionBankId(p: Partial<PersistedSlice>, current: string | null): string | null {
   if (!Object.prototype.hasOwnProperty.call(p, "selectedQuestionBankId")) {
-    return DEFAULT_QUESTION_BANK_ID;
+    return current ?? DEFAULT_QUESTION_BANK_ID;
   }
   const v = p.selectedQuestionBankId;
   if (v === null) return null;
-  if (typeof v === "string") return v;
-  return current;
+  if (typeof v === "string" && QUESTION_BANKS.some((b) => b.id === v)) return v;
+  return current ?? DEFAULT_QUESTION_BANK_ID;
 }
 
 function buildOrderedIds(kind: PracticeKind, bank: Question[], byId: Record<string, QuestionRecord>): string[] {
@@ -341,7 +342,7 @@ function sequentialResumeBookmarkPatch(
 export const useAppStore = create<AppState>()(
   persist(
     (set, get) => ({
-      bank: THEORY_BANK,
+      bank: resolveTheoryBank(DEFAULT_QUESTION_BANK_ID),
       selectedQuestionBankId: null,
       prefs: { ...DEFAULT_PREFS },
       practice: null,
@@ -355,7 +356,16 @@ export const useAppStore = create<AppState>()(
           prefs: { ...s.prefs, ...partial },
         })),
 
-      setSelectedQuestionBankId: (id) => set({ selectedQuestionBankId: id }),
+      setSelectedQuestionBankId: (id) => {
+        const normalized = normalizeQuestionBankId(id);
+        set({
+          selectedQuestionBankId: normalized,
+          bank: resolveTheoryBank(normalized),
+          practice: null,
+          mockExam: null,
+          sequentialResumeQuestionId: null,
+        });
+      },
 
       setBank: (bank) => set({ bank }),
 
@@ -523,7 +533,8 @@ export const useAppStore = create<AppState>()(
 
       startMockExam: (paperIds) => {
         const now = Date.now();
-        const deadline = now + 60 * 60 * 1000;
+        const template = getExamTemplateForBank(get().selectedQuestionBankId);
+        const deadline = now + template.durationMinutes * 60 * 1000;
         set({
           mockExam: {
             paperIds,
@@ -602,7 +613,7 @@ export const useAppStore = create<AppState>()(
           /* ignore */
         }
         set({
-          bank: THEORY_BANK,
+          bank: resolveTheoryBank(DEFAULT_QUESTION_BANK_ID),
           practice: null,
           mockExam: null,
         });
@@ -610,7 +621,7 @@ export const useAppStore = create<AppState>()(
 
       resetAll: () =>
         set({
-          bank: THEORY_BANK,
+          bank: resolveTheoryBank(DEFAULT_QUESTION_BANK_ID),
           byId: {},
           mockHistory: [],
           practice: null,
@@ -647,8 +658,8 @@ export const useAppStore = create<AppState>()(
             : current.sequentialResumeQuestionId;
         const mergedById =
           p.byId !== undefined && p.byId !== null ? normalizeById(p.byId) : normalizeById(current.byId);
-        /** 始终使用当前 JS 包内嵌题库（含最新标答）；localStorage 只持久化进度，不持久化 bank 快照 */
-        const bankMerged = current.bank;
+        const bankId = mergeSelectedQuestionBankId(p, current.selectedQuestionBankId);
+        const bankMerged = resolveTheoryBank(bankId ?? DEFAULT_QUESTION_BANK_ID);
         return {
           ...current,
           bank: bankMerged,

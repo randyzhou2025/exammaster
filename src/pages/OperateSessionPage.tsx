@@ -3,7 +3,9 @@ import { Link, Navigate, useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import { CodeFillLine } from "@/components/codefill/CodeFillLine";
 import { gradeCodeFillQuestion } from "@/domain/codeFillScoring";
+import { getQuestionBankMeta } from "@/data/questionBanks";
 import { routes } from "@/lib/routes";
+import { useAppStore } from "@/stores/appStore";
 import { useCodeFillStore } from "@/stores/codeFillStore";
 
 function countBlanksInLine(line: string) {
@@ -28,6 +30,10 @@ function isRenderableCell(cell: { lines: string[]; blanks: { id: string }[]; sou
 
 export function OperateSessionPage() {
   const nav = useNavigate();
+  const bankId = useAppStore((s) => s.selectedQuestionBankId);
+  if (getQuestionBankMeta(bankId)?.operate === false) {
+    return <Navigate to={routes.theoryHome} replace />;
+  }
   const practice = useCodeFillStore((s) => s.practice);
   const bank = useCodeFillStore((s) => s.bank);
   const byId = useCodeFillStore((s) => s.byId);

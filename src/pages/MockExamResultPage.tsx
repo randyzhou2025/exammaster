@@ -1,8 +1,9 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { routes } from "@/lib/routes";
-import { EXAM_TEMPLATE } from "@/types/exam";
+import { getExamTemplateForBank } from "@/data/questionBanks";
 import type { Question } from "@/types/exam";
 import { isAnswerCorrect } from "@/domain/scoring";
+import { useAppStore } from "@/stores/appStore";
 
 interface LocationState {
   score: number;
@@ -14,6 +15,8 @@ interface LocationState {
 export function MockExamResultPage() {
   const nav = useNavigate();
   const loc = useLocation();
+  const bankId = useAppStore((s) => s.selectedQuestionBankId);
+  const examTemplate = getExamTemplateForBank(bankId);
   const state = loc.state as LocationState | null;
 
   if (!state || typeof state.score !== "number" || !state.paper) {
@@ -39,12 +42,12 @@ export function MockExamResultPage() {
           <span className="text-lg text-neutral-400">/{state.max}</span>
         </p>
         <p className="mt-4 text-sm">
-          {state.score >= EXAM_TEMPLATE.passScore ? (
+          {state.score >= examTemplate.passScore ? (
             <span className="font-semibold text-emerald-600">合格</span>
           ) : (
             <span className="font-semibold text-red-600">不合格</span>
           )}
-          <span className="text-neutral-500">（合格线 {EXAM_TEMPLATE.passScore}）</span>
+          <span className="text-neutral-500">（合格线 {examTemplate.passScore}）</span>
         </p>
         <p className="mt-3 text-xs text-neutral-500">错题 {wrongCount} 道（按多选全对才得分规则判定）</p>
       </div>

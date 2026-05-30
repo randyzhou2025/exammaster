@@ -5,6 +5,7 @@
   "description": "本地开发/维护脚本专用依赖（pdf-parse、puppeteer 等），不参与 exam_frontend Docker 构建",
   "scripts": {
     "import-theory-bank": "node parse-theory-bank.mjs",
+    "import-theory-bank-l4": "node parse-theory-bank-l4.mjs",
     "mobile-shot": "node mobile-shot.mjs",
     "dump-pdf-text": "node dump-pdf-text.mjs"
   },
