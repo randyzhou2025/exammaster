@@ -23,6 +23,9 @@ deploy/welcome/downloads/*.zip
 # 移动端验证脚本输出（scripts/mobile-shot.mjs）
 .tmp-mobile/
 
+# 本地生成的复习文档等（scripts/generate-code-fill-review-doc.mjs）
+output/
+
 # 本地维护脚本依赖（pdf-parse、puppeteer；不参与 Docker 前端构建）
 scripts/node_modules/
 

@@ -95,10 +95,7 @@ export function OperateSessionPage() {
   const onCheck = () => {
     const { allCorrect, results } = gradeCodeFillQuestion(allBlanks, values);
     setGradeResults(results);
-    for (const b of allBlanks) {
-      setBlankAnswer(q.id, b.id, values[b.id] ?? "");
-    }
-    checkQuestion(q.id);
+    checkQuestion(q.id, values);
     if (allCorrect) setSessionReveal(null);
     setToast(allCorrect ? "全部正确！" : "仍有错误，请修改后再次检查");
     window.setTimeout(() => setToast(null), 2000);

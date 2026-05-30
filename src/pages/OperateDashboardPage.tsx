@@ -7,6 +7,7 @@ import { CODE_FILL_BANK } from "@/data/codeFillBank";
 import {
   selectCodeFillStats,
   useCodeFillStore,
+  useCodeFillStoreHydrated,
   type CodeFillPracticeMode,
 } from "@/stores/codeFillStore";
 
@@ -14,6 +15,7 @@ const ALL_IDS = CODE_FILL_BANK.map((q) => q.id);
 
 export function OperateDashboardPage() {
   const nav = useNavigate();
+  const hydrated = useCodeFillStoreHydrated();
   const stats = useCodeFillStore(useShallow(selectCodeFillStats));
   const byId = useCodeFillStore((s) => s.byId);
   const startPractice = useCodeFillStore((s) => s.startPractice);
@@ -41,9 +43,12 @@ export function OperateDashboardPage() {
   };
 
   const completedSet = useMemo(
-    () => new Set(ALL_IDS.filter((id) => byId[id]?.completed)),
+    () => new Set(ALL_IDS.filter((id) => byId[id]?.completed === true)),
     [byId]
   );
+
+  const completedLabel = hydrated ? String(stats.completed) : "—";
+  const completedRatio = hydrated ? `${stats.completed} / ${stats.total}` : `— / ${stats.total}`;
 
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-gradient-to-b from-violet-600 to-indigo-800 pb-[calc(2rem+env(safe-area-inset-bottom,0px))] text-white">
@@ -61,7 +66,7 @@ export function OperateDashboardPage() {
 
       <div className="mt-4 px-4">
         <div className="rounded-2xl bg-white p-5 text-neutral-900 shadow-card">
-          <p className="text-center text-sm text-neutral-500">题目总数 {stats.total} · 已完成 {stats.completed}</p>
+          <p className="text-center text-sm text-neutral-500">题目总数 {stats.total} · 已完成 {completedLabel}</p>
 
           <div className="mt-4 grid grid-cols-3 gap-2 text-center text-xs">
             {(
@@ -131,8 +136,8 @@ export function OperateDashboardPage() {
                   : "将随机打乱 20 题顺序后练习"}
               </p>
               <p className="mt-2 text-center text-xs text-neutral-500">
-                已完成 {stats.completed} / {stats.total} 题
-                {stats.completed > 0 ? " · 带 ✓ 表示已通过检查" : ""}
+                已完成 {completedRatio} 题
+                {hydrated && stats.completed > 0 ? " · 带 ✓ 表示已通过检查" : ""}
               </p>
               <details className="mt-3 rounded-lg border border-dashed border-neutral-200 bg-neutral-50/80">
                 <summary className="cursor-pointer px-3 py-2 text-center text-xs text-neutral-500">

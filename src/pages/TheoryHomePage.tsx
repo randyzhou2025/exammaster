@@ -4,7 +4,7 @@ import { getQuestionBankMeta } from "@/data/questionBanks";
 import { routes } from "@/lib/routes";
 import { useAppStore, selectStats } from "@/stores/appStore";
 import { useAuthStore } from "@/stores/authStore";
-import { selectCodeFillStats, useCodeFillStore } from "@/stores/codeFillStore";
+import { selectCodeFillStats, useCodeFillStore, useCodeFillStoreHydrated } from "@/stores/codeFillStore";
 
 const SEQ_ENTRY_CLASS =
   "flex h-36 w-36 flex-col items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-dark text-white shadow-lg ring-4 ring-brand-light/60";
@@ -16,9 +16,12 @@ export function TheoryHomePage() {
   const bankTitle = getQuestionBankMeta(bankId)?.title ?? "备考题库";
   const startPractice = useAppStore((s) => s.startPractice);
   const stats = useAppStore(useShallow(selectStats));
+  const codeFillHydrated = useCodeFillStoreHydrated();
   const codeStats = useCodeFillStore(useShallow(selectCodeFillStats));
   const seqDone = `${stats.answered}/${stats.total}`;
-  const codeDone = `${codeStats.completed}/${codeStats.total}`;
+  const codeDone = codeFillHydrated
+    ? `${codeStats.completed}/${codeStats.total}`
+    : `—/${codeStats.total}`;
   const neverPracticed = stats.answered === 0;
 
   const openSequential = () => {

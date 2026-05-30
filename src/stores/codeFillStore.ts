@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { CODE_FILL_BANK } from "@/data/codeFillBank";
@@ -55,7 +56,7 @@ interface CodeFillState {
   setPracticeIndex: (index: number) => void;
   setBlankAnswer: (questionId: string, blankId: string, value: string) => void;
   clearQuestionAnswers: (questionId: string) => void;
-  checkQuestion: (questionId: string) => boolean;
+  checkQuestion: (questionId: string, answersSnapshot?: Record<string, string>) => boolean;
   revealQuestionAnswers: (questionId: string) => void;
   resetOperateProgress: () => void;
   resetAllCodeFill: () => void;
@@ -81,8 +82,19 @@ function orderIds(mode: CodeFillPracticeMode, picked?: string[]): string[] {
 
 export function selectCodeFillStats(state: Pick<CodeFillState, "byId" | "bank">) {
   const total = state.bank.length;
-  const completed = state.bank.filter((q) => state.byId[q.id]?.completed).length;
+  const completed = state.bank.filter((q) => state.byId[q.id]?.completed === true).length;
   return { total, completed };
+}
+
+/** 等 localStorage 进度恢复后再展示「已完成」，避免先 0 后跳变 */
+export function useCodeFillStoreHydrated() {
+  const [hydrated, setHydrated] = useState(() => useCodeFillStore.persist.hasHydrated());
+  useEffect(() => {
+    const unsub = useCodeFillStore.persist.onFinishHydration(() => setHydrated(true));
+    if (useCodeFillStore.persist.hasHydrated()) setHydrated(true);
+    return unsub;
+  }, []);
+  return hydrated;
 }
 
 export const useCodeFillStore = create<CodeFillState>()(
@@ -152,18 +164,21 @@ export const useCodeFillStore = create<CodeFillState>()(
         });
       },
 
-      checkQuestion: (questionId) => {
+      checkQuestion: (questionId, answersSnapshot) => {
         const q = get().bank.find((x) => x.id === questionId);
         if (!q) return false;
         const blanks = q.cells.flatMap((c) => c.blanks);
         const progress = get().byId[questionId] ?? defaultProgress();
-        const { allCorrect } = gradeCodeFillQuestion(blanks, progress.answers);
+        const answers = answersSnapshot ?? progress.answers;
+        const { allCorrect } = gradeCodeFillQuestion(blanks, answers);
         set({
           byId: {
             ...get().byId,
             [questionId]: {
               ...progress,
-              completed: allCorrect,
+              answers: answersSnapshot ? { ...answers } : progress.answers,
+              /** 仅全对时可置 true；已完成后不因再次检查失败而回退 */
+              completed: allCorrect ? true : progress.completed,
               lastCheckedAt: Date.now(),
             },
           },
@@ -206,12 +221,26 @@ export const useCodeFillStore = create<CodeFillState>()(
       }),
       merge: (persisted, current) => {
         const p = (persisted ?? {}) as Partial<CodeFillState>;
-        const byId = { ...current.byId, ...p.byId };
-        for (const [id, prog] of Object.entries(byId)) {
-          if (prog && prog.revealed && !prog.completed) {
-            byId[id] = { ...prog, answers: {}, revealed: false };
+        const validIds = new Set(QUESTION_IDS);
+        const byId: Record<string, CodeFillQuestionProgress> = { ...current.byId };
+
+        for (const [id, prog] of Object.entries(p.byId ?? {})) {
+          if (!validIds.has(id) || !prog || typeof prog !== "object") continue;
+          const normalized: CodeFillQuestionProgress = {
+            completed: prog.completed === true,
+            answers:
+              prog.answers && typeof prog.answers === "object" ? { ...prog.answers } : {},
+            revealed: prog.revealed === true,
+            lastCheckedAt:
+              typeof prog.lastCheckedAt === "number" ? prog.lastCheckedAt : undefined,
+          };
+          if (normalized.revealed && !normalized.completed) {
+            normalized.answers = {};
+            normalized.revealed = false;
           }
+          byId[id] = normalized;
         }
+
         return { ...current, ...p, byId };
       },
     }
