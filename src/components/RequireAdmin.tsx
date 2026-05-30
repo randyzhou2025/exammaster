@@ -1,9 +1,11 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { routes } from "@/lib/routes";
+import { defaultPostLoginPath } from "@/lib/routes";
+import { useAppStore } from "@/stores/appStore";
 import { useAuthStore } from "@/stores/authStore";
 
 export function RequireAdmin() {
   const user = useAuthStore((s) => s.user);
+  const bankId = useAppStore((s) => s.selectedQuestionBankId);
 
   if (!user) {
     return (
@@ -14,7 +16,7 @@ export function RequireAdmin() {
   }
 
   if (user.role !== "admin") {
-    return <Navigate to={routes.theoryHome} replace />;
+    return <Navigate to={defaultPostLoginPath(bankId)} replace />;
   }
 
   return <Outlet />;

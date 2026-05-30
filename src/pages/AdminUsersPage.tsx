@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { isSubscriptionActive } from "@/lib/examAccess";
-import { routes } from "@/lib/routes";
+import { routes, theoryHomeForBank } from "@/lib/routes";
+import { useAppStore } from "@/stores/appStore";
 import { apiFetch } from "@/lib/api";
 import type { AuthUser } from "@/stores/authStore";
 import { useAuthStore } from "@/stores/authStore";
@@ -42,6 +43,7 @@ function formatDateTime(iso: string | null): string {
 }
 
 export function AdminUsersPage() {
+  const bankId = useAppStore((s) => s.selectedQuestionBankId);
   const token = useAuthStore((s) => s.token);
   const setUser = useAuthStore((s) => s.setUser);
   const [users, setUsers] = useState<AdminUserRow[]>([]);
@@ -154,7 +156,7 @@ export function AdminUsersPage() {
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-surface p-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
       <header className="mb-4 flex flex-wrap items-center gap-2">
-        <Link to={routes.theoryHome} className="text-brand">
+        <Link to={theoryHomeForBank(bankId)} className="text-brand">
           ← 返回
         </Link>
         <h1 className="text-lg font-bold text-neutral-900">用户管理</h1>

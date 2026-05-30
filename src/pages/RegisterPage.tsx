@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { hasExamAccess } from "@/lib/examAccess";
-import { routes } from "@/lib/routes";
+import { defaultPostLoginPath, routes } from "@/lib/routes";
 import { AuthShell } from "@/components/AuthShell";
 import { apiFetch } from "@/lib/api";
 import type { AuthUser } from "@/stores/authStore";
 import { useAuthStore } from "@/stores/authStore";
+import { useAppStore } from "@/stores/appStore";
 
 const inputClassName =
   "mt-1.5 w-full rounded-xl border border-neutral-200/90 bg-neutral-50/80 px-3.5 py-3 text-[15px] outline-none transition focus:border-brand/50 focus:bg-white focus:shadow-[0_0_0_3px_rgba(22,119,255,0.12)]";
@@ -22,11 +23,13 @@ export function RegisterPage() {
   const ready = useAuthStore((s) => s.ready);
   const existingToken = useAuthStore((s) => s.token);
 
+  const bankId = useAppStore((s) => s.selectedQuestionBankId);
+
   useEffect(() => {
     if (ready && existingToken) {
-      navigate(routes.theoryHome, { replace: true });
+      navigate(defaultPostLoginPath(bankId), { replace: true });
     }
-  }, [ready, existingToken, navigate]);
+  }, [ready, existingToken, navigate, bankId]);
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -51,7 +54,7 @@ export function RegisterPage() {
         return;
       }
       setSession(data.token, data.user);
-      navigate(hasExamAccess(data.user) ? routes.theoryHome : "/auth/pending", {
+      navigate(hasExamAccess(data.user) ? defaultPostLoginPath(null) : routes.pendingAuth, {
         replace: true,
       });
     } catch {

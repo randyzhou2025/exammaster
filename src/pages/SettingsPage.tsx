@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import type { ChangeEventHandler } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { routes } from "@/lib/routes";
+import { theoryHomeForBank } from "@/lib/routes";
 import { useAppStore } from "@/stores/appStore";
 import { useAuthStore } from "@/stores/authStore";
 import { useCodeFillStore } from "@/stores/codeFillStore";
@@ -9,6 +9,7 @@ import { downloadJson, parseBackupJson } from "@/lib/backup";
 
 export function SettingsPage() {
   const navigate = useNavigate();
+  const bankId = useAppStore((s) => s.selectedQuestionBankId);
   const logout = useAuthStore((s) => s.logout);
   const user = useAuthStore((s) => s.user);
   const resetAll = useAppStore((s) => s.resetAll);
@@ -50,7 +51,7 @@ export function SettingsPage() {
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-surface p-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
       <header className="mb-6 flex items-center gap-2">
-        <Link to={routes.theoryHome} className="text-brand">
+        <Link to={theoryHomeForBank(bankId)} className="text-brand">
           ← 返回
         </Link>
         <h1 className="text-lg font-bold text-neutral-900">设置</h1>

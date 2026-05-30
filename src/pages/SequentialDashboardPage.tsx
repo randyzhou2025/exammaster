@@ -1,11 +1,12 @@
 import type { ReactNode } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useShallow } from "zustand/react/shallow";
-import { routes } from "@/lib/routes";
+import { useLevelRoutes } from "@/hooks/useLevelRoutes";
 import { useAppStore, selectStats } from "@/stores/appStore";
 
 export function SequentialDashboardPage() {
   const nav = useNavigate();
+  const { routes: lr } = useLevelRoutes();
   const stats = useAppStore(useShallow(selectStats));
   const startPractice = useAppStore((s) => s.startPractice);
   const acc =
@@ -61,7 +62,7 @@ export function SequentialDashboardPage() {
               label="答错"
               valueClassName="text-red-500"
               interactive
-              onClick={() => nav(routes.theoryWrongBook)}
+              onClick={() => nav(lr.theoryWrongBook)}
             />
           </div>
 
@@ -69,7 +70,7 @@ export function SequentialDashboardPage() {
             type="button"
             onClick={() => {
               startPractice("sequential");
-              nav(routes.theoryPracticeSession);
+              nav(lr.theoryPracticeSession);
             }}
             className="mt-6 w-full rounded-xl bg-brand py-3 text-base font-semibold text-white active:bg-brand-dark"
           >
@@ -83,17 +84,17 @@ export function SequentialDashboardPage() {
           label="随机练习"
           onClick={() => {
             startPractice("random");
-            nav(routes.theoryPracticeSession);
+            nav(lr.theoryPracticeSession);
           }}
         />
         <MiniMode
           label="未做题"
           onClick={() => {
             startPractice("unanswered");
-            nav(routes.theoryPracticeSession);
+            nav(lr.theoryPracticeSession);
           }}
         />
-        <Link to={routes.theoryHome} className="rounded-xl bg-white/10 py-3 backdrop-blur">
+        <Link to={lr.theoryHome} className="rounded-xl bg-white/10 py-3 backdrop-blur">
           首页
         </Link>
         <MiniMode

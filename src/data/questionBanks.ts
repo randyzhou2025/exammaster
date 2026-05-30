@@ -2,6 +2,9 @@
 
 export const DEFAULT_QUESTION_BANK_ID = "ai-trainer-l3";
 
+/** URL 段默认等级（与三级题库对应） */
+export const DEFAULT_LEVEL_ID = "level3";
+
 export type ExamTemplateId = "l3" | "l4";
 
 export interface ExamTemplateSection {
@@ -53,6 +56,8 @@ export interface QuestionBankMeta {
   id: string;
   title: string;
   subtitle: string;
+  /** URL 段，如 level3 / level4 */
+  levelId: string;
   /** 首页展示用，如「三级」「四级」 */
   levelLabel: string;
   examTemplateId: ExamTemplateId;
@@ -65,6 +70,7 @@ export const QUESTION_BANKS: QuestionBankMeta[] = [
     id: "ai-trainer-l3",
     title: "人工智能训练师（3级）",
     subtitle: "理论知识 900 题 · 含 Python 实操填空 20 题",
+    levelId: "level3",
     levelLabel: "三级",
     examTemplateId: "l3",
     operate: true,
@@ -73,11 +79,27 @@ export const QUESTION_BANKS: QuestionBankMeta[] = [
     id: "ai-trainer-l4",
     title: "人工智能训练师（4级）",
     subtitle: "理论知识 750 题 · 暂无实操练习",
+    levelId: "level4",
     levelLabel: "四级",
     examTemplateId: "l4",
     operate: false,
   },
 ];
+
+export function isKnownLevelId(levelId: string | null | undefined): boolean {
+  if (!levelId) return false;
+  return QUESTION_BANKS.some((b) => b.levelId === levelId);
+}
+
+export function getLevelIdForBank(bankId: string | null | undefined): string {
+  const meta = getQuestionBankMeta(bankId);
+  return meta?.levelId ?? DEFAULT_LEVEL_ID;
+}
+
+export function getBankIdForLevel(levelId: string | null | undefined): string | undefined {
+  if (!levelId) return undefined;
+  return QUESTION_BANKS.find((b) => b.levelId === levelId)?.id;
+}
 
 export function getQuestionBankMeta(id: string | null | undefined): QuestionBankMeta | undefined {
   if (!id) return undefined;

@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
-import { Navigate, useLocation } from "react-router-dom";
-import { getLevelIdForBank } from "@/data/questionBanks";
-import { DEFAULT_LEVEL_ID, legacyRedirectTarget } from "@/lib/routes";
+import { Navigate } from "react-router-dom";
+import { defaultPostLoginPath } from "@/lib/routes";
 import { useAppStore } from "@/stores/appStore";
 
-/** 旧书签路径重定向到 AITrainer/{levelId}/theory 下对应路由 */
-export function LegacyRedirect() {
-  const { pathname, search } = useLocation();
+/** 根路径 / 404 等：按已选题库跳到对应 level 理论首页，否则去选题 */
+export function DefaultTheoryRedirect() {
   const [hydrated, setHydrated] = useState(() => useAppStore.persist.hasHydrated());
   const bankId = useAppStore((s) => s.selectedQuestionBankId);
 
@@ -24,8 +22,5 @@ export function LegacyRedirect() {
     );
   }
 
-  const levelId = getLevelIdForBank(bankId) ?? DEFAULT_LEVEL_ID;
-  const target = legacyRedirectTarget(pathname, levelId);
-  if (!target) return <Navigate to="/" replace />;
-  return <Navigate to={`${target}${search}`} replace />;
+  return <Navigate to={defaultPostLoginPath(bankId)} replace />;
 }

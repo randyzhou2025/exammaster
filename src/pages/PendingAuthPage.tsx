@@ -1,11 +1,13 @@
 import { useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { hasExamAccess, getAccessBlockReason } from "@/lib/examAccess";
-import { routes } from "@/lib/routes";
+import { defaultPostLoginPath, routes } from "@/lib/routes";
+import { useAppStore } from "@/stores/appStore";
 import { useAuthStore } from "@/stores/authStore";
 
 export function PendingAuthPage() {
   const user = useAuthStore((s) => s.user);
+  const bankId = useAppStore((s) => s.selectedQuestionBankId);
   const logout = useAuthStore((s) => s.logout);
   const bootstrap = useAuthStore((s) => s.bootstrap);
   const navigate = useNavigate();
@@ -13,9 +15,9 @@ export function PendingAuthPage() {
   useEffect(() => {
     if (!user) return;
     if (hasExamAccess(user)) {
-      navigate(routes.theoryHome, { replace: true });
+      navigate(defaultPostLoginPath(bankId), { replace: true });
     }
-  }, [user, navigate]);
+  }, [user, navigate, bankId]);
 
   const reason = searchParams.get("reason");
   const block = user ? getAccessBlockReason(user) : null;

@@ -2,7 +2,7 @@ import { useMemo, useState, useEffect, useRef, useCallback, useLayoutEffect } fr
 import { Navigate, useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import { TypeTag } from "@/components/TypeTag";
-import { routes } from "@/lib/routes";
+import { useLevelRoutes } from "@/hooks/useLevelRoutes";
 import { getExamTemplateForBank } from "@/data/questionBanks";
 import { useAppStore } from "@/stores/appStore";
 import { totalScoreForPaper } from "@/domain/scoring";
@@ -32,6 +32,7 @@ function countUnanswered(
 
 export function MockExamPage() {
   const nav = useNavigate();
+  const { routes: lr } = useLevelRoutes();
   const bankId = useAppStore((s) => s.selectedQuestionBankId);
   const examTemplate = getExamTemplateForBank(bankId);
   const mock = useAppStore((s) => s.mockExam);
@@ -121,7 +122,7 @@ export function MockExamPage() {
         durationUsedSec: used,
         questionIds: snap.paperIds,
       });
-      nav(routes.theoryMockResult, {
+      nav(lr.theoryMockResult, {
         replace: true,
         state: { score, max, paper: fullPaper, answers: snap.answers },
       });
@@ -145,7 +146,7 @@ export function MockExamPage() {
   }, [examStartedAt, handleSubmit]);
 
   if (!mock || !q) {
-    return <Navigate to={routes.theoryHome} replace />;
+    return <Navigate to={lr.theoryHome} replace />;
   }
 
   const idx = mock.currentIndex;
@@ -302,7 +303,7 @@ export function MockExamPage() {
           onClick={() => {
             if (window.confirm("确定退出考试？本次成绩将作废。")) {
               useAppStore.getState().abortMockExam();
-              nav(routes.theoryMock, { replace: true });
+              nav(lr.theoryMock, { replace: true });
             }
           }}
           className="text-sm text-neutral-600"

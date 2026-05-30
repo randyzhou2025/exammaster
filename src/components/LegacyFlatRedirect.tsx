@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { getLevelIdForBank } from "@/data/questionBanks";
-import { DEFAULT_LEVEL_ID, legacyRedirectTarget } from "@/lib/routes";
+import { DEFAULT_LEVEL_ID, levelRoutes } from "@/lib/routes";
 import { useAppStore } from "@/stores/appStore";
 
-/** 旧书签路径重定向到 AITrainer/{levelId}/theory 下对应路由 */
-export function LegacyRedirect() {
-  const { pathname, search } = useLocation();
+type LevelRouteKey = Exclude<keyof ReturnType<typeof levelRoutes>, "theoryPracticeKind">;
+
+/** 旧扁平书签 → 当前 level 下对应理论/实操路由 */
+export function LegacyFlatRedirect({ target }: { target: LevelRouteKey }) {
   const [hydrated, setHydrated] = useState(() => useAppStore.persist.hasHydrated());
   const bankId = useAppStore((s) => s.selectedQuestionBankId);
 
@@ -25,7 +26,5 @@ export function LegacyRedirect() {
   }
 
   const levelId = getLevelIdForBank(bankId) ?? DEFAULT_LEVEL_ID;
-  const target = legacyRedirectTarget(pathname, levelId);
-  if (!target) return <Navigate to="/" replace />;
-  return <Navigate to={`${target}${search}`} replace />;
+  return <Navigate to={levelRoutes(levelId)[target]} replace />;
 }

@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import { useShallow } from "zustand/react/shallow";
-import { routes } from "@/lib/routes";
+import { useLevelRoutes } from "@/hooks/useLevelRoutes";
 import { CODE_FILL_BANK } from "@/data/codeFillBank";
 import { getQuestionBankMeta } from "@/data/questionBanks";
 import { useAppStore } from "@/stores/appStore";
@@ -17,11 +17,9 @@ const ALL_IDS = CODE_FILL_BANK.map((q) => q.id);
 
 export function OperateDashboardPage() {
   const nav = useNavigate();
+  const { routes: lr } = useLevelRoutes();
   const bankId = useAppStore((s) => s.selectedQuestionBankId);
   const bankMeta = getQuestionBankMeta(bankId);
-  if (bankMeta?.operate === false) {
-    return <Navigate to={routes.theoryHome} replace />;
-  }
   const hydrated = useCodeFillStoreHydrated();
   const stats = useCodeFillStore(useShallow(selectCodeFillStats));
   const byId = useCodeFillStore((s) => s.byId);
@@ -46,7 +44,7 @@ export function OperateDashboardPage() {
 
   const handleStart = () => {
     startPractice(mode, mode === "pick" ? [...picked].sort() : undefined);
-    nav(routes.operateSession);
+    nav(lr.operateSession);
   };
 
   const completedSet = useMemo(
@@ -57,11 +55,15 @@ export function OperateDashboardPage() {
   const completedLabel = hydrated ? String(stats.completed) : "—";
   const completedRatio = hydrated ? `${stats.completed} / ${stats.total}` : `— / ${stats.total}`;
 
+  if (bankMeta?.operate === false) {
+    return <Navigate to={lr.theoryHome} replace />;
+  }
+
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-gradient-to-b from-violet-600 to-indigo-800 pb-[calc(2rem+env(safe-area-inset-bottom,0px))] text-white">
       <header className="flex items-center gap-3 px-3 pt-2">
         <Link
-          to={routes.theoryHome}
+          to={lr.theoryHome}
           className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/10"
           aria-label="返回"
         >

@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { routes } from "@/lib/routes";
+import { useLevelRoutes } from "@/hooks/useLevelRoutes";
 import { getExamTemplateForBank } from "@/data/questionBanks";
 import type { Question } from "@/types/exam";
 import { isAnswerCorrect } from "@/domain/scoring";
@@ -13,6 +13,7 @@ interface LocationState {
 }
 
 export function MockExamResultPage() {
+  const { routes: lr } = useLevelRoutes();
   const nav = useNavigate();
   const loc = useLocation();
   const bankId = useAppStore((s) => s.selectedQuestionBankId);
@@ -23,7 +24,7 @@ export function MockExamResultPage() {
     return (
       <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-3 p-6">
         <p className="text-sm text-neutral-600">暂无成绩数据</p>
-        <Link to={routes.theoryMock} className="text-brand font-medium">
+        <Link to={lr.theoryMock} className="text-brand font-medium">
           返回模考
         </Link>
       </div>
@@ -54,7 +55,7 @@ export function MockExamResultPage() {
 
       <div className="mt-6 space-y-3">
         <Link
-          to={routes.theoryMock}
+          to={lr.theoryMock}
           className="block w-full rounded-xl bg-brand py-3 text-center text-sm font-semibold text-white"
         >
           再考一次

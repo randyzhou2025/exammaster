@@ -4,7 +4,7 @@ import clsx from "clsx";
 import { CodeFillLine } from "@/components/codefill/CodeFillLine";
 import { gradeCodeFillQuestion } from "@/domain/codeFillScoring";
 import { getQuestionBankMeta } from "@/data/questionBanks";
-import { routes } from "@/lib/routes";
+import { useLevelRoutes } from "@/hooks/useLevelRoutes";
 import { useAppStore } from "@/stores/appStore";
 import { useCodeFillStore } from "@/stores/codeFillStore";
 
@@ -30,10 +30,9 @@ function isRenderableCell(cell: { lines: string[]; blanks: { id: string }[]; sou
 
 export function OperateSessionPage() {
   const nav = useNavigate();
+  const { routes: lr } = useLevelRoutes();
   const bankId = useAppStore((s) => s.selectedQuestionBankId);
-  if (getQuestionBankMeta(bankId)?.operate === false) {
-    return <Navigate to={routes.theoryHome} replace />;
-  }
+  const bankMeta = getQuestionBankMeta(bankId);
   const practice = useCodeFillStore((s) => s.practice);
   const bank = useCodeFillStore((s) => s.bank);
   const byId = useCodeFillStore((s) => s.byId);
@@ -79,15 +78,19 @@ export function OperateSessionPage() {
     : 0;
   const codeLineCount = visibleCells.reduce((n, c) => n + c.lines.filter((l) => l.trim()).length, 0);
 
+  if (bankMeta?.operate === false) {
+    return <Navigate to={lr.theoryHome} replace />;
+  }
+
   if (!practice) {
-    return <Navigate to={routes.operateHome} replace />;
+    return <Navigate to={lr.operateHome} replace />;
   }
 
   if (!q) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-3 p-6">
         <p className="text-neutral-600">未找到题目</p>
-        <Link to={routes.operateHome} className="text-brand">
+        <Link to={lr.operateHome} className="text-brand">
           返回配置
         </Link>
       </div>
@@ -129,7 +132,7 @@ export function OperateSessionPage() {
           type="button"
           onClick={() => {
             exitPractice();
-            nav(routes.operateHome);
+            nav(lr.operateHome);
           }}
           className="rounded-lg px-2 py-1 text-sm text-brand"
         >

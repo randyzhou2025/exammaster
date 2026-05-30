@@ -6,6 +6,7 @@ import { SegmentedControl } from "@/components/SegmentedControl";
 import { TypeTag } from "@/components/TypeTag";
 import type { Question } from "@/types/exam";
 import { isAnswerCorrect } from "@/domain/scoring";
+import { useLevelRoutes } from "@/hooks/useLevelRoutes";
 import { routes } from "@/lib/routes";
 import {
   useAppStore,
@@ -33,6 +34,7 @@ type AnswerUiSnapshot = { selected: string[]; lastCorrect: boolean };
 
 export function PracticePage() {
   const nav = useNavigate();
+  const { routes: lr } = useLevelRoutes();
   const practice = useAppStore((s) => s.practice);
   const bank = useAppStore((s) => s.bank);
   const byId = useAppStore((s) => s.byId);
@@ -207,14 +209,14 @@ export function PracticePage() {
 
   /** 无进行中的会话时回首页（持久化未完成前由 persistReady 挡掉，避免误判） */
   if (!practice) {
-    return <Navigate to={routes.theoryHome} replace />;
+    return <Navigate to={lr.theoryHome} replace />;
   }
 
   if (practice.orderedIds.length === 0 || !q) {
     return (
       <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-4 p-6">
         <p className="text-sm text-neutral-600">当前模式暂无可用题目</p>
-        <Link to={routes.theorySequential} className="text-brand font-medium">
+        <Link to={lr.theorySequential} className="text-brand font-medium">
           返回顺序练习
         </Link>
       </div>

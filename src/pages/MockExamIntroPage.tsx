@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { routes } from "@/lib/routes";
+import { useLevelRoutes } from "@/hooks/useLevelRoutes";
 import { assembleMockExamPaper } from "@/domain/examAssembly";
 import { formatExamTemplateSummary, getExamTemplateForBank } from "@/data/questionBanks";
 import { useAppStore } from "@/stores/appStore";
@@ -7,6 +7,7 @@ import { useMemo, useState } from "react";
 
 export function MockExamIntroPage() {
   const nav = useNavigate();
+  const { routes: lr } = useLevelRoutes();
   const bank = useAppStore((s) => s.bank);
   const bankId = useAppStore((s) => s.selectedQuestionBankId);
   const examTemplate = getExamTemplateForBank(bankId);
@@ -42,13 +43,13 @@ export function MockExamIntroPage() {
     }
     setErr(null);
     startMockExam(res.paper.map((q) => q.id));
-    nav(routes.theoryMockSession);
+    nav(lr.theoryMockSession);
   };
 
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-gradient-to-b from-brand to-brand-dark pb-[calc(1rem+env(safe-area-inset-bottom,0px))] text-white">
       <header className="flex items-center gap-2 px-2 pt-2">
-        <Link to={routes.theoryHome} className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/10">
+        <Link to={lr.theoryHome} className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/10">
           ←
         </Link>
         <h1 className="flex-1 text-center text-base font-semibold">资格证模拟考试</h1>
@@ -83,7 +84,7 @@ export function MockExamIntroPage() {
             开始考试
           </button>
           <Link
-            to={routes.theoryHome}
+            to={lr.theoryHome}
             className="mt-3 block w-full rounded-xl border border-neutral-200 py-3 text-center text-neutral-700"
           >
             返回

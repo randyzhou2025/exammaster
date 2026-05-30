@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useShallow } from "zustand/react/shallow";
 import { formatExamTemplateSummary, getExamTemplateForBank, getQuestionBankMeta } from "@/data/questionBanks";
+import { useLevelRoutes } from "@/hooks/useLevelRoutes";
 import { routes } from "@/lib/routes";
 import { useAppStore, selectStats } from "@/stores/appStore";
 import { useAuthStore } from "@/stores/authStore";
@@ -11,6 +12,7 @@ const SEQ_ENTRY_CLASS =
 
 export function TheoryHomePage() {
   const nav = useNavigate();
+  const { routes: lr } = useLevelRoutes();
   const user = useAuthStore((s) => s.user);
   const bankId = useAppStore((s) => s.selectedQuestionBankId);
   const bankMeta = getQuestionBankMeta(bankId);
@@ -31,7 +33,7 @@ export function TheoryHomePage() {
 
   const openSequential = () => {
     startPractice("sequential");
-    nav(routes.theoryPracticeSession);
+    nav(lr.theoryPracticeSession);
   };
 
   return (
@@ -68,14 +70,14 @@ export function TheoryHomePage() {
                 <span className="mt-1 text-2xl font-bold tabular-nums">{seqDone}</span>
               </button>
             ) : (
-              <Link to={routes.theorySequential} className={SEQ_ENTRY_CLASS}>
+              <Link to={lr.theorySequential} className={SEQ_ENTRY_CLASS}>
                 <span className="text-sm font-medium opacity-90">顺序练习</span>
                 <span className="mt-1 text-2xl font-bold tabular-nums">{seqDone}</span>
               </Link>
             )}
 
             <Link
-              to={routes.theoryMock}
+              to={lr.theoryMock}
               className="relative inline-flex rounded-full p-1.5 shadow-sm outline-none ring-neutral-200/80 transition hover:ring-2"
               aria-label="进入模拟考试"
             >
@@ -94,14 +96,14 @@ export function TheoryHomePage() {
 
           <div className="mt-8 grid grid-cols-2 gap-3 text-sm">
             <Link
-              to={routes.theoryWrongBook}
+              to={lr.theoryWrongBook}
               className="rounded-xl border border-neutral-200 bg-surface px-3 py-3 text-center font-medium text-neutral-800"
             >
               错题本
               <span className="mt-1 block text-xs font-normal text-neutral-500">{stats.wrongBookCount} 题</span>
             </Link>
             <Link
-              to={`${routes.theoryWrongBook}?tab=favorite`}
+              to={`${lr.theoryWrongBook}?tab=favorite`}
               className="rounded-xl border border-neutral-200 bg-surface px-3 py-3 text-center font-medium text-neutral-800"
             >
               我的收藏
@@ -115,7 +117,7 @@ export function TheoryHomePage() {
             <h2 className="text-center text-base font-bold text-neutral-800">实操练习</h2>
             <p className="mt-2 text-center text-xs text-neutral-500">Python 代码填空 · 20 题</p>
             <Link
-              to={routes.operateHome}
+              to={lr.operateHome}
               className="mt-6 flex flex-col items-center justify-center rounded-xl border border-violet-200 bg-gradient-to-br from-violet-50 to-indigo-50 py-8"
             >
               <span className="text-sm font-medium text-violet-800">代码填空练习</span>

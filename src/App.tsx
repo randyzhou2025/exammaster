@@ -1,13 +1,16 @@
 import { useEffect } from "react";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ActivityPingWatcher } from "@/components/ActivityPingWatcher";
 import { AppShell } from "@/components/AppShell";
+import { DefaultTheoryRedirect } from "@/components/DefaultTheoryRedirect";
+import { LegacyFlatRedirect } from "@/components/LegacyFlatRedirect";
 import { LegacyRedirect } from "@/components/LegacyRedirect";
+import { LevelHomeRedirect } from "@/components/LevelHomeRedirect";
 import { RequireAdmin } from "@/components/RequireAdmin";
 import { RequireExamAccess } from "@/components/RequireExamAccess";
 import { RequireQuestionBank } from "@/components/RequireQuestionBank";
 import { RequireLogin } from "@/components/RequireLogin";
-import { routes } from "@/lib/routes";
+import { LEVEL_ROUTE_PREFIX, routes } from "@/lib/routes";
 import { TheoryHomePage } from "@/pages/TheoryHomePage";
 import { SequentialDashboardPage } from "@/pages/SequentialDashboardPage";
 import { PracticePage } from "@/pages/PracticePage";
@@ -32,6 +35,8 @@ import { useAuthStore } from "@/stores/authStore";
 const routerBasename =
   import.meta.env.BASE_URL === "/" ? undefined : import.meta.env.BASE_URL.replace(/\/$/, "");
 
+const levelPath = (suffix: string) => `${LEVEL_ROUTE_PREFIX}${suffix}`;
+
 export default function App() {
   const bootstrap = useAuthStore((s) => s.bootstrap);
 
@@ -54,26 +59,26 @@ export default function App() {
             <Route element={<RequireExamAccess />}>
               <Route path="/banks" element={<QuestionBankPage />} />
               <Route element={<RequireQuestionBank />}>
-                <Route path={routes.levelHome} element={<Navigate to={routes.theoryHome} replace />} />
-                <Route path={routes.theoryHome} element={<TheoryHomePage />} />
-                <Route path={routes.theorySequential} element={<SequentialDashboardPage />} />
-                <Route path={routes.theoryWrongBook} element={<WrongBookPage />} />
-                <Route path="/AITrainer/level3/theory/practice/:kind" element={<PracticeEntryPage />} />
-                <Route path={routes.theoryPracticeSession} element={<PracticePage />} />
-                <Route path={routes.theoryMock} element={<MockExamIntroPage />} />
-                <Route path={routes.theoryMockSession} element={<MockExamPage />} />
-                <Route path={routes.theoryMockResult} element={<MockExamResultPage />} />
-                <Route path={routes.operateHome} element={<OperateDashboardPage />} />
-                <Route path={routes.operateSession} element={<OperateSessionPage />} />
+                <Route path={levelPath("")} element={<LevelHomeRedirect />} />
+                <Route path={levelPath("/theory")} element={<TheoryHomePage />} />
+                <Route path={levelPath("/theory/sequential")} element={<SequentialDashboardPage />} />
+                <Route path={levelPath("/theory/wrong-book")} element={<WrongBookPage />} />
+                <Route path={levelPath("/theory/practice/:kind")} element={<PracticeEntryPage />} />
+                <Route path={levelPath("/theory/practice/session")} element={<PracticePage />} />
+                <Route path={levelPath("/theory/mock")} element={<MockExamIntroPage />} />
+                <Route path={levelPath("/theory/mock/session")} element={<MockExamPage />} />
+                <Route path={levelPath("/theory/mock/result")} element={<MockExamResultPage />} />
+                <Route path={levelPath("/operate")} element={<OperateDashboardPage />} />
+                <Route path={levelPath("/operate/session")} element={<OperateSessionPage />} />
 
                 {/* 旧扁平路由重定向 */}
-                <Route path="/" element={<Navigate to={routes.theoryHome} replace />} />
-                <Route path="/sequential" element={<Navigate to={routes.theorySequential} replace />} />
-                <Route path="/wrong-book" element={<Navigate to={routes.theoryWrongBook} replace />} />
-                <Route path="/mock" element={<Navigate to={routes.theoryMock} replace />} />
-                <Route path="/mock/session" element={<Navigate to={routes.theoryMockSession} replace />} />
-                <Route path="/mock/result" element={<Navigate to={routes.theoryMockResult} replace />} />
-                <Route path="/practice/session" element={<Navigate to={routes.theoryPracticeSession} replace />} />
+                <Route path="/" element={<DefaultTheoryRedirect />} />
+                <Route path="/sequential" element={<LegacyFlatRedirect target="theorySequential" />} />
+                <Route path="/wrong-book" element={<LegacyFlatRedirect target="theoryWrongBook" />} />
+                <Route path="/mock" element={<LegacyFlatRedirect target="theoryMock" />} />
+                <Route path="/mock/session" element={<LegacyFlatRedirect target="theoryMockSession" />} />
+                <Route path="/mock/result" element={<LegacyFlatRedirect target="theoryMockResult" />} />
+                <Route path="/practice/session" element={<LegacyFlatRedirect target="theoryPracticeSession" />} />
                 <Route path="/practice/:kind" element={<LegacyRedirect />} />
               </Route>
             </Route>
@@ -85,7 +90,8 @@ export default function App() {
               <Route path={routes.adminHomepageActivity} element={<AdminHomepageActivityPage />} />
             </Route>
 
-            <Route path="*" element={<Navigate to={routes.theoryHome} replace />} />
+            <Route path={routes.examTrainerRoot} element={<DefaultTheoryRedirect />} />
+            <Route path="*" element={<DefaultTheoryRedirect />} />
           </Route>
         </Route>
       </Routes>
