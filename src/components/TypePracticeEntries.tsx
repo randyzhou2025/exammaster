@@ -50,11 +50,11 @@ export function TypePracticeEntries() {
   };
 
   return (
-    <div className="mt-5 border-t border-neutral-100 pt-5">
-      <p className="text-center text-xs text-neutral-500">按题型练 · 各题型可选顺序或随机</p>
+    <div className="mt-5 border-t border-neutral-100 pt-4">
+      <p className="text-center text-xs font-medium text-neutral-400">按题型练</p>
       <div
         className={clsx(
-          "mt-3 grid gap-2.5 text-sm",
+          "mt-2.5 grid gap-2 text-sm",
           entries.length === 2 ? "grid-cols-2" : "grid-cols-3"
         )}
       >
@@ -65,7 +65,7 @@ export function TypePracticeEntries() {
             <div
               key={type}
               className={clsx(
-                "flex min-w-0 flex-col items-center gap-1.5 rounded-xl border-2 px-1.5 py-3 text-center shadow-sm",
+                "flex min-w-0 flex-col items-center gap-1 rounded-xl border px-1.5 py-2.5 text-center",
                 style.shell
               )}
             >
@@ -77,7 +77,7 @@ export function TypePracticeEntries() {
               >
                 {label.replace("题", "")}
               </span>
-              <span className="text-lg font-bold tabular-nums leading-none text-neutral-900">
+              <span className="text-[11px] tabular-nums leading-none text-neutral-500">
                 {stats.answered}/{stats.total}
               </span>
               <div className="mt-0.5 grid w-full grid-cols-2 gap-1">

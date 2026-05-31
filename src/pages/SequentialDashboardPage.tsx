@@ -24,7 +24,7 @@ export function SequentialDashboardPage() {
         >
           ←
         </button>
-        <h1 className="flex-1 text-center text-base font-semibold">顺序练习</h1>
+        <h1 className="flex-1 text-center text-base font-semibold">理论练习</h1>
         <span className="w-10" />
       </header>
 
@@ -55,7 +55,7 @@ export function SequentialDashboardPage() {
             </div>
           </div>
 
-          <div className="mt-5 grid grid-cols-3 gap-2 text-sm">
+          <div className="mt-5 grid grid-cols-3 gap-2 rounded-xl bg-neutral-50 px-2 py-3 text-sm">
             <StatGridCell value={stats.unanswered} label="未做题" />
             <StatGridCell value={stats.answered} label="已做题" />
             <StatGridCell
@@ -67,9 +67,7 @@ export function SequentialDashboardPage() {
             />
           </div>
 
-          <TypePracticeEntries />
-
-          <div className="mt-6 grid grid-cols-2 gap-2">
+          <div className="mt-5 grid grid-cols-2 gap-2">
             <button
               type="button"
               onClick={() => {
@@ -91,6 +89,8 @@ export function SequentialDashboardPage() {
               随机练习
             </button>
           </div>
+
+          <TypePracticeEntries />
         </div>
       </div>
 
@@ -117,7 +117,7 @@ export function SequentialDashboardPage() {
 }
 
 const STAT_CELL_SHELL =
-  "flex min-h-[52px] w-full flex-col items-center justify-center gap-0.5 rounded-lg text-center";
+  "flex min-h-[60px] w-full flex-col items-center justify-center gap-1 rounded-lg text-center";
 
 function StatGridCell({
   value,
@@ -134,8 +134,8 @@ function StatGridCell({
 }) {
   const inner = (
     <>
-      <span className={`text-lg font-bold tabular-nums leading-none ${valueClassName}`}>{value}</span>
-      <span className="block text-xs leading-tight text-neutral-500">{label}</span>
+      <span className={`text-2xl font-bold tabular-nums leading-none ${valueClassName}`}>{value}</span>
+      <span className="block text-xs font-medium leading-tight text-neutral-500">{label}</span>
     </>
   );
   if (interactive && onClick) {
