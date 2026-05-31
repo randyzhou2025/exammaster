@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Navigate, Outlet, useParams } from "react-router-dom";
 import { getBankIdForLevel, isKnownLevelId } from "@/data/questionBanks";
 import { routes } from "@/lib/routes";
@@ -10,6 +10,7 @@ export function RequireQuestionBank() {
   const { levelId } = useParams<{ levelId?: string }>();
   const selectedQuestionBankId = useAppStore((s) => s.selectedQuestionBankId);
   const setSelectedQuestionBankId = useAppStore((s) => s.setSelectedQuestionBankId);
+  const lastSyncedBankIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     const unsub = useAppStore.persist.onFinishHydration(() => setHydrated(true));
@@ -19,11 +20,15 @@ export function RequireQuestionBank() {
 
   const bankIdFromUrl = levelId && isKnownLevelId(levelId) ? getBankIdForLevel(levelId) : undefined;
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!hydrated || !bankIdFromUrl) return;
-    if (bankIdFromUrl !== selectedQuestionBankId) {
-      setSelectedQuestionBankId(bankIdFromUrl);
+    if (selectedQuestionBankId === bankIdFromUrl) {
+      lastSyncedBankIdRef.current = bankIdFromUrl;
+      return;
     }
+    if (lastSyncedBankIdRef.current === bankIdFromUrl) return;
+    lastSyncedBankIdRef.current = bankIdFromUrl;
+    setSelectedQuestionBankId(bankIdFromUrl);
   }, [hydrated, bankIdFromUrl, selectedQuestionBankId, setSelectedQuestionBankId]);
 
   if (!hydrated) {
@@ -36,14 +41,6 @@ export function RequireQuestionBank() {
 
   if (levelId && !isKnownLevelId(levelId)) {
     return <Navigate to={routes.banks} replace />;
-  }
-
-  if (bankIdFromUrl && selectedQuestionBankId !== bankIdFromUrl) {
-    return (
-      <div className="flex min-h-dvh items-center justify-center bg-surface text-neutral-600">
-        加载中…
-      </div>
-    );
   }
 
   if (!selectedQuestionBankId) {

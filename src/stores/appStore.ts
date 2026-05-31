@@ -1,12 +1,13 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { Question } from "@/types/exam";
-import type { MockExamRecord } from "@/types/exam";
+import type { MockExamRecord, QuestionType } from "@/types/exam";
 import { DEFAULT_QUESTION_BANK_ID, getExamTemplateForBank, QUESTION_BANKS } from "@/data/questionBanks";
 import { normalizeQuestionBankId, resolveTheoryBank } from "@/data/resolveTheoryBank";
 import { isAnswerCorrect } from "@/domain/scoring";
 import type { BackupPayload } from "@/lib/backup";
 import { BACKUP_FORMAT_VERSION } from "@/lib/backup";
+import { isTypePracticeKind, practiceKindToQuestionType, type TypePracticeKind } from "@/lib/practice";
 
 const STORAGE_KEY = "ai-trainer-exam-v2";
 
@@ -48,7 +49,8 @@ export type PracticeKind =
   | "random"
   | "unanswered"
   | "wrong"
-  | "favorite";
+  | "favorite"
+  | TypePracticeKind;
 
 export interface AppPrefs {
   /** 答对后是否自动移出错题本（开启时 MVP 固定为答对 1 次即移除） */
@@ -210,6 +212,9 @@ const PRACTICE_KINDS: readonly PracticeKind[] = [
   "unanswered",
   "wrong",
   "favorite",
+  "type-judgment",
+  "type-single",
+  "type-multiple",
 ];
 
 /**
@@ -249,6 +254,17 @@ export function normalizePersistedPractice(
         index = Math.max(0, Math.min(index, orderedIds.length - 1));
       }
     }
+  } else if (isTypePracticeKind(kind)) {
+    orderedIds = buildOrderedIds(kind, bank, byId);
+    if (orderedIds.length === 0) return null;
+    if (savedOrdered.length > 0) {
+      const at = Math.max(0, Math.min(index, savedOrdered.length - 1));
+      const focusId = savedOrdered[at];
+      if (focusId && orderedIds.includes(focusId)) {
+        index = orderedIds.indexOf(focusId);
+      }
+    }
+    index = Math.max(0, Math.min(index, orderedIds.length - 1));
   } else {
     orderedIds = savedOrdered;
     if ((kind === "unanswered" || kind === "wrong" || kind === "favorite") && orderedIds.length === 0) {
@@ -304,8 +320,10 @@ function mergeSelectedQuestionBankId(p: Partial<PersistedSlice>, current: string
 }
 
 function buildOrderedIds(kind: PracticeKind, bank: Question[], byId: Record<string, QuestionRecord>): string[] {
-  const all = bank.map((q) => q.id);
-  if (kind === "sequential") return all;
+  const typeFilter = practiceKindToQuestionType(kind);
+  const pool = typeFilter ? bank.filter((q) => q.type === typeFilter) : bank;
+  const all = pool.map((q) => q.id);
+  if (kind === "sequential" || isTypePracticeKind(kind)) return all;
   if (kind === "random") return shuffleIds(all);
   if (kind === "unanswered")
     return all.filter((id) => effectiveLatestOutcome(byId[id] ?? defaultRecord()) === "unset");
@@ -358,6 +376,8 @@ export const useAppStore = create<AppState>()(
 
       setSelectedQuestionBankId: (id) => {
         const normalized = normalizeQuestionBankId(id);
+        const cur = get();
+        if (cur.selectedQuestionBankId === normalized) return;
         set({
           selectedQuestionBankId: normalized,
           bank: resolveTheoryBank(normalized),
@@ -381,6 +401,11 @@ export const useAppStore = create<AppState>()(
           if (i >= 0) index = i;
         } else if (kind === "sequential") {
           // 兜底：若无显式恢复点（如移动端重载导致未写入 sequentialResumeQuestionId），从第一道未做题继续。
+          const firstUnanswered = orderedIds.findIndex(
+            (id) => effectiveLatestOutcome(byId[id] ?? defaultRecord()) === "unset"
+          );
+          if (firstUnanswered >= 0) index = firstUnanswered;
+        } else if (isTypePracticeKind(kind)) {
           const firstUnanswered = orderedIds.findIndex(
             (id) => effectiveLatestOutcome(byId[id] ?? defaultRecord()) === "unset"
           );
@@ -714,4 +739,48 @@ export function selectStats(state: AppState) {
     favoriteCount,
     total: bank.length,
   };
+}
+
+export type TypePracticeStats = {
+  total: number;
+  answered: number;
+  unanswered: number;
+  attemptCorrect: number;
+  attemptWrong: number;
+};
+
+export function computeStatsByType(
+  bank: Question[],
+  byId: Record<string, QuestionRecord>
+): Record<QuestionType, TypePracticeStats> {
+  const empty = (): TypePracticeStats => ({
+    total: 0,
+    answered: 0,
+    unanswered: 0,
+    attemptCorrect: 0,
+    attemptWrong: 0,
+  });
+  const out: Record<QuestionType, TypePracticeStats> = {
+    judgment: empty(),
+    single: empty(),
+    multiple: empty(),
+  };
+  for (const q of bank) {
+    const bucket = out[q.type];
+    bucket.total += 1;
+    const o = effectiveLatestOutcome(byId[q.id] ?? defaultRecord());
+    if (o === "unset") bucket.unanswered += 1;
+    else if (o === "correct") {
+      bucket.answered += 1;
+      bucket.attemptCorrect += 1;
+    } else {
+      bucket.answered += 1;
+      bucket.attemptWrong += 1;
+    }
+  }
+  return out;
+}
+
+export function selectStatsByType(state: AppState): Record<QuestionType, TypePracticeStats> {
+  return computeStatsByType(state.bank, state.byId);
 }

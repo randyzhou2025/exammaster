@@ -20,7 +20,7 @@ export interface Question {
 export const EXAM_TEMPLATE = {
   totalScore: 100,
   passScore: 60,
-  durationMinutes: 60,
+  durationMinutes: 90,
   sections: [
     { type: "judgment" as const, count: 40, score: 20, perScore: 0.5 },
     { type: "single" as const, count: 140, score: 70, perScore: 0.5 },

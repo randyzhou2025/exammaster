@@ -22,12 +22,12 @@ export interface ExamTemplate {
   sections: ExamTemplateSection[];
 }
 
-/** 三级官方模考：190 题 / 60 分钟 */
+/** 三级官方模考：190 题 / 90 分钟 */
 export const EXAM_TEMPLATE_L3: ExamTemplate = {
   id: "l3",
   totalScore: 100,
   passScore: 60,
-  durationMinutes: 60,
+  durationMinutes: 90,
   sections: [
     { type: "judgment", count: 40, score: 20, perScore: 0.5 },
     { type: "single", count: 140, score: 70, perScore: 0.5 },
@@ -118,4 +118,10 @@ export function formatExamTemplateSummary(template: ExamTemplate): string {
   });
   const totalQ = template.sections.reduce((n, s) => n + s.count, 0);
   return `${totalQ} 题 / ${template.durationMinutes} 分 · ${parts.join(" + ")}`;
+}
+
+/** 首页入口等短文案：仅题量与时长 */
+export function formatExamTemplateBrief(template: ExamTemplate): string {
+  const totalQ = template.sections.reduce((n, s) => n + s.count, 0);
+  return `${totalQ} 题 · ${template.durationMinutes} 分钟`;
 }

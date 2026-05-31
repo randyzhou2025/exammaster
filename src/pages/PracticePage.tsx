@@ -7,10 +7,12 @@ import { TypeTag } from "@/components/TypeTag";
 import type { Question } from "@/types/exam";
 import { isAnswerCorrect } from "@/domain/scoring";
 import { useLevelRoutes } from "@/hooks/useLevelRoutes";
+import { isTypePracticeKind, practiceKindLabel, practiceKindToQuestionType } from "@/lib/practice";
 import { routes } from "@/lib/routes";
 import {
   useAppStore,
   selectStats,
+  computeStatsByType,
   effectiveLatestOutcome,
   defaultRecord,
   type QuestionRecord,
@@ -45,6 +47,7 @@ export function PracticePage() {
   const toggleFavorite = useAppStore((s) => s.toggleFavorite);
   const exitPractice = useAppStore((s) => s.exitPractice);
   const stats = useAppStore(useShallow(selectStats));
+  const statsByType = useMemo(() => computeStatsByType(bank, byId), [bank, byId]);
 
   const [selected, setSelected] = useState<string[]>([]);
   const [graded, setGraded] = useState(false);
@@ -213,15 +216,30 @@ export function PracticePage() {
   }
 
   if (practice.orderedIds.length === 0 || !q) {
+    const typeFilter = practice ? practiceKindToQuestionType(practice.kind) : null;
     return (
       <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-4 p-6">
-        <p className="text-sm text-neutral-600">当前模式暂无可用题目</p>
-        <Link to={lr.theorySequential} className="text-brand font-medium">
-          返回顺序练习
+        <p className="text-sm text-neutral-600">
+          {typeFilter ? "当前题型暂无题目" : "当前模式暂无可用题目"}
+        </p>
+        <Link to={lr.theoryHome} className="text-brand font-medium">
+          返回首页
         </Link>
       </div>
     );
   }
+
+  const typeFilter = practiceKindToQuestionType(practice.kind);
+  const sessionStats = typeFilter ? statsByType[typeFilter] : stats;
+  const sessionLabel = practiceKindLabel(practice.kind);
+  const finishPractice = () => {
+    exitPractice();
+    if (isTypePracticeKind(practice.kind)) {
+      nav(lr.theoryHome);
+      return;
+    }
+    nav(lr.theorySequential);
+  };
 
   const index = practice.index;
   const total = practice.orderedIds.length;
@@ -261,7 +279,7 @@ export function PracticePage() {
     clearCorrectAdvanceTimer();
     if (index >= total - 1) {
       exitPractice();
-      nav("/sequential");
+      finishPractice();
       return;
     }
     slideIntentRef.current = "next";
@@ -394,7 +412,16 @@ export function PracticePage() {
       </header>
 
       <div className="border-b border-brand-light/50 bg-gradient-to-r from-brand-light/25 via-brand-light/35 to-brand-light/25 px-5 py-2 text-center text-[13px] font-medium tracking-wide text-brand-dark">
-        高效学习 · 文明备考
+        {typeFilter ? (
+          <span>
+            {sessionLabel} ·{" "}
+            <span className="tabular-nums">
+              {index + 1}/{total}
+            </span>
+          </span>
+        ) : (
+          "高效学习 · 文明备考"
+        )}
       </div>
 
       <main className="relative flex min-h-0 flex-1 flex-col overflow-x-hidden">
@@ -530,16 +557,16 @@ export function PracticePage() {
           收藏
         </button>
         <div className="flex items-center gap-3 tabular-nums">
-          <span className="leading-snug text-brand">答对 {stats.attemptCorrect}</span>
+          <span className="leading-snug text-brand">答对 {sessionStats.attemptCorrect}</span>
           <button
             type="button"
             className="m-0 border-0 bg-transparent p-0 leading-snug font-normal text-red-500 underline-offset-2 hover:underline"
             onClick={() => {
               exitPractice();
-              nav("/wrong-book");
+              nav(lr.theoryWrongBook);
             }}
           >
-            答错 {stats.attemptWrong}
+            答错 {sessionStats.attemptWrong}
           </button>
         </div>
         <button

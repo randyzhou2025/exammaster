@@ -70,7 +70,7 @@ export function HomePage() {
               <span className="relative flex h-[8.25rem] w-[8.25rem] flex-col items-center justify-center rounded-full bg-gradient-to-br from-teal-500 via-emerald-500 to-cyan-800 px-3 text-center text-white shadow-inner">
                 <span className="text-sm font-bold tracking-wide">模拟考试</span>
                 <span className="mt-1.5 text-[11px] font-normal leading-snug text-white/95">
-                  限时仿真 · 190 题 / 60 分
+                  限时仿真 · 190 题 / 90 分
                 </span>
               </span>
             </Link>

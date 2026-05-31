@@ -1,6 +1,6 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useShallow } from "zustand/react/shallow";
-import { formatExamTemplateSummary, getExamTemplateForBank, getQuestionBankMeta } from "@/data/questionBanks";
+import { formatExamTemplateBrief, getExamTemplateForBank, getQuestionBankMeta } from "@/data/questionBanks";
 import { useLevelRoutes } from "@/hooks/useLevelRoutes";
 import { routes } from "@/lib/routes";
 import { useAppStore, selectStats } from "@/stores/appStore";
@@ -11,7 +11,6 @@ const SEQ_ENTRY_CLASS =
   "flex h-36 w-36 flex-col items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-dark text-white shadow-lg ring-4 ring-brand-light/60";
 
 export function TheoryHomePage() {
-  const nav = useNavigate();
   const { routes: lr } = useLevelRoutes();
   const user = useAuthStore((s) => s.user);
   const bankId = useAppStore((s) => s.selectedQuestionBankId);
@@ -20,8 +19,7 @@ export function TheoryHomePage() {
   const levelLabel = bankMeta?.levelLabel ?? "三级";
   const showOperate = bankMeta?.operate !== false;
   const examTemplate = getExamTemplateForBank(bankId);
-  const mockSummary = formatExamTemplateSummary(examTemplate);
-  const startPractice = useAppStore((s) => s.startPractice);
+  const mockBrief = formatExamTemplateBrief(examTemplate);
   const stats = useAppStore(useShallow(selectStats));
   const codeFillHydrated = useCodeFillStoreHydrated();
   const codeStats = useCodeFillStore(useShallow(selectCodeFillStats));
@@ -29,12 +27,6 @@ export function TheoryHomePage() {
   const codeDone = codeFillHydrated
     ? `${codeStats.completed}/${codeStats.total}`
     : `—/${codeStats.total}`;
-  const neverPracticed = stats.answered === 0;
-
-  const openSequential = () => {
-    startPractice("sequential");
-    nav(lr.theoryPracticeSession);
-  };
 
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-gradient-to-b from-brand to-brand-dark pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))] text-white">
@@ -64,17 +56,10 @@ export function TheoryHomePage() {
           <p className="mt-2 text-center text-xs text-neutral-500">{bankTitle}</p>
 
           <div className="mt-8 flex flex-col items-center gap-6">
-            {neverPracticed ? (
-              <button type="button" className={`${SEQ_ENTRY_CLASS} cursor-pointer border-0`} onClick={openSequential}>
-                <span className="text-sm font-medium opacity-90">顺序练习</span>
-                <span className="mt-1 text-2xl font-bold tabular-nums">{seqDone}</span>
-              </button>
-            ) : (
-              <Link to={lr.theorySequential} className={SEQ_ENTRY_CLASS}>
-                <span className="text-sm font-medium opacity-90">顺序练习</span>
-                <span className="mt-1 text-2xl font-bold tabular-nums">{seqDone}</span>
-              </Link>
-            )}
+            <Link to={lr.theorySequential} className={SEQ_ENTRY_CLASS}>
+              <span className="text-sm font-medium opacity-90">顺序练习</span>
+              <span className="mt-1 text-2xl font-bold tabular-nums">{seqDone}</span>
+            </Link>
 
             <Link
               to={lr.theoryMock}
@@ -87,14 +72,12 @@ export function TheoryHomePage() {
               />
               <span className="relative flex h-[8.25rem] w-[8.25rem] flex-col items-center justify-center rounded-full bg-gradient-to-br from-teal-500 via-emerald-500 to-cyan-800 px-3 text-center text-white shadow-inner">
                 <span className="text-sm font-bold tracking-wide">模拟考试</span>
-                <span className="mt-1.5 text-[11px] font-normal leading-snug text-white/95">
-                  限时仿真 · {mockSummary}
-                </span>
+                <span className="mt-2 text-xs font-medium tabular-nums text-white/95">{mockBrief}</span>
               </span>
             </Link>
           </div>
 
-          <div className="mt-8 grid grid-cols-2 gap-3 text-sm">
+          <div className="mt-6 grid grid-cols-2 gap-3 text-sm">
             <Link
               to={lr.theoryWrongBook}
               className="rounded-xl border border-neutral-200 bg-surface px-3 py-3 text-center font-medium text-neutral-800"

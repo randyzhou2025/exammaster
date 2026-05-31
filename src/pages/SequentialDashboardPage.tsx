@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useShallow } from "zustand/react/shallow";
+import { TypePracticeEntries } from "@/components/TypePracticeEntries";
 import { useLevelRoutes } from "@/hooks/useLevelRoutes";
 import { useAppStore, selectStats } from "@/stores/appStore";
 
@@ -66,6 +67,8 @@ export function SequentialDashboardPage() {
             />
           </div>
 
+          <TypePracticeEntries />
+
           <button
             type="button"
             onClick={() => {
@@ -74,7 +77,7 @@ export function SequentialDashboardPage() {
             }}
             className="mt-6 w-full rounded-xl bg-brand py-3 text-base font-semibold text-white active:bg-brand-dark"
           >
-            继续练习
+            {stats.answered === 0 ? "开始顺序练习" : "继续练习"}
           </button>
         </div>
       </div>
@@ -100,7 +103,7 @@ export function SequentialDashboardPage() {
         <MiniMode
           label="错题"
           onClick={() => {
-            nav("/wrong-book");
+            nav(lr.theoryWrongBook);
           }}
         />
       </div>
