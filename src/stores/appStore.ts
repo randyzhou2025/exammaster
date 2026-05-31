@@ -7,7 +7,7 @@ import { normalizeQuestionBankId, resolveTheoryBank } from "@/data/resolveTheory
 import { isAnswerCorrect } from "@/domain/scoring";
 import type { BackupPayload } from "@/lib/backup";
 import { BACKUP_FORMAT_VERSION } from "@/lib/backup";
-import { isTypePracticeKind, practiceKindToQuestionType, type TypePracticeKind } from "@/lib/practice";
+import { isTypePracticeKind, practiceKindToQuestionType, type TypePracticeKind, type TypePracticeOrder } from "@/lib/practice";
 
 const STORAGE_KEY = "ai-trainer-exam-v2";
 
@@ -99,6 +99,8 @@ interface AppState {
     orderedIds: string[];
     index: number;
     uiMode: UiStudyMode;
+    /** 题型专项：顺序或随机抽题 */
+    typeOrder?: TypePracticeOrder;
   };
   mockExam: null | {
     paperIds: string[];
@@ -115,7 +117,11 @@ interface AppState {
   setPrefs: (partial: Partial<AppPrefs>) => void;
   setSelectedQuestionBankId: (id: string) => void;
   setBank: (q: Question[]) => void;
-  startPractice: (kind: PracticeKind, uiMode?: UiStudyMode, opts?: { startQuestionId?: string }) => void;
+  startPractice: (
+    kind: PracticeKind,
+    uiMode?: UiStudyMode,
+    opts?: { startQuestionId?: string; typeOrder?: TypePracticeOrder }
+  ) => void;
   clearWrongBook: () => void;
   setPracticeUiMode: (m: UiStudyMode) => void;
   setPracticeIndex: (i: number) => void;
@@ -232,6 +238,7 @@ export function normalizePersistedPractice(
   if (typeof kind !== "string" || !PRACTICE_KINDS.includes(kind as PracticeKind)) return null;
 
   const uiMode: UiStudyMode = o.uiMode === "memorize" ? "memorize" : "answer";
+  const typeOrder: TypePracticeOrder = o.typeOrder === "random" ? "random" : "sequential";
   const bankIds = new Set(bank.map((q) => q.id));
   let index = typeof o.index === "number" && Number.isFinite(o.index) ? Math.trunc(o.index) : 0;
 
@@ -255,7 +262,7 @@ export function normalizePersistedPractice(
       }
     }
   } else if (isTypePracticeKind(kind)) {
-    orderedIds = buildOrderedIds(kind, bank, byId);
+    orderedIds = buildOrderedIds(kind, bank, byId, typeOrder);
     if (orderedIds.length === 0) return null;
     if (savedOrdered.length > 0) {
       const at = Math.max(0, Math.min(index, savedOrdered.length - 1));
@@ -283,6 +290,7 @@ export function normalizePersistedPractice(
     orderedIds,
     index,
     uiMode,
+    ...(isTypePracticeKind(kind) ? { typeOrder } : {}),
   };
 }
 
@@ -319,11 +327,19 @@ function mergeSelectedQuestionBankId(p: Partial<PersistedSlice>, current: string
   return current ?? DEFAULT_QUESTION_BANK_ID;
 }
 
-function buildOrderedIds(kind: PracticeKind, bank: Question[], byId: Record<string, QuestionRecord>): string[] {
+function buildOrderedIds(
+  kind: PracticeKind,
+  bank: Question[],
+  byId: Record<string, QuestionRecord>,
+  typeOrder: TypePracticeOrder = "sequential"
+): string[] {
   const typeFilter = practiceKindToQuestionType(kind);
   const pool = typeFilter ? bank.filter((q) => q.type === typeFilter) : bank;
   const all = pool.map((q) => q.id);
-  if (kind === "sequential" || isTypePracticeKind(kind)) return all;
+  if (kind === "sequential") return all;
+  if (isTypePracticeKind(kind)) {
+    return typeOrder === "random" ? shuffleIds(all) : all;
+  }
   if (kind === "random") return shuffleIds(all);
   if (kind === "unanswered")
     return all.filter((id) => effectiveLatestOutcome(byId[id] ?? defaultRecord()) === "unset");
@@ -391,7 +407,13 @@ export const useAppStore = create<AppState>()(
 
       startPractice: (kind, uiMode = "answer", opts) => {
         const { bank, byId, sequentialResumeQuestionId } = get();
-        const orderedIds = buildOrderedIds(kind, bank, byId);
+        const typeOrder = opts?.typeOrder ?? "sequential";
+        const orderedIds = buildOrderedIds(
+          kind,
+          bank,
+          byId,
+          isTypePracticeKind(kind) ? typeOrder : "sequential"
+        );
         let index = 0;
         if (opts?.startQuestionId) {
           const i = orderedIds.indexOf(opts.startQuestionId);
@@ -405,13 +427,19 @@ export const useAppStore = create<AppState>()(
             (id) => effectiveLatestOutcome(byId[id] ?? defaultRecord()) === "unset"
           );
           if (firstUnanswered >= 0) index = firstUnanswered;
-        } else if (isTypePracticeKind(kind)) {
+        } else if (isTypePracticeKind(kind) && typeOrder === "sequential") {
           const firstUnanswered = orderedIds.findIndex(
             (id) => effectiveLatestOutcome(byId[id] ?? defaultRecord()) === "unset"
           );
           if (firstUnanswered >= 0) index = firstUnanswered;
         }
-        const practice = { kind, orderedIds, index, uiMode };
+        const practice = {
+          kind,
+          orderedIds,
+          index,
+          uiMode,
+          ...(isTypePracticeKind(kind) ? { typeOrder } : {}),
+        };
         const bookmark =
           kind === "sequential" && orderedIds.length > 0
             ? sequentialResumeBookmarkPatch(

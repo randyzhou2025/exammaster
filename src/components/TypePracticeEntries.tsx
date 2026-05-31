@@ -2,26 +2,34 @@ import clsx from "clsx";
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLevelRoutes } from "@/hooks/useLevelRoutes";
-import { QUESTION_TYPES, questionTypeToPracticeKind, typePracticeShortLabel } from "@/lib/practice";
+import {
+  QUESTION_TYPES,
+  questionTypeToPracticeKind,
+  typePracticeShortLabel,
+  type TypePracticeOrder,
+} from "@/lib/practice";
 import type { QuestionType } from "@/types/exam";
 import { computeStatsByType, useAppStore } from "@/stores/appStore";
 
-const TYPE_CELL_STYLE: Record<QuestionType, { shell: string; badge: string }> = {
+const TYPE_CELL_STYLE: Record<QuestionType, { shell: string; badge: string; btn: string }> = {
   judgment: {
-    shell: "border-sky-200 bg-sky-50/90 active:border-sky-300 active:bg-sky-100/90",
+    shell: "border-sky-200 bg-sky-50/90",
     badge: "bg-sky-600 text-white",
+    btn: "border-sky-200 bg-white text-sky-800 active:bg-sky-50",
   },
   single: {
-    shell: "border-brand/35 bg-brand-light/40 active:border-brand/50 active:bg-brand-light/60",
+    shell: "border-brand/35 bg-brand-light/40",
     badge: "bg-brand text-white",
+    btn: "border-brand/30 bg-white text-brand-dark active:bg-brand-light/50",
   },
   multiple: {
-    shell: "border-violet-200 bg-violet-50/90 active:border-violet-300 active:bg-violet-100/90",
+    shell: "border-violet-200 bg-violet-50/90",
     badge: "bg-violet-600 text-white",
+    btn: "border-violet-200 bg-white text-violet-800 active:bg-violet-50",
   },
 };
 
-/** 顺序练习页白卡片内：按题型入口 */
+/** 顺序练习页白卡片内：按题型入口（各题型可选顺序/随机） */
 export function TypePracticeEntries() {
   const nav = useNavigate();
   const { routes: lr } = useLevelRoutes();
@@ -36,14 +44,14 @@ export function TypePracticeEntries() {
 
   if (entries.length === 0) return null;
 
-  const openType = (type: QuestionType) => {
-    startPractice(questionTypeToPracticeKind(type));
+  const openType = (type: QuestionType, typeOrder: TypePracticeOrder) => {
+    startPractice(questionTypeToPracticeKind(type), "answer", { typeOrder });
     nav(lr.theoryPracticeSession);
   };
 
   return (
     <div className="mt-5 border-t border-neutral-100 pt-5">
-      <p className="text-center text-xs text-neutral-500">按题型练 · 仅刷该题型，按题库顺序</p>
+      <p className="text-center text-xs text-neutral-500">按题型练 · 各题型可选顺序或随机</p>
       <div
         className={clsx(
           "mt-3 grid gap-2.5 text-sm",
@@ -54,14 +62,10 @@ export function TypePracticeEntries() {
           const style = TYPE_CELL_STYLE[type];
           const label = typePracticeShortLabel(type);
           return (
-            <button
+            <div
               key={type}
-              type="button"
-              aria-label={`开始${label}，已练 ${stats.answered} 题，共 ${stats.total} 题`}
-              onClick={() => openType(type)}
               className={clsx(
-                "flex min-h-[4.75rem] w-full flex-col items-center justify-center gap-1.5 rounded-xl border-2 px-1.5 py-3 text-center shadow-sm",
-                "touch-manipulation [-webkit-tap-highlight-color:transparent] transition-transform active:scale-[0.98]",
+                "flex min-w-0 flex-col items-center gap-1.5 rounded-xl border-2 px-1.5 py-3 text-center shadow-sm",
                 style.shell
               )}
             >
@@ -76,7 +80,33 @@ export function TypePracticeEntries() {
               <span className="text-lg font-bold tabular-nums leading-none text-neutral-900">
                 {stats.answered}/{stats.total}
               </span>
-            </button>
+              <div className="mt-0.5 grid w-full grid-cols-2 gap-1">
+                <button
+                  type="button"
+                  aria-label={`${label}顺序练习，已练 ${stats.answered} 题，共 ${stats.total} 题`}
+                  onClick={() => openType(type, "sequential")}
+                  className={clsx(
+                    "min-h-11 rounded-lg border text-xs font-semibold",
+                    "touch-manipulation [-webkit-tap-highlight-color:transparent] active:scale-[0.98]",
+                    style.btn
+                  )}
+                >
+                  顺序
+                </button>
+                <button
+                  type="button"
+                  aria-label={`${label}随机练习，已练 ${stats.answered} 题，共 ${stats.total} 题`}
+                  onClick={() => openType(type, "random")}
+                  className={clsx(
+                    "min-h-11 rounded-lg border text-xs font-semibold",
+                    "touch-manipulation [-webkit-tap-highlight-color:transparent] active:scale-[0.98]",
+                    style.btn
+                  )}
+                >
+                  随机
+                </button>
+              </div>
+            </div>
           );
         })}
       </div>

@@ -1,5 +1,7 @@
 import type { QuestionType } from "@/types/exam";
 
+export type TypePracticeOrder = "sequential" | "random";
+
 export type TypePracticeKind = "type-judgment" | "type-single" | "type-multiple";
 
 export const TYPE_PRACTICE_KINDS: readonly TypePracticeKind[] = [
@@ -31,11 +33,17 @@ export function typePracticeShortLabel(type: QuestionType): string {
   return "多选题";
 }
 
-export function practiceKindLabel(kind: string): string {
+export function practiceKindLabel(kind: string, typeOrder?: TypePracticeOrder): string {
   const t = practiceKindToQuestionType(kind);
-  if (t === "judgment") return "判断题专项";
-  if (t === "single") return "单选题专项";
-  if (t === "multiple") return "多选题专项";
+  if (t === "judgment") {
+    return typeOrder === "random" ? "判断题 · 随机" : "判断题 · 顺序";
+  }
+  if (t === "single") {
+    return typeOrder === "random" ? "单选题 · 随机" : "单选题 · 顺序";
+  }
+  if (t === "multiple") {
+    return typeOrder === "random" ? "多选题 · 随机" : "多选题 · 顺序";
+  }
   switch (kind) {
     case "sequential":
       return "顺序练习";

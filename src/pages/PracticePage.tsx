@@ -7,7 +7,7 @@ import { TypeTag } from "@/components/TypeTag";
 import type { Question } from "@/types/exam";
 import { isAnswerCorrect } from "@/domain/scoring";
 import { useLevelRoutes } from "@/hooks/useLevelRoutes";
-import { isTypePracticeKind, practiceKindLabel, practiceKindToQuestionType } from "@/lib/practice";
+import { practiceKindLabel, practiceKindToQuestionType } from "@/lib/practice";
 import { routes } from "@/lib/routes";
 import {
   useAppStore,
@@ -26,6 +26,8 @@ const SWIPE_MIN_PX = 56;
 const SWIPE_DOMINANCE = 1.2;
 const DRAG_CLAMP_PX = 132;
 const HORIZONTAL_DRAG_LOCK_PX = 14;
+/** 暂时隐藏答题页「试题详解」区块，恢复时改为 true */
+const SHOW_QUESTION_EXPLANATION = false;
 
 function formatChoiceKeys(keys: string[]): string {
   if (keys.length === 0) return "—";
@@ -231,13 +233,9 @@ export function PracticePage() {
 
   const typeFilter = practiceKindToQuestionType(practice.kind);
   const sessionStats = typeFilter ? statsByType[typeFilter] : stats;
-  const sessionLabel = practiceKindLabel(practice.kind);
+  const sessionLabel = practiceKindLabel(practice.kind, practice.typeOrder);
   const finishPractice = () => {
     exitPractice();
-    if (isTypePracticeKind(practice.kind)) {
-      nav(lr.theoryHome);
-      return;
-    }
     nav(lr.theorySequential);
   };
 
@@ -517,7 +515,8 @@ export function PracticePage() {
           </div>
         ) : null}
 
-        {(uiMode === "memorize" && graded) || (graded && uiMode === "answer" && lastCorrect === false) ? (
+        {SHOW_QUESTION_EXPLANATION &&
+        ((uiMode === "memorize" && graded) || (graded && uiMode === "answer" && lastCorrect === false)) ? (
           <div className="space-y-3 rounded-xl border border-neutral-100 bg-surface p-4 text-[15px] leading-relaxed text-neutral-800">
             <div className="flex items-center gap-2 text-[12px] font-semibold uppercase tracking-wide text-neutral-500">
               <span className="h-px flex-1 bg-neutral-200" />

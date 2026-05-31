@@ -69,27 +69,32 @@ export function SequentialDashboardPage() {
 
           <TypePracticeEntries />
 
-          <button
-            type="button"
-            onClick={() => {
-              startPractice("sequential");
-              nav(lr.theoryPracticeSession);
-            }}
-            className="mt-6 w-full rounded-xl bg-brand py-3 text-base font-semibold text-white active:bg-brand-dark"
-          >
-            {stats.answered === 0 ? "开始顺序练习" : "继续练习"}
-          </button>
+          <div className="mt-6 grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                startPractice("sequential");
+                nav(lr.theoryPracticeSession);
+              }}
+              className="min-h-11 rounded-xl bg-brand py-3 text-base font-semibold text-white active:bg-brand-dark"
+            >
+              {stats.answered === 0 ? "顺序练习" : "继续练习"}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                startPractice("random");
+                nav(lr.theoryPracticeSession);
+              }}
+              className="min-h-11 rounded-xl border-2 border-brand bg-white py-3 text-base font-semibold text-brand active:bg-brand-light/30"
+            >
+              随机练习
+            </button>
+          </div>
         </div>
       </div>
 
-      <div className="mt-6 grid grid-cols-4 gap-2 px-4 text-center text-xs text-white/95">
-        <MiniMode
-          label="随机练习"
-          onClick={() => {
-            startPractice("random");
-            nav(lr.theoryPracticeSession);
-          }}
-        />
+      <div className="mt-6 grid grid-cols-3 gap-2 px-4 text-center text-xs text-white/95">
         <MiniMode
           label="未做题"
           onClick={() => {

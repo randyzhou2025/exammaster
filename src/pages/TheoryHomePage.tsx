@@ -57,7 +57,7 @@ export function TheoryHomePage() {
 
           <div className="mt-8 flex flex-col items-center gap-6">
             <Link to={lr.theorySequential} className={SEQ_ENTRY_CLASS}>
-              <span className="text-sm font-medium opacity-90">顺序练习</span>
+              <span className="text-sm font-medium opacity-90">开始练习</span>
               <span className="mt-1 text-2xl font-bold tabular-nums">{seqDone}</span>
             </Link>
 
