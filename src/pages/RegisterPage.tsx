@@ -65,10 +65,7 @@ export function RegisterPage() {
   };
 
   return (
-    <AuthShell
-      cardTitle="创建账号"
-      cardSubtitle="开通后由管理员授权即可使用全量刷题与模考功能"
-    >
+    <AuthShell cardTitle="创建账号">
       <form onSubmit={onSubmit} className="space-y-5 text-neutral-900">
         {error ? (
           <p className="rounded-xl bg-red-50 px-3 py-2.5 text-center text-[13px] text-red-700 ring-1 ring-red-100">

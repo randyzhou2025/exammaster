@@ -8,6 +8,8 @@ import { homepageDailyVisits, users } from "../db/schema.js";
 import {
   getProjectClickStats,
   isHomepageProjectId,
+  JK_EXAM_LABELS,
+  JK_EXAM_PROJECT_IDS,
   touchHomepageVisit,
   touchProjectClick,
 } from "../homepage-analytics.js";
@@ -47,7 +49,31 @@ function buildProjectSummaries(stats: Awaited<ReturnType<typeof getProjectClickS
   const pbOnline = pick("privacy-blur-online");
   const pbDownload = pick("privacy-blur-download");
 
+  const jkExams = JK_EXAM_PROJECT_IDS.map((id) => {
+    const s = pick(id);
+    return {
+      projectId: id,
+      label: JK_EXAM_LABELS[id],
+      uniqueVisitors: s.uniqueVisitors,
+      totalClicks: s.totalClicks,
+    };
+  });
+  const jkTotals = jkExams.reduce(
+    (acc, s) => ({
+      uniqueVisitors: acc.uniqueVisitors + s.uniqueVisitors,
+      totalClicks: acc.totalClicks + s.totalClicks,
+    }),
+    { uniqueVisitors: 0, totalClicks: 0 }
+  );
+
   return [
+    {
+      projectId: "jinengkao-exams",
+      label: "技能考 · 考试详情（上海站）",
+      uniqueVisitors: jkTotals.uniqueVisitors,
+      totalClicks: jkTotals.totalClicks,
+      breakdown: Object.fromEntries(jkExams.map((e) => [e.projectId, e])),
+    },
     {
       projectId: "examprep",
       label: "考练宝典 · 备考刷题",

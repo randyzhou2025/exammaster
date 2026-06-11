@@ -29,9 +29,9 @@ interface ProjectSummary {
   uniqueVisitors: number;
   totalClicks: number;
   breakdown?: {
-    online: ProjectBreakdownItem;
-    download: ProjectBreakdownItem;
-  };
+    online?: ProjectBreakdownItem;
+    download?: ProjectBreakdownItem;
+  } & Record<string, ProjectBreakdownItem | undefined>;
 }
 
 const PAGE_SIZE = 20;
@@ -183,14 +183,29 @@ export function AdminHomepageActivityPage() {
                 </p>
                 {p.breakdown ? (
                   <ul className="mt-2 space-y-1 text-xs text-neutral-600">
-                    <li>
-                      {p.breakdown.online.label}：{p.breakdown.online.totalClicks} 次 /{" "}
-                      {p.breakdown.online.uniqueVisitors} 人
-                    </li>
-                    <li>
-                      {p.breakdown.download.label}：{p.breakdown.download.totalClicks} 次 /{" "}
-                      {p.breakdown.download.uniqueVisitors} 人
-                    </li>
+                    {p.breakdown.online ? (
+                      <li>
+                        {p.breakdown.online.label}：{p.breakdown.online.totalClicks} 次 /{" "}
+                        {p.breakdown.online.uniqueVisitors} 人
+                      </li>
+                    ) : null}
+                    {p.breakdown.download ? (
+                      <li>
+                        {p.breakdown.download.label}：{p.breakdown.download.totalClicks} 次 /{" "}
+                        {p.breakdown.download.uniqueVisitors} 人
+                      </li>
+                    ) : null}
+                    {p.projectId === "jinengkao-exams"
+                      ? Object.entries(p.breakdown)
+                          .filter(([k]) => k.startsWith("jk-exam-"))
+                          .map(([k, item]) =>
+                            item ? (
+                              <li key={k}>
+                                {item.label}：{item.totalClicks} 次 / {item.uniqueVisitors} 人
+                              </li>
+                            ) : null
+                          )
+                      : null}
                   </ul>
                 ) : null}
               </div>

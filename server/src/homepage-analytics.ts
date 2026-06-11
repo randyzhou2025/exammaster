@@ -13,10 +13,39 @@ export const HOMEPAGE_PROJECT_IDS = [
   "privacy-blur-download",
 ] as const;
 
-export type HomepageProjectId = (typeof HOMEPAGE_PROJECT_IDS)[number];
+/** 技能考 · 上海站考试详情 projectId（jk-exam-{slug}） */
+export const JK_EXAM_PROJECT_IDS = [
+  "jk-exam-fire-operator",
+  "jk-exam-special-operation",
+  "jk-exam-ai-trainer",
+  "jk-exam-network-security-admin",
+  "jk-exam-omni-media-operator",
+  "jk-exam-ecommerce-specialist",
+  "jk-exam-internet-marketer",
+  "jk-exam-elderly-care-worker",
+  "jk-exam-domestic-worker",
+] as const;
+
+export const JK_EXAM_LABELS: Record<(typeof JK_EXAM_PROJECT_IDS)[number], string> = {
+  "jk-exam-fire-operator": "消防设施操作员",
+  "jk-exam-special-operation": "特种作业人员",
+  "jk-exam-ai-trainer": "人工智能训练师",
+  "jk-exam-network-security-admin": "网络与信息安全管理员",
+  "jk-exam-omni-media-operator": "全媒体运营师",
+  "jk-exam-ecommerce-specialist": "电子商务师",
+  "jk-exam-internet-marketer": "互联网营销师",
+  "jk-exam-elderly-care-worker": "养老护理员",
+  "jk-exam-domestic-worker": "家政服务员",
+};
+
+export type HomepageProjectId =
+  | (typeof HOMEPAGE_PROJECT_IDS)[number]
+  | (typeof JK_EXAM_PROJECT_IDS)[number];
 
 export function isHomepageProjectId(id: string): id is HomepageProjectId {
-  return (HOMEPAGE_PROJECT_IDS as readonly string[]).includes(id);
+  if ((HOMEPAGE_PROJECT_IDS as readonly string[]).includes(id)) return true;
+  if ((JK_EXAM_PROJECT_IDS as readonly string[]).includes(id)) return true;
+  return false;
 }
 
 function shouldRecordHomepageView(visitorKey: string): boolean {
