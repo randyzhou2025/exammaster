@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useShallow } from "zustand/react/shallow";
 import { getQuestionBankMeta } from "@/data/questionBanks";
+import { routes } from "@/lib/routes";
 import { useAppStore, selectStats } from "@/stores/appStore";
 import { useAuthStore } from "@/stores/authStore";
 
@@ -29,9 +30,9 @@ export function HomePage() {
         <span className="text-lg font-semibold leading-snug">{bankTitle}</span>
         <div className="flex items-center gap-3 text-sm text-white/90">
           {user?.role === "admin" ? (
-            <Link to="/admin/users" className="text-white/90">
+            <a href={routes.adminUsers} className="text-white/90">
               用户管理
-            </Link>
+            </a>
           ) : null}
           <Link to="/settings">设置</Link>
         </div>

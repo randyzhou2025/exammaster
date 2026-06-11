@@ -10,6 +10,7 @@ import { RequireExamAccess } from "@/components/RequireExamAccess";
 import { RequireLogin } from "@/components/RequireLogin";
 import { RequireQuestionBank } from "@/components/RequireQuestionBank";
 import { SiteLoginRedirect } from "@/components/SiteLoginRedirect";
+import { SiteAdminRedirect } from "@/components/SiteAdminRedirect";
 import { LEVEL_ROUTE_PREFIX, routes } from "@/lib/routes";
 import { TheoryHomePage } from "@/pages/TheoryHomePage";
 import { SequentialDashboardPage } from "@/pages/SequentialDashboardPage";
@@ -50,6 +51,7 @@ function ExamPrepApp() {
           <Route element={<AppShell />}>
             <Route path="/auth/pending" element={<PendingAuthPage />} />
             <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/admin/*" element={<SiteAdminRedirect />} />
 
             <Route element={<RequireExamAccess />}>
               <Route path="/banks" element={<QuestionBankPage />} />

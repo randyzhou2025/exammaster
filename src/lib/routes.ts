@@ -35,6 +35,7 @@ export const routes = {
   login: "/login",
   register: "/register",
   pendingAuth: "/auth/pending",
+  /** 站点根路径；考练部署在 /examprep 时须用 <a href> 跳转，勿用 React Router Link */
   adminUsers: "/admin/users",
   adminLoginLogs: "/admin/login-logs",
   adminDailyActivity: "/admin/daily-activity",

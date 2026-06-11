@@ -36,9 +36,9 @@ export function TheoryHomePage() {
         </span>
         <nav className="flex shrink-0 flex-wrap items-center justify-end gap-x-3 gap-y-1 text-sm text-white/90">
           {user?.role === "admin" ? (
-            <Link to={routes.adminUsers} className="text-white/90">
+            <a href={routes.adminUsers} className="text-white/90">
               用户管理
-            </Link>
+            </a>
           ) : null}
           <Link to={routes.banks} state={{ switching: true }} className="text-white/90" title={`当前题库：${bankTitle}`}>
             切换题库
