@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { isSubscriptionActive } from "@/lib/examAccess";
-import { routes, theoryHomeForBank } from "@/lib/routes";
+import { routes, theoryHomeHrefForBank } from "@/lib/routes";
 import { useAppStore } from "@/stores/appStore";
 import { apiFetch } from "@/lib/api";
 import type { AuthUser } from "@/stores/authStore";
@@ -156,9 +156,9 @@ export function AdminUsersPage() {
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-surface p-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
       <header className="mb-4 flex flex-wrap items-center gap-2">
-        <Link to={theoryHomeForBank(bankId)} className="text-brand">
+        <a href={theoryHomeHrefForBank(bankId)} className="text-brand">
           ← 返回
-        </Link>
+        </a>
         <h1 className="text-lg font-bold text-neutral-900">用户管理</h1>
       </header>
 

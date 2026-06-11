@@ -1,9 +1,13 @@
 import { useEffect } from "react";
 
-/** 统一登录在技能考站点根路径 /login */
+/** /examprep/login 等 → 站点根 /login?return=完整路径 */
 export function SiteLoginRedirect() {
   useEffect(() => {
-    const returnTo = encodeURIComponent(window.location.pathname + window.location.search);
+    const path = window.location.pathname;
+    if (path === "/login" || path === "/register") return;
+    const returnTo = encodeURIComponent(
+      path + window.location.search + window.location.hash
+    );
     window.location.replace(`/login?return=${returnTo}`);
   }, []);
   return (

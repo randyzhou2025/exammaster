@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { hasExamAccess } from "@/lib/examAccess";
-import { defaultPostLoginPath, routes } from "@/lib/routes";
+import { assignSitePath, defaultPostLoginPath, examprepPath, routes } from "@/lib/routes";
 import { AuthShell } from "@/components/AuthShell";
 import { apiFetch } from "@/lib/api";
 import type { AuthUser } from "@/stores/authStore";
@@ -13,7 +13,7 @@ const inputClassName =
   "mt-1.5 w-full rounded-xl border border-neutral-200/90 bg-neutral-50/80 px-3.5 py-3 text-[15px] outline-none transition focus:border-brand/50 focus:bg-white focus:shadow-[0_0_0_3px_rgba(22,119,255,0.12)]";
 
 export function RegisterPage() {
-  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const setSession = useAuthStore((s) => s.setSession);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,9 +27,14 @@ export function RegisterPage() {
 
   useEffect(() => {
     if (ready && existingToken) {
-      navigate(defaultPostLoginPath(bankId), { replace: true });
+      const returnPath = searchParams.get("return");
+      assignSitePath(
+        returnPath && returnPath.startsWith("/")
+          ? returnPath
+          : examprepPath(defaultPostLoginPath(bankId))
+      );
     }
-  }, [ready, existingToken, navigate, bankId]);
+  }, [ready, existingToken, searchParams, bankId]);
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -54,9 +59,11 @@ export function RegisterPage() {
         return;
       }
       setSession(data.token, data.user);
-      navigate(hasExamAccess(data.user) ? defaultPostLoginPath(null) : routes.pendingAuth, {
-        replace: true,
-      });
+      assignSitePath(
+        examprepPath(
+          hasExamAccess(data.user) ? defaultPostLoginPath(null) : routes.pendingAuth
+        )
+      );
     } catch {
       setError("网络错误");
     } finally {

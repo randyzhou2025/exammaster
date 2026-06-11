@@ -27,6 +27,7 @@ import { PendingAuthPage } from "@/pages/PendingAuthPage";
 import { QuestionBankPage } from "@/pages/QuestionBankPage";
 import { useAuthStore } from "@/stores/authStore";
 import { AdminApp, isAdminSitePath } from "@/AdminApp";
+import { SiteAuthApp, isSiteAuthPath } from "@/SiteAuthApp";
 
 const routerBasename =
   import.meta.env.BASE_URL === "/" ? undefined : import.meta.env.BASE_URL.replace(/\/$/, "");
@@ -91,6 +92,9 @@ function ExamPrepApp() {
 export default function App() {
   if (isAdminSitePath()) {
     return <AdminApp />;
+  }
+  if (isSiteAuthPath()) {
+    return <SiteAuthApp />;
   }
   return <ExamPrepApp />;
 }

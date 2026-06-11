@@ -1,29 +1,40 @@
-import { useEffect, useState } from "react";
-import type { FormEvent } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState, type FormEvent } from "react";
+import { Link, useLocation, useSearchParams } from "react-router-dom";
 import { AuthShell } from "@/components/AuthShell";
 import { apiFetch } from "@/lib/api";
+import { assignSitePath, examprepPath } from "@/lib/routes";
 import type { AuthUser } from "@/stores/authStore";
 import { useAuthStore } from "@/stores/authStore";
 
+function resolveReturnPath(searchParams: URLSearchParams, stateFrom?: string): string {
+  const fromQuery = searchParams.get("return");
+  if (fromQuery && fromQuery.startsWith("/")) return fromQuery;
+  if (stateFrom && stateFrom.startsWith("/")) return stateFrom;
+  return examprepPath("/banks");
+}
+
+function goAfterAuth(path: string) {
+  assignSitePath(path);
+}
+
 export function LoginPage() {
-  const navigate = useNavigate();
   const loc = useLocation();
+  const [searchParams] = useSearchParams();
   const setSession = useAuthStore((s) => s.setSession);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const from = (loc.state as { from?: string } | null)?.from ?? "/";
+  const returnPath = resolveReturnPath(searchParams, (loc.state as { from?: string } | null)?.from);
   const ready = useAuthStore((s) => s.ready);
   const existingToken = useAuthStore((s) => s.token);
 
   useEffect(() => {
     if (ready && existingToken) {
-      navigate(from, { replace: true });
+      goAfterAuth(returnPath);
     }
-  }, [ready, existingToken, navigate, from]);
+  }, [ready, existingToken, returnPath]);
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -44,7 +55,7 @@ export function LoginPage() {
         return;
       }
       setSession(data.token, data.user);
-      navigate(from, { replace: true });
+      goAfterAuth(returnPath);
     } catch {
       setError("网络错误");
     } finally {

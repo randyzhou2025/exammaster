@@ -3,7 +3,8 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { ActivityPingWatcher } from "@/components/ActivityPingWatcher";
 import { AdminIndexRedirect, RequireLogin } from "@/components/RequireLogin";
 import { RequireAdmin } from "@/components/RequireAdmin";
-import { SiteLoginRedirect } from "@/components/SiteLoginRedirect";
+import { LoginPage } from "@/pages/LoginPage";
+import { RegisterPage } from "@/pages/RegisterPage";
 import { AdminUsersPage } from "@/pages/AdminUsersPage";
 import { AdminDailyActivityPage } from "@/pages/AdminDailyActivityPage";
 import { AdminHomepageActivityPage } from "@/pages/AdminHomepageActivityPage";
@@ -23,8 +24,8 @@ export function AdminApp() {
     <BrowserRouter>
       <ActivityPingWatcher />
       <Routes>
-        <Route path="/login" element={<SiteLoginRedirect />} />
-        <Route path="/register" element={<SiteLoginRedirect />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
 
         <Route element={<RequireLogin />}>
           <Route element={<RequireAdmin />}>

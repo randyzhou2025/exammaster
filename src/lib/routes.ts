@@ -47,6 +47,23 @@ export function theoryHomeForBank(bankId: string | null | undefined): string {
   return levelRoutes(getLevelIdForBank(bankId)).theoryHome;
 }
 
+/** 考练宝典完整 URL path（含 Vite basename），从 /admin 等站点根路径跳回时使用 */
+export function examprepPath(inAppPath: string): string {
+  const raw = import.meta.env.BASE_URL ?? "/";
+  const base = raw === "/" || raw === "" ? "" : raw.replace(/\/$/, "");
+  const path = inAppPath.startsWith("/") ? inAppPath : `/${inAppPath}`;
+  return `${base}${path}`;
+}
+
+export function theoryHomeHrefForBank(bankId: string | null | undefined): string {
+  return examprepPath(theoryHomeForBank(bankId));
+}
+
+/** 整页跳转到站点内绝对路径（跨 examprep basename 时使用） */
+export function assignSitePath(path: string): void {
+  window.location.assign(path.startsWith("/") ? path : `/${path}`);
+}
+
 /** 登录/注册后默认落地页：无题库则去选题 */
 export function defaultPostLoginPath(bankId: string | null | undefined): string {
   if (!bankId) return routes.banks;

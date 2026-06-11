@@ -1,8 +1,10 @@
-import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { useAuthStore } from "@/stores/authStore";
 
-function redirectToSiteLogin(from: string) {
-  const returnTo = encodeURIComponent(from);
+function redirectToSiteLogin() {
+  const returnTo = encodeURIComponent(
+    window.location.pathname + window.location.search + window.location.hash
+  );
   window.location.replace(`/login?return=${returnTo}`);
 }
 
@@ -10,7 +12,6 @@ function redirectToSiteLogin(from: string) {
 export function RequireLogin() {
   const ready = useAuthStore((s) => s.ready);
   const token = useAuthStore((s) => s.token);
-  const loc = useLocation();
 
   if (!ready) {
     return (
@@ -21,7 +22,7 @@ export function RequireLogin() {
   }
 
   if (!token) {
-    redirectToSiteLogin(loc.pathname + loc.search);
+    redirectToSiteLogin();
     return (
       <div className="flex min-h-dvh items-center justify-center bg-surface text-neutral-600">
         正在跳转到登录页…
