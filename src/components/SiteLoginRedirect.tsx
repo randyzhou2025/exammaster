@@ -1,14 +1,12 @@
 import { useEffect } from "react";
+import { loginReturnParam } from "@/lib/routes";
 
-/** /examprep/login 等 → 站点根 /login?return=完整路径 */
+/** /examprep/login 等 → 站点根 /login?return=…（return 不会是 login 本身） */
 export function SiteLoginRedirect() {
   useEffect(() => {
     const path = window.location.pathname;
     if (path === "/login" || path === "/register") return;
-    const returnTo = encodeURIComponent(
-      path + window.location.search + window.location.hash
-    );
-    window.location.replace(`/login?return=${returnTo}`);
+    window.location.replace(`/login?return=${loginReturnParam()}`);
   }, []);
   return (
     <div className="flex min-h-dvh items-center justify-center bg-surface text-neutral-600">

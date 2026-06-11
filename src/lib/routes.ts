@@ -64,6 +64,31 @@ export function assignSitePath(path: string): void {
   window.location.assign(path.startsWith("/") ? path : `/${path}`);
 }
 
+const AUTH_PATH_RE = /\/(login|register)\/?$/;
+
+/** 登录/注册成功后禁止跳回 auth 页，避免 /examprep/login ↔ /login 死循环 */
+export function sanitizePostLoginReturn(raw: string | null | undefined): string {
+  if (!raw) return examprepPath("/banks");
+  const trimmed = raw.trim();
+  if (!trimmed.startsWith("/")) return examprepPath("/banks");
+
+  const pathOnly = trimmed.split("?")[0]?.split("#")[0] ?? trimmed;
+  if (pathOnly === "/" || AUTH_PATH_RE.test(pathOnly)) {
+    return examprepPath("/banks");
+  }
+  return trimmed;
+}
+
+/** 跳转站点登录页时使用的 return 参数（排除 auth 路径本身） */
+export function loginReturnParam(): string {
+  const full = window.location.pathname + window.location.search + window.location.hash;
+  const pathOnly = window.location.pathname;
+  if (pathOnly === "/login" || pathOnly === "/register" || AUTH_PATH_RE.test(pathOnly)) {
+    return encodeURIComponent(examprepPath("/banks"));
+  }
+  return encodeURIComponent(full);
+}
+
 /** 登录/注册后默认落地页：无题库则去选题 */
 export function defaultPostLoginPath(bankId: string | null | undefined): string {
   if (!bankId) return routes.banks;

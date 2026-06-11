@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { hasExamAccess } from "@/lib/examAccess";
-import { assignSitePath, defaultPostLoginPath, examprepPath, routes } from "@/lib/routes";
+import { assignSitePath, defaultPostLoginPath, examprepPath, routes, sanitizePostLoginReturn } from "@/lib/routes";
 import { AuthShell } from "@/components/AuthShell";
 import { apiFetch } from "@/lib/api";
 import type { AuthUser } from "@/stores/authStore";
@@ -27,10 +27,9 @@ export function RegisterPage() {
 
   useEffect(() => {
     if (ready && existingToken) {
-      const returnPath = searchParams.get("return");
       assignSitePath(
-        returnPath && returnPath.startsWith("/")
-          ? returnPath
+        searchParams.get("return")
+          ? sanitizePostLoginReturn(searchParams.get("return"))
           : examprepPath(defaultPostLoginPath(bankId))
       );
     }

@@ -2,15 +2,12 @@ import { useEffect, useState, type FormEvent } from "react";
 import { Link, useLocation, useSearchParams } from "react-router-dom";
 import { AuthShell } from "@/components/AuthShell";
 import { apiFetch } from "@/lib/api";
-import { assignSitePath, examprepPath } from "@/lib/routes";
+import { assignSitePath, sanitizePostLoginReturn } from "@/lib/routes";
 import type { AuthUser } from "@/stores/authStore";
 import { useAuthStore } from "@/stores/authStore";
 
 function resolveReturnPath(searchParams: URLSearchParams, stateFrom?: string): string {
-  const fromQuery = searchParams.get("return");
-  if (fromQuery && fromQuery.startsWith("/")) return fromQuery;
-  if (stateFrom && stateFrom.startsWith("/")) return stateFrom;
-  return examprepPath("/banks");
+  return sanitizePostLoginReturn(searchParams.get("return") ?? stateFrom ?? undefined);
 }
 
 function goAfterAuth(path: string) {
