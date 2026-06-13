@@ -35,12 +35,20 @@ export function TypePracticeEntries() {
   const { routes: lr } = useLevelRoutes();
   const startPractice = useAppStore((s) => s.startPractice);
   const bank = useAppStore((s) => s.bank);
+  const bankMeta = useAppStore((s) => s.bankMeta);
   const byId = useAppStore((s) => s.byId);
+  const entitlements = bankMeta?.entitlements;
 
   const entries = useMemo(() => {
     const byType = computeStatsByType(bank, byId);
-    return QUESTION_TYPES.map((type) => ({ type, stats: byType[type] })).filter((e) => e.stats.total > 0);
-  }, [bank, byId]);
+    return QUESTION_TYPES.map((type) => ({ type, stats: byType[type] }))
+      .filter((e) => e.stats.total > 0)
+      .filter((e) => {
+        if (!entitlements) return true;
+        const key = e.type as keyof typeof entitlements.theory;
+        return entitlements.theory[key].allowed > 0;
+      });
+  }, [bank, byId, entitlements]);
 
   if (entries.length === 0) return null;
 

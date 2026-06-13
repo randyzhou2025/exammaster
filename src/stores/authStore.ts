@@ -1,5 +1,8 @@
 import { create } from "zustand";
 import { apiFetch } from "@/lib/api";
+import { clearBankSessionCache } from "@/lib/bankSessionCache";
+import { clearSyncedBanks } from "@/lib/syncBanks";
+import type { ContentAccess, ContentEntitlements } from "@/types/contentAccess";
 
 const TOKEN_KEY = "exam-auth-token";
 
@@ -12,6 +15,8 @@ export interface AuthUser {
   createdAt: string;
   /** YYYY-MM-DD；null 表示永不到期 */
   subscriptionExpiresOn: string | null;
+  contentAccess?: ContentAccess;
+  entitlements?: ContentEntitlements;
 }
 
 interface AuthState {
@@ -23,6 +28,11 @@ interface AuthState {
   setUser: (user: AuthUser) => void;
   logout: () => void;
   bootstrap: () => Promise<void>;
+}
+
+function clearBankStateOnAuthLoss(): void {
+  clearSyncedBanks();
+  clearBankSessionCache();
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -47,6 +57,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     } catch {
       /* ignore */
     }
+    clearBankStateOnAuthLoss();
     set({ token: null, user: null });
   },
 
@@ -73,9 +84,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         return;
       }
       const data = (await res.json()) as { user: AuthUser };
+      if (data.user.contentAccess === "blocked") {
+        clearBankStateOnAuthLoss();
+      }
       set({ user: data.user, ready: true });
     } catch {
-      get().logout();
+      /* 网络错误保留 token，避免误退 */
       set({ ready: true });
     }
   },

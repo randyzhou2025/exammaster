@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import { loginReturnParam } from "@/lib/routes";
+import { consumeLogoutRedirect, loginReturnParam } from "@/lib/routes";
 import { useAuthStore } from "@/stores/authStore";
 
 /** 需已登录；未登录时跳转站点 /login */
@@ -10,6 +10,10 @@ export function RequireLogin() {
 
   useEffect(() => {
     if (ready && !token) {
+      if (consumeLogoutRedirect()) {
+        window.location.replace("/login");
+        return;
+      }
       window.location.replace(`/login?return=${loginReturnParam()}`);
     }
   }, [ready, token]);

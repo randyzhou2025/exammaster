@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { hasExamAccess } from "@/lib/examAccess";
-import { assignSitePath, defaultPostLoginPath, examprepPath, routes, sanitizePostLoginReturn } from "@/lib/routes";
+import { canEnterExamPrep } from "@/lib/examAccess";
+import { assignSitePath, defaultPostLoginPath, examprepPath, postLoginPathForReturn, routes } from "@/lib/routes";
 import { AuthShell } from "@/components/AuthShell";
 import { apiFetch } from "@/lib/api";
 import type { AuthUser } from "@/stores/authStore";
@@ -24,16 +24,19 @@ export function RegisterPage() {
   const existingToken = useAuthStore((s) => s.token);
 
   const bankId = useAppStore((s) => s.selectedQuestionBankId);
+  const [storeReady, setStoreReady] = useState(() => useAppStore.persist.hasHydrated());
 
   useEffect(() => {
-    if (ready && existingToken) {
-      assignSitePath(
-        searchParams.get("return")
-          ? sanitizePostLoginReturn(searchParams.get("return"))
-          : examprepPath(defaultPostLoginPath(bankId))
-      );
+    const unsub = useAppStore.persist.onFinishHydration(() => setStoreReady(true));
+    if (useAppStore.persist.hasHydrated()) setStoreReady(true);
+    return unsub;
+  }, []);
+
+  useEffect(() => {
+    if (ready && existingToken && storeReady) {
+      assignSitePath(postLoginPathForReturn(searchParams.get("return"), bankId));
     }
-  }, [ready, existingToken, searchParams, bankId]);
+  }, [ready, existingToken, storeReady, searchParams, bankId]);
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -60,7 +63,7 @@ export function RegisterPage() {
       setSession(data.token, data.user);
       assignSitePath(
         examprepPath(
-          hasExamAccess(data.user) ? defaultPostLoginPath(null) : routes.pendingAuth
+          canEnterExamPrep(data.user) ? defaultPostLoginPath(null) : routes.pendingAuth
         )
       );
     } catch {

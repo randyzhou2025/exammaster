@@ -7,6 +7,7 @@ import { registerActivityRoutes } from "./routes/activity.js";
 import { registerAuthRoutes } from "./routes/auth.js";
 import { registerAdminRoutes } from "./routes/admin.js";
 import { registerHomepageAnalyticsRoutes } from "./routes/homepage-analytics.js";
+import { registerBankRoutes } from "./routes/banks.js";
 import { seedAdminFromEnv } from "./seed.js";
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -45,6 +46,7 @@ async function build() {
   };
 
   await registerAuthRoutes(app, authenticate);
+  await registerBankRoutes(app, authenticate);
   await registerActivityRoutes(app, authenticate);
   await registerAdminRoutes(app, authenticate);
   await registerHomepageAnalyticsRoutes(app, authenticate);

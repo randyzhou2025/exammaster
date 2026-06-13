@@ -125,3 +125,8 @@ export function formatExamTemplateBrief(template: ExamTemplate): string {
   const totalQ = template.sections.reduce((n, s) => n + s.count, 0);
   return `${totalQ} 题 · ${template.durationMinutes} 分钟`;
 }
+
+export function normalizeQuestionBankId(id: string | null | undefined): string {
+  if (id && QUESTION_BANKS.some((b) => b.id === id)) return id;
+  return DEFAULT_QUESTION_BANK_ID;
+}

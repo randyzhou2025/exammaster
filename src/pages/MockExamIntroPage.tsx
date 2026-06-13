@@ -3,6 +3,7 @@ import { useLevelRoutes } from "@/hooks/useLevelRoutes";
 import { assembleMockExamPaper } from "@/domain/examAssembly";
 import { formatExamTemplateSummary, getExamTemplateForBank } from "@/data/questionBanks";
 import { useAppStore } from "@/stores/appStore";
+import { useAuthStore } from "@/stores/authStore";
 import { useMemo, useState } from "react";
 
 export function MockExamIntroPage() {
@@ -10,6 +11,8 @@ export function MockExamIntroPage() {
   const { routes: lr } = useLevelRoutes();
   const bank = useAppStore((s) => s.bank);
   const bankId = useAppStore((s) => s.selectedQuestionBankId);
+  const user = useAuthStore((s) => s.user);
+  const isTrial = user?.contentAccess === "trial";
   const examTemplate = getExamTemplateForBank(bankId);
   const startMockExam = useAppStore((s) => s.startMockExam);
   const [err, setErr] = useState<string | null>(null);
@@ -37,7 +40,9 @@ export function MockExamIntroPage() {
       if (m.single) parts.push(`单选缺 ${m.single}`);
       if (m.multiple) parts.push(`多选缺 ${m.multiple}`);
       setErr(
-        `题库不足以组卷（需 ${examTemplate.sections.map((s) => `${s.count} 道${labelType(s.type)}`).join("、")}）。${parts.join("；")}`
+        isTrial
+          ? `试用版仅含判断题前 ${counts.j} 道，无法按完整模考组卷。开通全量权限后可进行模拟考试。${parts.length ? `（${parts.join("；")}）` : ""}`
+          : `题库不足以组卷（需 ${examTemplate.sections.map((s) => `${s.count} 道${labelType(s.type)}`).join("、")}）。${parts.join("；")}`
       );
       return;
     }

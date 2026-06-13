@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { CODE_FILL_BANK } from "@/data/codeFillBank";
 import { gradeCodeFillQuestion } from "@/domain/codeFillScoring";
 import type {
   CodeFillPracticeMode,
@@ -12,7 +11,6 @@ import type {
 export type { CodeFillPracticeMode } from "@/types/codeFill";
 
 const STORAGE_KEY = "codeFillProgress-v1";
-const QUESTION_IDS = CODE_FILL_BANK.map((q) => q.id);
 
 const safeStorage = {
   getItem: (name: string) => {
@@ -51,6 +49,7 @@ interface CodeFillState {
   byId: Record<string, CodeFillQuestionProgress>;
   practice: CodeFillPracticeSession | null;
   operateResumeQuestionId: string | null;
+  setBank: (bank: CodeFillQuestion[]) => void;
   startPractice: (mode: CodeFillPracticeMode, pickedIds?: string[]) => void;
   exitPractice: () => void;
   setPracticeIndex: (index: number) => void;
@@ -66,11 +65,11 @@ function defaultProgress(): CodeFillQuestionProgress {
   return { completed: false, answers: {} };
 }
 
-function orderIds(mode: CodeFillPracticeMode, picked?: string[]): string[] {
+function orderIds(bank: CodeFillQuestion[], mode: CodeFillPracticeMode, picked?: string[]): string[] {
   if (mode === "pick" && picked && picked.length > 0) {
     return [...picked].sort();
   }
-  const ids = [...QUESTION_IDS];
+  const ids = bank.map((q) => q.id);
   if (mode === "random") {
     for (let i = ids.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -100,20 +99,20 @@ export function useCodeFillStoreHydrated() {
 export const useCodeFillStore = create<CodeFillState>()(
   persist(
     (set, get) => ({
-      bank: CODE_FILL_BANK,
+      bank: [],
       byId: {},
       practice: null,
       operateResumeQuestionId: null,
 
+      setBank: (bank) => set({ bank }),
+
       startPractice: (mode, pickedIds) => {
-        const orderedIds = orderIds(mode, pickedIds);
-        const byId = get().byId;
+        const { bank, byId } = get();
+        const orderedIds = orderIds(bank, mode, pickedIds);
         let index = 0;
         if (mode === "random") {
-          // 每次开始重新洗牌，从随机序列第一题做起
           index = 0;
         } else {
-          // 按顺序 / 选题：定位列表中第一个未完成题，全部完成则从第一题开始
           const firstIncomplete = orderedIds.findIndex((id) => !byId[id]?.completed);
           index = firstIncomplete >= 0 ? firstIncomplete : 0;
         }
@@ -177,7 +176,6 @@ export const useCodeFillStore = create<CodeFillState>()(
             [questionId]: {
               ...progress,
               answers: answersSnapshot ? { ...answers } : progress.answers,
-              /** 仅全对时可置 true；已完成后不因再次检查失败而回退 */
               completed: allCorrect ? true : progress.completed,
               lastCheckedAt: Date.now(),
             },
@@ -186,7 +184,6 @@ export const useCodeFillStore = create<CodeFillState>()(
         return allCorrect;
       },
 
-      /** 仅标记「曾点过显示答案」；参考答案由做题页会话态展示，不写入持久化 answers */
       revealQuestionAnswers: (questionId) => {
         const prev = get().byId[questionId] ?? defaultProgress();
         set({
@@ -221,11 +218,12 @@ export const useCodeFillStore = create<CodeFillState>()(
       }),
       merge: (persisted, current) => {
         const p = (persisted ?? {}) as Partial<CodeFillState>;
-        const validIds = new Set(QUESTION_IDS);
+        const validIds = new Set(current.bank.map((q) => q.id));
         const byId: Record<string, CodeFillQuestionProgress> = { ...current.byId };
 
         for (const [id, prog] of Object.entries(p.byId ?? {})) {
-          if (!validIds.has(id) || !prog || typeof prog !== "object") continue;
+          if (validIds.size > 0 && !validIds.has(id)) continue;
+          if (!prog || typeof prog !== "object") continue;
           const normalized: CodeFillQuestionProgress = {
             completed: prog.completed === true,
             answers:
@@ -241,7 +239,7 @@ export const useCodeFillStore = create<CodeFillState>()(
           byId[id] = normalized;
         }
 
-        return { ...current, ...p, byId };
+        return { ...current, ...p, bank: current.bank, byId };
       },
     }
   )

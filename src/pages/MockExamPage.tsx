@@ -18,6 +18,8 @@ const SWIPE_MIN_PX = 56;
 const SWIPE_DOMINANCE = 1.2;
 const DRAG_CLAMP_PX = 120;
 const HORIZONTAL_DRAG_LOCK_PX = 14;
+/** 判断/单选：先展示选中样式，再自动下一题 */
+const AUTO_ADVANCE_MS = 380;
 
 function countUnanswered(
   paperIds: string[],
@@ -51,6 +53,7 @@ export function MockExamPage() {
   const slideIntentRef = useRef<"next" | "prev" | null>(null);
   const slideInnerRef = useRef<HTMLDivElement>(null);
   const skipSlideInRef = useRef(true);
+  const advanceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [dragX, setDragX] = useState(0);
   const [dragSmooth, setDragSmooth] = useState(true);
@@ -100,6 +103,29 @@ export function MockExamPage() {
     });
   }, [q?.id]);
 
+  const clearAdvanceTimer = useCallback(() => {
+    if (advanceTimerRef.current !== null) {
+      window.clearTimeout(advanceTimerRef.current);
+      advanceTimerRef.current = null;
+    }
+  }, []);
+
+  useEffect(() => {
+    clearAdvanceTimer();
+    return clearAdvanceTimer;
+  }, [q?.id, clearAdvanceTimer]);
+
+  const scheduleAutoNext = useCallback(() => {
+    clearAdvanceTimer();
+    advanceTimerRef.current = window.setTimeout(() => {
+      advanceTimerRef.current = null;
+      const snap = useAppStore.getState().mockExam;
+      if (!snap || snap.currentIndex >= snap.paperIds.length - 1) return;
+      slideIntentRef.current = "next";
+      setMockIndex(snap.currentIndex + 1);
+    }, AUTO_ADVANCE_MS);
+  }, [clearAdvanceTimer, setMockIndex]);
+
   const handleSubmit = useCallback(
     (timedOut: boolean) => {
       if (submitted.current) return;
@@ -113,7 +139,7 @@ export function MockExamPage() {
       const used = timedOut
         ? examTemplate.durationMinutes * 60
         : Math.min(examTemplate.durationMinutes * 60, Math.floor((Date.now() - snap.startedAt) / 1000));
-      submitMockExam({
+      const examId = submitMockExam({
         startedAt: new Date(snap.startedAt).toISOString(),
         submittedAt: new Date().toISOString(),
         score,
@@ -121,10 +147,11 @@ export function MockExamPage() {
         passed: score >= examTemplate.passScore,
         durationUsedSec: used,
         questionIds: snap.paperIds,
+        answers: { ...snap.answers },
       });
       nav(lr.theoryMockResult, {
         replace: true,
-        state: { score, max, paper: fullPaper, answers: snap.answers },
+        state: { score, max, paper: fullPaper, answers: snap.answers, examId },
       });
     },
     [nav, submitMockExam, examTemplate]
@@ -155,41 +182,43 @@ export function MockExamPage() {
   const selected = mock.answers[q.id] ?? [];
 
   const goPrev = () => {
+    clearAdvanceTimer();
     if (idx <= 0) return;
     slideIntentRef.current = "prev";
     setMockIndex(idx - 1);
   };
 
   const goNext = () => {
+    clearAdvanceTimer();
     if (idx >= len - 1) return;
     slideIntentRef.current = "next";
     setMockIndex(idx + 1);
   };
 
-  /** 判断 / 单选：选一即记录并自动进入下一题；末题不切题只保留答案 */
+  const stopSwipeBubble = (e: React.PointerEvent) => {
+    e.stopPropagation();
+  };
+
+  /** 判断 / 单选：先高亮选中项，短暂停留后自动下一题；末题不切题 */
   const pick = (key: string) => {
     if (q.type === "multiple") {
       const next = selected.includes(key) ? selected.filter((k) => k !== key) : [...selected, key];
       setMockAnswer(q.id, next);
       return;
     }
+    if (advanceTimerRef.current !== null) return;
     setMockAnswer(q.id, [key]);
-    if (!isLast) {
-      slideIntentRef.current = "next";
-      setMockIndex(idx + 1);
-    }
+    if (!isLast) scheduleAutoNext();
   };
 
-  /** 多选：确认后继续 */
+  /** 多选：确认后短暂展示再下一题 */
   const confirmMultipleNext = () => {
     if (selected.length === 0) {
       window.alert("请至少选择一项后再进入下一题。");
       return;
     }
-    if (!isLast) {
-      slideIntentRef.current = "next";
-      setMockIndex(idx + 1);
-    }
+    if (advanceTimerRef.current !== null) return;
+    if (!isLast) scheduleAutoNext();
   };
 
   const trySubmit = () => {
@@ -346,13 +375,21 @@ export function MockExamPage() {
                   <button
                     key={opt.key}
                     type="button"
+                    onPointerDown={stopSwipeBubble}
                     onClick={() => pick(opt.key)}
                     className={clsx(
-                      "flex w-full items-start gap-3 rounded-xl border px-3 py-3 text-left text-sm",
-                      on ? "border-brand bg-brand-light/50" : "border-neutral-200"
+                      "flex w-full touch-manipulation items-start gap-3 rounded-xl border px-3 py-3 text-left text-sm transition-colors [-webkit-tap-highlight-color:transparent]",
+                      on
+                        ? "border-brand bg-brand-light/60 ring-2 ring-brand/25"
+                        : "border-neutral-200 bg-white"
                     )}
                   >
-                    <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-xs font-bold">
+                    <span
+                      className={clsx(
+                        "mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-xs font-bold",
+                        on ? "border-brand bg-brand text-white" : "border-neutral-300 text-neutral-600"
+                      )}
+                    >
                       {opt.key}
                     </span>
                     <span className="flex-1">{opt.text}</span>
@@ -364,8 +401,10 @@ export function MockExamPage() {
             {q.type === "multiple" && !isLast ? (
               <button
                 type="button"
+                onPointerDown={stopSwipeBubble}
                 onClick={confirmMultipleNext}
-                className="w-full rounded-xl bg-brand py-3 text-sm font-semibold text-white"
+                disabled={selected.length === 0}
+                className="min-h-11 w-full touch-manipulation rounded-xl bg-brand py-3 text-sm font-semibold text-white disabled:opacity-40 [-webkit-tap-highlight-color:transparent]"
               >
                 确认本题并下一题
               </button>
@@ -425,6 +464,7 @@ export function MockExamPage() {
                     key={pq.id}
                     type="button"
                     onClick={() => {
+                      clearAdvanceTimer();
                       slideIntentRef.current = i > mock.currentIndex ? "next" : i < mock.currentIndex ? "prev" : null;
                       setMockIndex(i);
                       setSheet(false);

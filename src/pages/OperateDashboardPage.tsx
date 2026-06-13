@@ -3,7 +3,6 @@ import { Link, Navigate, useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import { useShallow } from "zustand/react/shallow";
 import { useLevelRoutes } from "@/hooks/useLevelRoutes";
-import { CODE_FILL_BANK } from "@/data/codeFillBank";
 import { getQuestionBankMeta } from "@/data/questionBanks";
 import { useAppStore } from "@/stores/appStore";
 import {
@@ -13,13 +12,13 @@ import {
   type CodeFillPracticeMode,
 } from "@/stores/codeFillStore";
 
-const ALL_IDS = CODE_FILL_BANK.map((q) => q.id);
-
 export function OperateDashboardPage() {
   const nav = useNavigate();
   const { routes: lr } = useLevelRoutes();
   const bankId = useAppStore((s) => s.selectedQuestionBankId);
   const bankMeta = getQuestionBankMeta(bankId);
+  const codeFillBank = useCodeFillStore((s) => s.bank);
+  const allIds = useMemo(() => codeFillBank.map((q) => q.id), [codeFillBank]);
   const hydrated = useCodeFillStoreHydrated();
   const stats = useCodeFillStore(useShallow(selectCodeFillStats));
   const byId = useCodeFillStore((s) => s.byId);
@@ -48,8 +47,8 @@ export function OperateDashboardPage() {
   };
 
   const completedSet = useMemo(
-    () => new Set(ALL_IDS.filter((id) => byId[id]?.completed === true)),
-    [byId]
+    () => new Set(allIds.filter((id) => byId[id]?.completed === true)),
+    [allIds, byId]
   );
 
   const completedLabel = hydrated ? String(stats.completed) : "—";
@@ -104,7 +103,7 @@ export function OperateDashboardPage() {
               <div className="mb-2 flex items-center justify-between text-xs text-neutral-500">
                 <span>已选 {selectedCount} 题</span>
                 <div className="gap-2 flex">
-                  <button type="button" className="text-brand" onClick={() => setPicked(new Set(ALL_IDS))}>
+                  <button type="button" className="text-brand" onClick={() => setPicked(new Set(allIds))}>
                     全选
                   </button>
                   <button type="button" className="text-brand" onClick={() => setPicked(new Set())}>
@@ -113,7 +112,7 @@ export function OperateDashboardPage() {
                 </div>
               </div>
               <div className="grid grid-cols-4 gap-2">
-                {ALL_IDS.map((id) => {
+                {allIds.map((id) => {
                   const on = picked.has(id);
                   const done = completedSet.has(id);
                   return (
@@ -156,7 +155,7 @@ export function OperateDashboardPage() {
                   className="flex flex-wrap justify-center gap-x-2 gap-y-1.5 border-t border-dashed border-neutral-200 px-3 pb-3 pt-2"
                   aria-label="题号列表，仅展示"
                 >
-                  {ALL_IDS.map((id) => {
+                  {allIds.map((id) => {
                     const done = completedSet.has(id);
                     return (
                       <span

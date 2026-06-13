@@ -24,8 +24,8 @@ services:
 
   exam_api:
     build:
-      context: ./server
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: server/Dockerfile
     image: exam-master-api:latest
     container_name: exam_api
     restart: unless-stopped
@@ -36,6 +36,7 @@ services:
       DATABASE_URL: postgresql://exam:${EXAM_POSTGRES_PASSWORD}@exam_postgres:5432/exam_master
       JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env.prod min 16 chars}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+      TRIAL_MODE_ENABLED: ${TRIAL_MODE_ENABLED:-false}
       PORT: "4000"
       HOST: 0.0.0.0
       ADMIN_EMAIL: ${ADMIN_EMAIL:-}
@@ -50,6 +51,7 @@ services:
       args:
         # 站点根路径部署用默认 /；宝塔子路径部署示例：在 .env.prod 写 VITE_BASE_PATH=/examprep/
         VITE_BASE_PATH: ${VITE_BASE_PATH:-/}
+        VITE_USE_LOCAL_BANKS: ${VITE_USE_LOCAL_BANKS:-false}
     image: exam-master-frontend:latest
     container_name: exam_frontend
     restart: unless-stopped

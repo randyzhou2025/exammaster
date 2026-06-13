@@ -1,8 +1,9 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { getAccessBlockReason } from "@/lib/examAccess";
+import { canEnterExamPrep, getAccessBlockReason } from "@/lib/examAccess";
+import { routes } from "@/lib/routes";
 import { useAuthStore } from "@/stores/authStore";
 
-/** 模考/练习等：需已授权且订阅未过期，或管理员 */
+/** 模考/练习等：全量、试用或管理员可进；blocked 进 pending */
 export function RequireExamAccess() {
   const user = useAuthStore((s) => s.user);
 
@@ -14,9 +15,9 @@ export function RequireExamAccess() {
     );
   }
 
-  const block = getAccessBlockReason(user);
-  if (block) {
-    return <Navigate to={`/auth/pending?reason=${block}`} replace />;
+  if (!canEnterExamPrep(user)) {
+    const block = getAccessBlockReason(user) ?? "unauthorized";
+    return <Navigate to={`${routes.pendingAuth}?reason=${block}`} replace />;
   }
 
   return <Outlet />;

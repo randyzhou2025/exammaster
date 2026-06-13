@@ -2,7 +2,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useLevelRoutes } from "@/hooks/useLevelRoutes";
 import { getExamTemplateForBank } from "@/data/questionBanks";
 import type { Question } from "@/types/exam";
-import { isAnswerCorrect } from "@/domain/scoring";
+import { wrongQuestionsInPaper } from "@/lib/mockExamReview";
 import { useAppStore } from "@/stores/appStore";
 
 interface LocationState {
@@ -10,6 +10,7 @@ interface LocationState {
   max: number;
   paper: Question[];
   answers: Record<string, string[]>;
+  examId?: string;
 }
 
 export function MockExamResultPage() {
@@ -31,7 +32,8 @@ export function MockExamResultPage() {
     );
   }
 
-  const wrongCount = state.paper.filter((q) => !isAnswerCorrect(q, state.answers[q.id] ?? [])).length;
+  const wrongCount = wrongQuestionsInPaper(state.paper, state.answers).length;
+  const canReview = wrongCount > 0 && state.answers;
 
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-surface p-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
@@ -50,28 +52,46 @@ export function MockExamResultPage() {
           )}
           <span className="text-neutral-500">（合格线 {examTemplate.passScore}）</span>
         </p>
-        <p className="mt-3 text-xs text-neutral-500">错题 {wrongCount} 道（按多选全对才得分规则判定）</p>
+        <p className="mt-3 text-xs text-neutral-500">错题 {wrongCount} 道（多选题须全对才得分）</p>
       </div>
 
       <div className="mt-6 space-y-3">
+        {canReview ? (
+          <button
+            type="button"
+            onClick={() =>
+              nav(
+                state.examId
+                  ? `${lr.theoryMockReview}?exam=${encodeURIComponent(state.examId)}`
+                  : lr.theoryMockReview,
+                {
+                  state: {
+                    paper: state.paper,
+                    answers: state.answers,
+                    examId: state.examId,
+                  },
+                }
+              )
+            }
+            className="min-h-11 w-full rounded-xl border border-brand/30 bg-brand/5 py-3 text-center text-sm font-semibold text-brand"
+          >
+            查看错题（{wrongCount}）
+          </button>
+        ) : null}
         <Link
           to={lr.theoryMock}
-          className="block w-full rounded-xl bg-brand py-3 text-center text-sm font-semibold text-white"
+          className="flex min-h-11 w-full items-center justify-center rounded-xl bg-brand text-sm font-semibold text-white"
         >
           再考一次
         </Link>
         <button
           type="button"
-          onClick={() => nav("/", { replace: true })}
-          className="block w-full rounded-xl border border-neutral-200 bg-white py-3 text-sm text-neutral-800"
+          onClick={() => nav(lr.theoryHome, { replace: true })}
+          className="min-h-11 w-full rounded-xl border border-neutral-200 bg-white py-3 text-sm text-neutral-800"
         >
           返回首页
         </button>
       </div>
-
-      <p className="mt-8 text-center text-[11px] leading-relaxed text-neutral-400">
-        完整版可下钻逐题回顾与解析；当前原型展示总分、合格判定与错题数量。
-      </p>
     </div>
   );
 }

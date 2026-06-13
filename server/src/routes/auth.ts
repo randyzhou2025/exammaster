@@ -7,6 +7,8 @@ import { touchActivity } from "../activity.js";
 import { clientIpFromRequest } from "../client-ip.js";
 import { resolveLocationByIp } from "../ip-location.js";
 import { hashPassword, verifyPassword } from "../hash.js";
+import { buildAuthUserPayload } from "../auth-user-payload.js";
+import { isTrialModeEnabled } from "../trial-config.js";
 
 const registerSchema = z.object({
   email: z.string().email().max(255),
@@ -18,32 +20,6 @@ const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(1),
 });
-
-function publicUser(u: {
-  id: string;
-  email: string;
-  displayName: string | null;
-  role: string;
-  isAuthorized: boolean;
-  createdAt: Date;
-  subscriptionExpiresOn?: Date | string | null;
-}) {
-  const expires =
-    u.subscriptionExpiresOn == null
-      ? null
-      : typeof u.subscriptionExpiresOn === "string"
-        ? u.subscriptionExpiresOn.slice(0, 10)
-        : u.subscriptionExpiresOn.toISOString().slice(0, 10);
-  return {
-    id: u.id,
-    email: u.email,
-    displayName: u.displayName,
-    role: u.role,
-    isAuthorized: u.isAuthorized,
-    createdAt: u.createdAt.toISOString(),
-    subscriptionExpiresOn: expires,
-  };
-}
 
 /** 登录 / 注册成功后写入一条登录日志（与 POST /api/auth/login 字段一致） */
 async function recordLoginLog(request: FastifyRequest, userId: string, username: string): Promise<void> {
@@ -82,8 +58,7 @@ export async function registerAuthRoutes(app: FastifyInstance, authenticate: pre
         passwordHash: await hashPassword(password),
         displayName: displayName?.trim() || null,
         role: "user",
-        /** 注册后即可使用备考功能；管理员仍可后台撤销授权 */
-        isAuthorized: true,
+        isAuthorized: !isTrialModeEnabled(),
       })
       .returning({
         id: users.id,
@@ -99,7 +74,7 @@ export async function registerAuthRoutes(app: FastifyInstance, authenticate: pre
 
     await recordLoginLog(request, created.id, created.email);
 
-    return reply.send({ token, user: publicUser(created) });
+    return reply.send({ token, user: buildAuthUserPayload(created) });
   });
 
   app.post("/api/auth/login", async (request, reply: FastifyReply) => {
@@ -130,7 +105,7 @@ export async function registerAuthRoutes(app: FastifyInstance, authenticate: pre
 
     return reply.send({
       token,
-      user: publicUser(row),
+      user: buildAuthUserPayload(row),
     });
   });
 
@@ -149,6 +124,6 @@ export async function registerAuthRoutes(app: FastifyInstance, authenticate: pre
     const ip = clientIpFromRequest(request.headers as Record<string, unknown>, request.ip);
     void touchActivity(jwtUser.sub, ip);
 
-    return reply.send({ user: publicUser(row) });
+    return reply.send({ user: buildAuthUserPayload(row) });
   });
 }

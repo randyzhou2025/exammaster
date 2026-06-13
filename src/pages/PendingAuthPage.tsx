@@ -1,20 +1,25 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { hasExamAccess, getAccessBlockReason } from "@/lib/examAccess";
-import { defaultPostLoginPath, routes } from "@/lib/routes";
+import { canEnterExamPrep, getAccessBlockReason } from "@/lib/examAccess";
+import { defaultPostLoginPath, logoutAndRedirectToLogin, routes } from "@/lib/routes";
+import { clearBankSessionCache } from "@/lib/bankSessionCache";
+import { refreshBanksFromServer } from "@/lib/syncBanks";
 import { useAppStore } from "@/stores/appStore";
 import { useAuthStore } from "@/stores/authStore";
 
 export function PendingAuthPage() {
   const user = useAuthStore((s) => s.user);
+  const token = useAuthStore((s) => s.token);
   const bankId = useAppStore((s) => s.selectedQuestionBankId);
   const logout = useAuthStore((s) => s.logout);
   const bootstrap = useAuthStore((s) => s.bootstrap);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const [refreshing, setRefreshing] = useState(false);
+
   useEffect(() => {
     if (!user) return;
-    if (hasExamAccess(user)) {
+    if (canEnterExamPrep(user)) {
       navigate(defaultPostLoginPath(bankId), { replace: true });
     }
   }, [user, navigate, bankId]);
@@ -28,6 +33,21 @@ export function PendingAuthPage() {
     ? "您的账号订阅已到期，暂无法使用顺序练习、模拟考试等功能。请联系管理员续期或调整到期日。"
     : "您的账号已登录，但尚未开通备考功能权限。请联系管理员为您授权后再使用顺序练习、模拟考试等功能。";
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await bootstrap();
+      const nextUser = useAuthStore.getState().user;
+      if (nextUser && canEnterExamPrep(nextUser) && token && bankId) {
+        clearBankSessionCache();
+        await refreshBanksFromServer(bankId, token);
+        navigate(defaultPostLoginPath(bankId), { replace: true });
+      }
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-surface p-6 pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))]">
       <div className="mx-auto max-w-sm rounded-2xl bg-white p-6 shadow-card">
@@ -39,20 +59,16 @@ export function PendingAuthPage() {
         <div className="mt-8 flex flex-col gap-3">
           <button
             type="button"
-            className="rounded-xl bg-brand py-3 text-sm font-semibold text-white"
-            onClick={() => {
-              void bootstrap();
-            }}
+            disabled={refreshing}
+            className="min-h-11 rounded-xl bg-brand py-3 text-sm font-semibold text-white disabled:opacity-60"
+            onClick={() => void onRefresh()}
           >
-            刷新权限状态
+            {refreshing ? "刷新中…" : "刷新权限状态"}
           </button>
           <button
             type="button"
-            className="rounded-xl border border-neutral-200 py-3 text-sm font-semibold text-neutral-700"
-            onClick={() => {
-              logout();
-              navigate("/login", { replace: true });
-            }}
+            className="min-h-11 rounded-xl border border-neutral-200 py-3 text-sm font-semibold text-neutral-700"
+            onClick={() => logoutAndRedirectToLogin(logout)}
           >
             退出登录
           </button>

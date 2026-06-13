@@ -62,4 +62,6 @@ export interface MockExamRecord {
   passed: boolean;
   durationUsedSec: number;
   questionIds: string[];
+  /** 各题作答；旧记录可能缺失 */
+  answers?: Record<string, string[]>;
 }

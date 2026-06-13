@@ -5,7 +5,11 @@ import { loginReturnParam } from "@/lib/routes";
 export function SiteLoginRedirect() {
   useEffect(() => {
     const path = window.location.pathname;
-    if (path === "/login" || path === "/register") return;
+    if (path === "/login" || path === "/register") {
+      // dev（BASE_URL=/）下客户端 navigate 到 /login 时仍在 ExamPrepApp，须整页加载以挂载 SiteAuthApp
+      window.location.replace(`${path}${window.location.search}`);
+      return;
+    }
     window.location.replace(`/login?return=${loginReturnParam()}`);
   }, []);
   return (

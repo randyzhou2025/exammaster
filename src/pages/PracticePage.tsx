@@ -104,7 +104,7 @@ export function PracticePage() {
         resetLocal();
       }
     }
-  }, [practice, q, uiMode, resetLocal]);
+  }, [practice?.index, practice?.orderedIds.length, q?.id, uiMode, resetLocal]);
 
   useEffect(() => {
     return () => {
@@ -252,6 +252,10 @@ export function PracticePage() {
       return;
     }
     submitAnswerMode(q, [key]);
+  };
+
+  const stopSwipeBubble = (e: React.PointerEvent) => {
+    e.stopPropagation();
   };
 
   const handleConfirmMultiple = () => {
@@ -455,9 +459,10 @@ export function PracticePage() {
               <button
                 key={opt.key}
                 type="button"
+                onPointerDown={stopSwipeBubble}
                 onClick={() => handlePick(opt.key)}
                 className={clsx(
-                  "flex w-full items-start gap-3.5 rounded-xl border px-4 py-3.5 text-left text-[1rem] font-normal leading-[1.5] text-neutral-950 transition-colors sm:text-[1.0625rem]",
+                  "flex w-full touch-manipulation items-start gap-3.5 rounded-xl border px-4 py-3.5 text-left text-[1rem] font-normal leading-[1.5] text-neutral-950 transition-colors [-webkit-tap-highlight-color:transparent] sm:text-[1.0625rem]",
                   highlightCorrect && "border-brand bg-brand-light/80 text-brand-dark",
                   highlightWrong && "border-red-300 bg-red-50 text-red-700",
                   !highlightCorrect &&
@@ -491,9 +496,10 @@ export function PracticePage() {
         {q.type === "multiple" && uiMode === "answer" && !graded ? (
           <button
             type="button"
+            onPointerDown={stopSwipeBubble}
             onClick={handleConfirmMultiple}
             disabled={selected.length === 0}
-            className="w-full rounded-xl bg-brand py-3.5 text-[15px] font-semibold text-white disabled:opacity-40"
+            className="min-h-11 w-full touch-manipulation rounded-xl bg-brand py-3.5 text-[15px] font-semibold text-white disabled:opacity-40 [-webkit-tap-highlight-color:transparent]"
           >
             确认答案（多选须全对才得分）
           </button>

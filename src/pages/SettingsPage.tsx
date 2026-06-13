@@ -1,17 +1,21 @@
 import { useRef, useState } from "react";
 import type { ChangeEventHandler } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { theoryHomeForBank } from "@/lib/routes";
+import { Link } from "react-router-dom";
+import { logoutAndRedirectToLogin, theoryHomeForBank } from "@/lib/routes";
 import { useAppStore } from "@/stores/appStore";
 import { useAuthStore } from "@/stores/authStore";
 import { useCodeFillStore } from "@/stores/codeFillStore";
 import { downloadJson, parseBackupJson } from "@/lib/backup";
+import { useLocalBanks } from "@/lib/useLocalBanks";
+import { clearBankSessionCache } from "@/lib/bankSessionCache";
+import { refreshBanksFromServer } from "@/lib/syncBanks";
 
 export function SettingsPage() {
-  const navigate = useNavigate();
   const bankId = useAppStore((s) => s.selectedQuestionBankId);
   const logout = useAuthStore((s) => s.logout);
   const user = useAuthStore((s) => s.user);
+  const token = useAuthStore((s) => s.token);
+  const useLocal = useLocalBanks();
   const resetAll = useAppStore((s) => s.resetAll);
   const syncLatestTheoryBank = useAppStore((s) => s.syncLatestTheoryBank);
   const resetAllCodeFill = useCodeFillStore((s) => s.resetAllCodeFill);
@@ -69,10 +73,7 @@ export function SettingsPage() {
           <button
             type="button"
             className="mt-4 w-full rounded-xl border border-neutral-200 py-3 text-sm font-semibold text-neutral-800"
-            onClick={() => {
-              logout();
-              navigate("/login", { replace: true });
-            }}
+            onClick={() => logoutAndRedirectToLogin(logout)}
           >
             退出登录
           </button>
@@ -117,8 +118,20 @@ export function SettingsPage() {
             type="button"
             className="mt-4 w-full rounded-xl border border-brand/30 bg-brand/5 py-3 text-sm font-semibold text-brand active:opacity-90"
             onClick={() => {
-              syncLatestTheoryBank();
-              window.location.reload();
+              if (useLocal) {
+                syncLatestTheoryBank();
+                window.location.reload();
+                return;
+              }
+              if (!token || !bankId) {
+                window.alert("请先登录并选择题库。");
+                return;
+              }
+              void (async () => {
+                clearBankSessionCache();
+                await refreshBanksFromServer(bankId, token);
+                window.location.reload();
+              })();
             }}
           >
             更新最新题库

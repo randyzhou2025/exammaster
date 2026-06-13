@@ -1,0 +1,3757 @@
+[
+  {
+    "id": "1.1.1",
+    "title": "1.1.1 智能医疗系统中的业务数据处理流程设计",
+    "stem": "某医疗机构计划引入智能医疗系统，以提升诊断效率和准确性。通过分析患者的历史数据，使用机器学习算法预测患者的健康风险，从而辅助医生进行诊断和治疗。为此，该机构需要设计一套全面的业务数据处理流程，确保数据处理的高效性和准确性，为人工智能模型提供可靠的输入数据。\n我们提供一个患者数据集（patient_data.csv），包含以下字段：\n PatientID: 患者ID\n Age: 年龄\n BMI: 体重指数\n BloodPressure: 血压\n Cholesterol: 胆固醇水平\n DaysInHospital: 住院天数\n你作为人工智能训练师，根据提供的数据集和Python代码框架（1.1.1.ipynb），完成以下数据的统计和分析，为智能医疗系统提供可靠的数据支持。\n（1）通过补全并运行Python代码（1.1.1.ipynb）分别统计住院天数超过7天的患者数量以及其占比。这类患者被定义为高风险患者，反之为低风险患者。将上述统计结果截图以jpg的格式保存，命名为“1.1.1-1”。\n（2）通过补全并运行Python代码（1.1.1. ipynb）统计不同BMI区间中高风险患者的比例和统计不同BMI区间中的患者数。BMI区间分类设置为：偏瘦（低于18.5），正常（18.5～23.9），超重（24.0～27.9），肥胖（28.0及以上），将上述统计结果截图以jpg的格式保存，命名为“1.1.1-2”。\n（3）通过补全并运行Python代码（1.1.1. ipynb）统计不同年龄区间中高风险患者的比例和统计不同年龄区间中的患者数。年龄区间分类设置为：年龄区间分类设置为：≤25岁，26-35岁，36-45岁，46-55岁，56-65岁，＞65岁，将上述统计结果截图以jpg的格式保存，命名为“1.1.1-3”。\n所有结果文件储存在桌面新建的考生文件夹中，文件夹命名为“准考证号+身份证号后六位”。",
+    "cells": [
+      {
+        "cellIndex": 0,
+        "source": "import pandas as pd\nimport numpy as np\n\n# 读取数据集 1分\ndata = _____________",
+        "lines": [
+          "import pandas as pd",
+          "import numpy as np",
+          "",
+          "# 读取数据集 1分",
+          "data = _____________"
+        ],
+        "blanks": [
+          {
+            "id": "b0",
+            "accepted": [
+              "pd.read_csv('patient_data.csv')"
+            ]
+          }
+        ]
+      },
+      {
+        "cellIndex": 1,
+        "source": "# 1. 统计住院天数超过7天的患者数量及其占比\n# 创建新列'RiskLevel'，根据住院天数判断风险等级 3分\n_____________ = _____________(_____________, '高风险患者', '低风险患者')\n# 统计不同风险等级的患者数量 2分\nrisk_counts = data_____________._____________\n# 计算高风险患者占比 1分\nhigh_risk_ratio = risk_counts['高风险患者'] / _____________\n# 计算低风险患者占比 1分\nlow_risk_ratio = risk_counts['低风险患者'] / _____________\n\n# 输出结果\nprint(\"高风险患者数量:\", risk_counts['高风险患者'])\nprint(\"低风险患者数量:\", risk_counts['低风险患者'])\nprint(\"高风险患者占比:\", high_risk_ratio)\nprint(\"低风险患者占比:\", low_risk_ratio)",
+        "lines": [
+          "# 1. 统计住院天数超过7天的患者数量及其占比",
+          "# 创建新列'RiskLevel'，根据住院天数判断风险等级 3分",
+          "_____________ = _____________(_____________, '高风险患者', '低风险患者')",
+          "# 统计不同风险等级的患者数量 2分",
+          "risk_counts = data_____________._____________",
+          "# 计算高风险患者占比 1分",
+          "high_risk_ratio = risk_counts['高风险患者'] / _____________",
+          "# 计算低风险患者占比 1分",
+          "low_risk_ratio = risk_counts['低风险患者'] / _____________",
+          "",
+          "# 输出结果",
+          "print(\"高风险患者数量:\", risk_counts['高风险患者'])",
+          "print(\"低风险患者数量:\", risk_counts['低风险患者'])",
+          "print(\"高风险患者占比:\", high_risk_ratio)",
+          "print(\"低风险患者占比:\", low_risk_ratio)"
+        ],
+        "blanks": [
+          {
+            "id": "b1",
+            "accepted": [
+              "data['RiskLevel']"
+            ]
+          },
+          {
+            "id": "b2",
+            "accepted": [
+              "np.where"
+            ]
+          },
+          {
+            "id": "b3",
+            "accepted": [
+              "data['DaysInHospital'] > 7"
+            ]
+          },
+          {
+            "id": "b4",
+            "accepted": [
+              "['RiskLevel']"
+            ]
+          },
+          {
+            "id": "b5",
+            "accepted": [
+              "value_counts()"
+            ]
+          },
+          {
+            "id": "b6",
+            "accepted": [
+              "len(data)"
+            ]
+          },
+          {
+            "id": "b7",
+            "accepted": [
+              "len(data)"
+            ]
+          }
+        ]
+      },
+      {
+        "cellIndex": 2,
+        "source": "# 2. 统计不同BMI区间中高风险患者的比例和统计不同BMI区间中的患者数\n# 定义BMI区间和标签\nbmi_bins = [0, 18.5, 24, 28, np.inf]\nbmi_labels = ['偏瘦', '正常', '超重', '肥胖']\n# 根据BMI值划分指定区间 4分\ndata['BMIRange'] = _____________(_____________, _____________, _____________, right=False)  # 使用左闭右开区间\n# 计算每个BMI区间中高风险患者的比例 2分\nbmi_risk_rate = _____________(_____________)['RiskLevel'].apply(lambda x: (x == '高风险患者').mean())\n# 统计每个BMI区间的患者数量 1分\nbmi_patient_count = data_____________\n\n# 输出结果\nprint(\"BMI区间中高风险患者的比例和患者数:\")\nprint(bmi_risk_rate) \nprint(bmi_patient_count)",
+        "lines": [
+          "# 2. 统计不同BMI区间中高风险患者的比例和统计不同BMI区间中的患者数",
+          "# 定义BMI区间和标签",
+          "bmi_bins = [0, 18.5, 24, 28, np.inf]",
+          "bmi_labels = ['偏瘦', '正常', '超重', '肥胖']",
+          "# 根据BMI值划分指定区间 4分",
+          "data['BMIRange'] = _____________(_____________, _____________, _____________, right=False)  # 使用左闭右开区间",
+          "# 计算每个BMI区间中高风险患者的比例 2分",
+          "bmi_risk_rate = _____________(_____________)['RiskLevel'].apply(lambda x: (x == '高风险患者').mean())",
+          "# 统计每个BMI区间的患者数量 1分",
+          "bmi_patient_count = data_____________",
+          "",
+          "# 输出结果",
+          "print(\"BMI区间中高风险患者的比例和患者数:\")",
+          "print(bmi_risk_rate) ",
+          "print(bmi_patient_count)"
+        ],
+        "blanks": [
+          {
+            "id": "b8",
+            "accepted": [
+              "pd.cut"
+            ]
+          },
+          {
+            "id": "b9",
+            "accepted": [
+              "data['BMI']"
+            ]
+          },
+          {
+            "id": "b10",
+            "accepted": [
+              "bins=bmi_bins"
+            ]
+          },
+          {
+            "id": "b11",
+            "accepted": [
+              "labels=bmi_labels"
+            ]
+          },
+          {
+            "id": "b12",
+            "accepted": [
+              "data.groupby"
+            ]
+          },
+          {
+            "id": "b13",
+            "accepted": [
+              "'BMIRange'"
+            ]
+          },
+          {
+            "id": "b14",
+            "accepted": [
+              "['BMIRange'].value_counts()"
+            ]
+          }
+        ]
+      },
+      {
+        "cellIndex": 3,
+        "source": "# 3. 统计不同年龄区间中高风险患者的比例和统计不同年龄区间中的患者数\n# 定义年龄区间和标签\nage_bins = [0, 26, 36, 46, 56, 66, np.inf]\nage_labels = ['≤25岁', '26-35岁', '36-45岁', '46-55岁', '56-65岁', '＞65岁']\n# 根据年龄值划分指定区间 4分\ndata['AgeRange'] = _____________(_____________, _____________, _____________, right=False)  # 使用左闭右开区间\n# 计算每个年龄区间中高风险患者的比例 2分\nage_risk_rate = _____________(_____________)['RiskLevel'].apply(lambda x: (x == '高风险患者').mean())\n# 统计每个年龄区间的患者数量 1分\nage_patient_count = data_____________\n\n# 输出结果\nprint(\"年龄区间中高风险患者的比例和患者数:\")\nprint(age_risk_rate) \nprint(age_patient_count) ",
+        "lines": [
+          "# 3. 统计不同年龄区间中高风险患者的比例和统计不同年龄区间中的患者数",
+          "# 定义年龄区间和标签",
+          "age_bins = [0, 26, 36, 46, 56, 66, np.inf]",
+          "age_labels = ['≤25岁', '26-35岁', '36-45岁', '46-55岁', '56-65岁', '＞65岁']",
+          "# 根据年龄值划分指定区间 4分",
+          "data['AgeRange'] = _____________(_____________, _____________, _____________, right=False)  # 使用左闭右开区间",
+          "# 计算每个年龄区间中高风险患者的比例 2分",
+          "age_risk_rate = _____________(_____________)['RiskLevel'].apply(lambda x: (x == '高风险患者').mean())",
+          "# 统计每个年龄区间的患者数量 1分",
+          "age_patient_count = data_____________",
+          "",
+          "# 输出结果",
+          "print(\"年龄区间中高风险患者的比例和患者数:\")",
+          "print(age_risk_rate) ",
+          "print(age_patient_count) "
+        ],
+        "blanks": [
+          {
+            "id": "b15",
+            "accepted": [
+              "pd.cut"
+            ]
+          },
+          {
+            "id": "b16",
+            "accepted": [
+              "data['Age']"
+            ]
+          },
+          {
+            "id": "b17",
+            "accepted": [
+              "bins=age_bins"
+            ]
+          },
+          {
+            "id": "b18",
+            "accepted": [
+              "labels=age_labels"
+            ]
+          },
+          {
+            "id": "b19",
+            "accepted": [
+              "data.groupby"
+            ]
+          },
+          {
+            "id": "b20",
+            "accepted": [
+              "'AgeRange'"
+            ]
+          },
+          {
+            "id": "b21",
+            "accepted": [
+              "['AgeRange'].value_counts()"
+            ]
+          }
+        ]
+      }
+    ],
+    "meta": {
+      "examId": "AITrainer",
+      "levelId": "level3",
+      "blankCount": 22,
+      "cellCount": 4
+    }
+  },
+  {
+    "id": "1.1.2",
+    "title": "1.1.2 智能农业系统中的业务数据采集和处理流程设计",
+    "stem": "某农业公司计划引入智能农业系统，通过安装在农田中的各种传感器（如温度传感器、湿度传感器、土壤传感器等）实时监控农田环境，收集数据并进行分析，以优化作物管理和提高产量。为此，公司需要设计并实现一套数据采集和处理流程，确保数据的高效采集、传输和处理，为智能分析提供可靠的数据支持。\n我们提供一个传感器数据集（sensor_data.csv），包含以下字段：\n SensorID: 传感器ID\n Timestamp: 时间戳\n SensorType: 传感器类型（Temperature温度, Humidity湿度, SoilMoisture土壤水分, SoilPH土壤酸碱度, Light光传感器）\n Value: 传感器读数\n Location: 传感器安装位置：\n你作为智能农业系统的人工智能训练师，根据提供的sensor_data.csv数据集和Python代码框架（1.1.2.ipynb），完成以下数据的采集和处理任务，为智能农业系统提供可靠的数据支持。请按照以下要求完成任务，确保结果准确并保存相应的截图。\n（1）传感器数据统计：\n通过补全并运行Python代码（1.1.2.ipynb）分别统计每种传感器的数据数量和平均值。将上述统计结果截图以jpg的格式保存，命名为“1.1.2-1”。\n（2）按位置统计温度和湿度数据：\n通过补全并运行Python代码（1.1.2.ipynb）统计每个位置的温度和湿度传感器数据的平均值。将上述统计结果截图以jpg的格式保存，命名为“1.1.2-2”。\n（3）数据清洗和异常值处理：\n通过补全并运行Python代码（1.1.2.ipynb）对数据进行清洗，处理异常值。具体要求如下：\n 将明显异常的温度（ 50）和湿度（ 100）数据进行标记并统计。\n 对缺失值使用前面数据的值（如果前面值没有采用后面数据的值）进行填补。\n 将清洗后的数据保存为新文件cleaned_sensor_data.csv。\n所有结果文件储存在桌面新建的考生文件夹中，文件夹命名为“准考证号+身份证号后六位”。",
+    "cells": [
+      {
+        "cellIndex": 0,
+        "source": "import pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n# 读取数据集 2分\ndata = _____________",
+        "lines": [
+          "import pandas as pd",
+          "import numpy as np",
+          "import matplotlib.pyplot as plt",
+          "# 读取数据集 2分",
+          "data = _____________"
+        ],
+        "blanks": [
+          {
+            "id": "b0",
+            "accepted": [
+              "pd.read_csv('sensor_data.csv')"
+            ]
+          }
+        ]
+      },
+      {
+        "cellIndex": 1,
+        "source": "# 1. 传感器数据统计\n# 对传感器类型进行分组，并计算每个组的数据数量和平均值 3分\nsensor_stats = _____________(_____________)['Value']._____________\n# 输出结果\nprint(\"传感器数据数量和平均值:\")\nprint(sensor_stats)",
+        "lines": [
+          "# 1. 传感器数据统计",
+          "# 对传感器类型进行分组，并计算每个组的数据数量和平均值 3分",
+          "sensor_stats = _____________(_____________)['Value']._____________",
+          "# 输出结果",
+          "print(\"传感器数据数量和平均值:\")",
+          "print(sensor_stats)"
+        ],
+        "blanks": [
+          {
+            "id": "b1",
+            "accepted": [
+              "data.groupby"
+            ]
+          },
+          {
+            "id": "b2",
+            "accepted": [
+              "'SensorType'"
+            ]
+          },
+          {
+            "id": "b3",
+            "accepted": [
+              "agg(['count', 'mean'])"
+            ]
+          }
+        ]
+      },
+      {
+        "cellIndex": 2,
+        "source": "# 2. 按位置统计温度和湿度数据\n# 筛选出温度和湿度数据，然后按位置和传感器类型分组，计算每个组的平均值 2分\nlocation_stats = data[data['SensorType']._____________._____________['Value'].mean().unstack()\n# 输出结果\nprint(\"每个位置的温度和湿度数据平均值:\")\nprint(location_stats)",
+        "lines": [
+          "# 2. 按位置统计温度和湿度数据",
+          "# 筛选出温度和湿度数据，然后按位置和传感器类型分组，计算每个组的平均值 2分",
+          "location_stats = data[data['SensorType']._____________._____________['Value'].mean().unstack()",
+          "# 输出结果",
+          "print(\"每个位置的温度和湿度数据平均值:\")",
+          "print(location_stats)"
+        ],
+        "blanks": [
+          {
+            "id": "b4",
+            "accepted": [
+              "isin(['Temperature', 'Humidity'])]"
+            ]
+          },
+          {
+            "id": "b5",
+            "accepted": [
+              "groupby(['Location', 'SensorType'])"
+            ]
+          }
+        ]
+      },
+      {
+        "cellIndex": 3,
+        "source": "# 3. 数据清洗和异常值处理\n# 标记异常值 3分\ndata['is_abnormal'] = _____________(\n    ((_____________) & ((data['Value'] < -10) | (data['Value'] > 50))) |\n    ((_____________) & ((data['Value'] < 0) | (data['Value'] > 100))),\n    True, False\n)\n# 输出异常值数量 2分\nprint(\"异常值数量:\", data['is_abnormal']._____________)\n# 填补缺失值\n# 使用前向填充和后向填充的方法填补缺失值 4分\ndata['Value']._____________(_____________, inplace=True)\ndata['Value']._____________(_____________, inplace=True)\n# 保存清洗后的数据\n# 删除用于标记异常值的列，并将清洗后的数据保存到新的CSV文件中 4分\ncleaned_data = _____________(_____________=['is_abnormal'])\n_____________('cleaned_sensor_data.csv', _____________)\nprint(\"数据清洗完成，已保存为 'cleaned_sensor_data.csv'\")",
+        "lines": [
+          "# 3. 数据清洗和异常值处理",
+          "# 标记异常值 3分",
+          "data['is_abnormal'] = _____________(",
+          "    ((_____________) & ((data['Value'] < -10) | (data['Value'] > 50))) |",
+          "    ((_____________) & ((data['Value'] < 0) | (data['Value'] > 100))),",
+          "    True, False",
+          ")",
+          "# 输出异常值数量 2分",
+          "print(\"异常值数量:\", data['is_abnormal']._____________)",
+          "# 填补缺失值",
+          "# 使用前向填充和后向填充的方法填补缺失值 4分",
+          "data['Value']._____________(_____________, inplace=True)",
+          "data['Value']._____________(_____________, inplace=True)",
+          "# 保存清洗后的数据",
+          "# 删除用于标记异常值的列，并将清洗后的数据保存到新的CSV文件中 4分",
+          "cleaned_data = _____________(_____________=['is_abnormal'])",
+          "_____________('cleaned_sensor_data.csv', _____________)",
+          "print(\"数据清洗完成，已保存为 'cleaned_sensor_data.csv'\")"
+        ],
+        "blanks": [
+          {
+            "id": "b6",
+            "accepted": [
+              "np.where"
+            ]
+          },
+          {
+            "id": "b7",
+            "accepted": [
+              "data['SensorType'] == 'Temperature'"
+            ]
+          },
+          {
+            "id": "b8",
+            "accepted": [
+              "data['SensorType'] == 'Humidity'"
+            ]
+          },
+          {
+            "id": "b9",
+            "accepted": [
+              "sum()"
+            ]
+          },
+          {
+            "id": "b10",
+            "accepted": [
+              "fillna"
+            ]
+          },
+          {
+            "id": "b11",
+            "accepted": [
+              "method='ffill'"
+            ]
+          },
+          {
+            "id": "b12",
+            "accepted": [
+              "fillna"
+            ]
+          },
+          {
+            "id": "b13",
+            "accepted": [
+              "method='bfill'"
+            ]
+          },
+          {
+            "id": "b14",
+            "accepted": [
+              "data.drop"
+            ]
+          },
+          {
+            "id": "b15",
+            "accepted": [
+              "columns"
+            ]
+          },
+          {
+            "id": "b16",
+            "accepted": [
+              "cleaned_data.to_csv"
+            ]
+          },
+          {
+            "id": "b17",
+            "accepted": [
+              "index=False"
+            ]
+          }
+        ]
+      }
+    ],
+    "meta": {
+      "examId": "AITrainer",
+      "levelId": "level3",
+      "blankCount": 18,
+      "cellCount": 4
+    }
+  },
+  {
+    "id": "1.1.3",
+    "title": "1.1.3 金融机构信用评估系统中的业务数据审核流程设计",
+    "stem": "某金融机构计划引入智能信用评估系统，通过分析客户的历史交易数据和信用记录，使用机器学习算法预测客户的信用风险等级，从而辅助贷款审批和风险控制。为了确保数据的准确性和可靠性，该机构需要设计并实现一套全面的业务数据审核流程，确保数据在进入信用评估系统之前经过严格的审核和清洗。\n我们提供一个客户信用数据集（credit_data.csv），包含以下字段：\n CustomerID: 客户ID\n Name: 客户姓名\n Age: 年龄\n Income: 收入\n LoanAmount: 贷款金额\n LoanTerm: 贷款期限（月）\n CreditScore: 信用评分\n Default: 是否违约（0: 否，1: 是）\n TransactionHistory: 历史交易记录（JSON格式）\n你作为人工智能训练师，根据提供的credit_data.csv数据集和Python代码框架（1.1.3.ipynb），完成以下数据的审核和处理任务，确保数据的准确性和可靠性。请按照以下要求完成任务，确保结果准确并保存相应的截图。\n（1）数据完整性审核：\n通过运行Python代码（1.1.3.ipynb）检查数据集中的每个字段是否存在缺失值和重复值。将上述审核结果截图以jpg的格式保存，命名为“1.1.3-1”。\n（2）数据合理性审核：\n通过运行Python代码（1.1.3.ipynb）审核以下字段的合理性：\n 年龄：应在18到70岁之间。\n 收入：应大于2000。\n 贷款金额：应小于收入的5倍。\n 信用评分：应在300到850之间。\n对不合理的数据进行标记，并将审核结果截图以jpg的格式保存，命名为“1.1.3-2”。\n（3）通过运行Python代码（1.1.3.ipynb）对数据进行清洗，处理异常值。具体要求如下：\n 将不合理的数据进行标记，并对异常值所在行进行删除；\n 清洗后的数据保存为新文件cleaned_credit_data.csv。\n所有结果文件储存在桌面新建的考生文件夹中，文件夹命名为“准考证号+身份证号后六位”。",
+    "cells": [
+      {
+        "cellIndex": 0,
+        "source": "import pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n# 读取数据集\ndata = pd.read_csv('credit_data.csv')",
+        "lines": [
+          "import pandas as pd",
+          "import numpy as np",
+          "import matplotlib.pyplot as plt",
+          "# 读取数据集",
+          "data = pd.read_csv('credit_data.csv')"
+        ],
+        "blanks": []
+      },
+      {
+        "cellIndex": 1,
+        "source": "# 1. 数据完整性审核\nmissing_values = data._________       #数据缺失值统计 2分\nduplicate_values = data._________     #数据重复值统计 2分\n# 输出结果\nprint(\"缺失值统计:\")\nprint(missing_values)\nprint(\"重复值统计:\")\nprint(duplicate_values)",
+        "lines": [
+          "# 1. 数据完整性审核",
+          "missing_values = data._________       #数据缺失值统计 2分",
+          "duplicate_values = data._________     #数据重复值统计 2分",
+          "# 输出结果",
+          "print(\"缺失值统计:\")",
+          "print(missing_values)",
+          "print(\"重复值统计:\")",
+          "print(duplicate_values)"
+        ],
+        "blanks": [
+          {
+            "id": "b0",
+            "accepted": [
+              "isnull().sum()"
+            ]
+          },
+          {
+            "id": "b1",
+            "accepted": [
+              "duplicated().sum()"
+            ]
+          }
+        ]
+      },
+      {
+        "cellIndex": 2,
+        "source": "# 2. 数据合理性审核\ndata['is_age_valid'] = _________._________(18, 70)              #Age数据的合理性审核 2分\ndata['is_income_valid'] = _________ > _________                 #Income数据的合理性审核 2分\ndata['is_loan_amount_valid'] = _________ < (_________ * 5)      #LoanAmount数据的合理性审核 2分\ndata['is_credit_score_valid'] = _________._________(300, 850)   #CreditScore数据的合理性审核 2分\n# 合理性检查结果\nvalidity_checks = data[['is_age_valid', 'is_income_valid', 'is_loan_amount_valid', 'is_credit_score_valid']].all(axis=1)\ndata['is_valid'] = validity_checks\n# 输出结果\nprint(\"数据合理性检查:\")\nprint(data[['is_age_valid', 'is_income_valid', 'is_loan_amount_valid', 'is_credit_score_valid', 'is_valid']].describe())",
+        "lines": [
+          "# 2. 数据合理性审核",
+          "data['is_age_valid'] = _________._________(18, 70)              #Age数据的合理性审核 2分",
+          "data['is_income_valid'] = _________ > _________                 #Income数据的合理性审核 2分",
+          "data['is_loan_amount_valid'] = _________ < (_________ * 5)      #LoanAmount数据的合理性审核 2分",
+          "data['is_credit_score_valid'] = _________._________(300, 850)   #CreditScore数据的合理性审核 2分",
+          "# 合理性检查结果",
+          "validity_checks = data[['is_age_valid', 'is_income_valid', 'is_loan_amount_valid', 'is_credit_score_valid']].all(axis=1)",
+          "data['is_valid'] = validity_checks",
+          "# 输出结果",
+          "print(\"数据合理性检查:\")",
+          "print(data[['is_age_valid', 'is_income_valid', 'is_loan_amount_valid', 'is_credit_score_valid', 'is_valid']].describe())"
+        ],
+        "blanks": [
+          {
+            "id": "b2",
+            "accepted": [
+              "data['Age']"
+            ]
+          },
+          {
+            "id": "b3",
+            "accepted": [
+              "between"
+            ]
+          },
+          {
+            "id": "b4",
+            "accepted": [
+              "data['Income']"
+            ]
+          },
+          {
+            "id": "b5",
+            "accepted": [
+              "2000"
+            ]
+          },
+          {
+            "id": "b6",
+            "accepted": [
+              "data['LoanAmount']"
+            ]
+          },
+          {
+            "id": "b7",
+            "accepted": [
+              "data['Income']"
+            ]
+          },
+          {
+            "id": "b8",
+            "accepted": [
+              "data['CreditScore']"
+            ]
+          },
+          {
+            "id": "b9",
+            "accepted": [
+              "between"
+            ]
+          }
+        ]
+      },
+      {
+        "cellIndex": 3,
+        "source": "# 3. 数据清洗和异常值处理\n# 标记不合理数据\ninvalid_rows = data[~data['is_valid']]\n# 删除不合理数据行\ncleaned_data = data[data['is_valid']]\n# 删除标记列\ncleaned_data = cleaned_data.drop(columns=['is_age_valid', 'is_income_valid', 'is_loan_amount_valid', 'is_credit_score_valid', 'is_valid'])\n# 保存清洗后的数据\n_________._________(_________, index=False)\nprint(\"数据清洗完成，已保存为 'cleaned_credit_data.csv'\")",
+        "lines": [
+          "# 3. 数据清洗和异常值处理",
+          "# 标记不合理数据",
+          "invalid_rows = data[~data['is_valid']]",
+          "# 删除不合理数据行",
+          "cleaned_data = data[data['is_valid']]",
+          "# 删除标记列",
+          "cleaned_data = cleaned_data.drop(columns=['is_age_valid', 'is_income_valid', 'is_loan_amount_valid', 'is_credit_score_valid', 'is_valid'])",
+          "# 保存清洗后的数据",
+          "_________._________(_________, index=False)",
+          "print(\"数据清洗完成，已保存为 'cleaned_credit_data.csv'\")"
+        ],
+        "blanks": [
+          {
+            "id": "b10",
+            "accepted": [
+              "cleaned_data"
+            ]
+          },
+          {
+            "id": "b11",
+            "accepted": [
+              "to_csv"
+            ]
+          },
+          {
+            "id": "b12",
+            "accepted": [
+              "'cleaned_credit_data.csv'"
+            ]
+          }
+        ]
+      }
+    ],
+    "meta": {
+      "examId": "AITrainer",
+      "levelId": "level3",
+      "blankCount": 13,
+      "cellCount": 4
+    }
+  },
+  {
+    "id": "1.1.4",
+    "title": "1.1.4 电商平台用户行为分析系统的数据采集与处理流程设计",
+    "stem": "某电商平台希望通过用户行为数据分析，了解用户购物习惯、购买倾向等，从而优化产品推荐系统，提高用户满意度和销售额。作为数据分析师，您需要设计一套全面的业务数据采集与处理流程，确保数据在进入用户行为分析系统之前经过严格的采集、清洗和预处理。\n我们提供一个用户行为数据集（user_behavior_data.csv），包含以下字段：\n UserID: 用户ID\n UserName: 用户名\n Age: 年龄\n Gender: 性别（Male/Female）\n Location: 位置\n LastLogin: 上次登录时间\n PurchaseAmount: 购买金额\n PurchaseCategory: 购买类别（例如，电子产品、服装、食品等）\n ReviewScore: 用户评价评分（1-5）\n LoginFrequency: 登录频率（每日、每周、每月）\n你作为人工智能训练师，根据提供的user_behavior_data.csv数据集和Python代码框架（1.1.4.ipynb），完成以下数据的采集与处理任务，确保数据的准确性和可靠性。请按照以下要求完成任务，确保结果准确并保存相应的截图。\n（1）数据采集：\n通过运行Python代码（1.1.4.ipynb），从本地文件user_behavior_data.csv中读取数据，并将数据加载到DataFrame中。打印前5条数据。\n（2）数据清洗与预处理：\n通过运行Python代码（1.1.4.ipynb）对数据进行清洗和预处理，具体要求如下：\n 处理缺失值：对缺失值进行填充或删除。\n 数据类型转换：确保每个字段的数据类型正确。\n 处理异常值：删除不合理的年龄、购买金额和评价评分。\n 数据标准化：对购买金额和评价评分进行标准化处理。\n清洗后的数据保存为新文件cleaned_user_behavior_data.csv。\n（3）数据统计：\n通过运行Python代码（1.1.4.ipynb），完成以下数据统计任务：\n 统计每个购买类别的用户数。\n 统计不同性别的平均购买金额。\n 统计不同年龄段的用户数（18-25岁、26-35岁、36-45岁、46-55岁、56-65岁、65岁以上）。\n将统计结果分别截图以jpg的格式保存，分别命名为“1.1.4-1”、“1.1.4-2”、“1.1.4-3”。\n所有结果文件储存在桌面新建的考生文件夹中，文件夹命名为“准考证号+身份证号后六位”。",
+    "cells": [
+      {
+        "cellIndex": 0,
+        "source": "import pandas\nimport numpy as np\nimport matplotlib.pyplot as plt\n\n# 1. 数据采集\n# 从本地文件中读取数据  2分\ndata =  _______________________________\nprint(\"数据采集完成，已加载到DataFrame中\")\n\n# 打印数据的前5条记录  2分\nprint(________________________________)",
+        "lines": [
+          "import pandas",
+          "import numpy as np",
+          "import matplotlib.pyplot as plt",
+          "",
+          "# 1. 数据采集",
+          "# 从本地文件中读取数据  2分",
+          "data =  _______________________________",
+          "print(\"数据采集完成，已加载到DataFrame中\")",
+          "",
+          "# 打印数据的前5条记录  2分",
+          "print(________________________________)"
+        ],
+        "blanks": [
+          {
+            "id": "b0",
+            "accepted": [
+              "pandas.read_csv('user_behavior_data.csv')"
+            ]
+          },
+          {
+            "id": "b1",
+            "accepted": [
+              "data.head()"
+            ]
+          }
+        ]
+      },
+      {
+        "cellIndex": 1,
+        "source": "# 2. 数据清洗与预处理\n# 处理缺失值（删除）  2分\ndata = ________________________________\n\n# 数据类型转换\ndata________________ = ________________(int)   # Age数据类型转换为int 2分\ndata________________ = ________________(float) # PurchaseAmount数据类型转换为float  2分\ndata________________ = ________________(int)   # ReviewScore数据类型转换为int 2分\n\n# 处理异常值  2分\ndata = data[(________________.________________(18, 70)) & \n            (data['PurchaseAmount'] > 0) & \n            (________________.________________(1, 5))]\n\n# 数据标准化\ndata['PurchaseAmount'] = (data['PurchaseAmount'] - ________________) / ________________  # PurchaseAmount数据标准化 2分\ndata['ReviewScore'] = (data['ReviewScore'] - ________________) / ________________        # ReviewScore数据标准化 2分\n\n# 保存清洗后的数据  1分\n________________('cleaned_user_behavior_data.csv', index=False)\nprint(\"数据清洗完成，已保存为 'cleaned_user_behavior_data.csv'\")",
+        "lines": [
+          "# 2. 数据清洗与预处理",
+          "# 处理缺失值（删除）  2分",
+          "data = ________________________________",
+          "",
+          "# 数据类型转换",
+          "data________________ = ________________(int)   # Age数据类型转换为int 2分",
+          "data________________ = ________________(float) # PurchaseAmount数据类型转换为float  2分",
+          "data________________ = ________________(int)   # ReviewScore数据类型转换为int 2分",
+          "",
+          "# 处理异常值  2分",
+          "data = data[(________________.________________(18, 70)) & ",
+          "            (data['PurchaseAmount'] > 0) & ",
+          "            (________________.________________(1, 5))]",
+          "",
+          "# 数据标准化",
+          "data['PurchaseAmount'] = (data['PurchaseAmount'] - ________________) / ________________  # PurchaseAmount数据标准化 2分",
+          "data['ReviewScore'] = (data['ReviewScore'] - ________________) / ________________        # ReviewScore数据标准化 2分",
+          "",
+          "# 保存清洗后的数据  1分",
+          "________________('cleaned_user_behavior_data.csv', index=False)",
+          "print(\"数据清洗完成，已保存为 'cleaned_user_behavior_data.csv'\")"
+        ],
+        "blanks": [
+          {
+            "id": "b2",
+            "accepted": [
+              "data.dropna()"
+            ]
+          },
+          {
+            "id": "b3",
+            "accepted": [
+              "['Age']"
+            ]
+          },
+          {
+            "id": "b4",
+            "accepted": [
+              "data['Age'].astype"
+            ]
+          },
+          {
+            "id": "b5",
+            "accepted": [
+              "['PurchaseAmount']"
+            ]
+          },
+          {
+            "id": "b6",
+            "accepted": [
+              "data['PurchaseAmount'].astype"
+            ]
+          },
+          {
+            "id": "b7",
+            "accepted": [
+              "['ReviewScore']"
+            ]
+          },
+          {
+            "id": "b8",
+            "accepted": [
+              "data['ReviewScore'].astype"
+            ]
+          },
+          {
+            "id": "b9",
+            "accepted": [
+              "data['Age']"
+            ]
+          },
+          {
+            "id": "b10",
+            "accepted": [
+              "between"
+            ]
+          },
+          {
+            "id": "b11",
+            "accepted": [
+              "data['ReviewScore']"
+            ]
+          },
+          {
+            "id": "b12",
+            "accepted": [
+              "between"
+            ]
+          },
+          {
+            "id": "b13",
+            "accepted": [
+              "data['PurchaseAmount'].mean()"
+            ]
+          },
+          {
+            "id": "b14",
+            "accepted": [
+              "data['PurchaseAmount'].std()"
+            ]
+          },
+          {
+            "id": "b15",
+            "accepted": [
+              "data['ReviewScore'].mean()"
+            ]
+          },
+          {
+            "id": "b16",
+            "accepted": [
+              "data['ReviewScore'].std()"
+            ]
+          },
+          {
+            "id": "b17",
+            "accepted": [
+              "data.to_csv"
+            ]
+          }
+        ]
+      },
+      {
+        "cellIndex": 2,
+        "source": "# 3. 数据统计\n# 统计每个购买类别的用户数 2分\npurchase_category_counts = ________________.________________\nprint(\"每个购买类别的用户数:\\n\", purchase_category_counts)\n\n# 统计不同性别的平均购买金额 2分\ngender_purchase_amount_mean = ________________(________________)['PurchaseAmount'].mean()\nprint(\"不同性别的平均购买金额:\\n\", gender_purchase_amount_mean)\n\n# 统计不同年龄段的用户数 2分\nbins = [18, 26, 36, 46, 56, 66, np.inf]\nlabels = ['18-25', '26-35', '36-45', '46-55', '56-65', '65+']\ndata['AgeGroup'] = pandas.________________(________________, right=False)\nage_group_counts = data['AgeGroup'].value_counts().sort_index()\nprint(\"不同年龄段的用户数:\\n\", age_group_counts)\n",
+        "lines": [
+          "# 3. 数据统计",
+          "# 统计每个购买类别的用户数 2分",
+          "purchase_category_counts = ________________.________________",
+          "print(\"每个购买类别的用户数:\\n\", purchase_category_counts)",
+          "",
+          "# 统计不同性别的平均购买金额 2分",
+          "gender_purchase_amount_mean = ________________(________________)['PurchaseAmount'].mean()",
+          "print(\"不同性别的平均购买金额:\\n\", gender_purchase_amount_mean)",
+          "",
+          "# 统计不同年龄段的用户数 2分",
+          "bins = [18, 26, 36, 46, 56, 66, np.inf]",
+          "labels = ['18-25', '26-35', '36-45', '46-55', '56-65', '65+']",
+          "data['AgeGroup'] = pandas.________________(________________, right=False)",
+          "age_group_counts = data['AgeGroup'].value_counts().sort_index()",
+          "print(\"不同年龄段的用户数:\\n\", age_group_counts)",
+          ""
+        ],
+        "blanks": [
+          {
+            "id": "b18",
+            "accepted": [
+              "data['PurchaseCategory']"
+            ]
+          },
+          {
+            "id": "b19",
+            "accepted": [
+              "value_counts()"
+            ]
+          },
+          {
+            "id": "b20",
+            "accepted": [
+              "data.groupby"
+            ]
+          },
+          {
+            "id": "b21",
+            "accepted": [
+              "'Gender'"
+            ]
+          },
+          {
+            "id": "b22",
+            "accepted": [
+              "cut"
+            ]
+          },
+          {
+            "id": "b23",
+            "accepted": [
+              "data['Age'], bins=bins, labels=labels"
+            ]
+          }
+        ]
+      }
+    ],
+    "meta": {
+      "examId": "AITrainer",
+      "levelId": "level3",
+      "blankCount": 24,
+      "cellCount": 3
+    }
+  },
+  {
+    "id": "1.1.5",
+    "title": "1.1.5 智能交通系统的数据采集、处理和审核流程设计",
+    "stem": "某智能交通系统希望通过车辆的行驶数据，利用人工智能技术进行交通流量预测和拥堵预警。你作为人工智能训练师，需要设计一套全面的业务数据采集、处理和审核流程，确保数据在进入交通流量分析系统之前经过严格的采集、清洗、审核和预处理。这里提供一个车辆行驶数据集（vehicle_traffic_data.csv），包含以下字段：\n VehicleID: 车辆ID\n DriverName: 驾驶员姓名\n Age: 年龄\n Gender: 性别（Male/Female）\n Speed: 车速（km/h）\n TravelDistance: 行驶距离（km）\n TravelTime: 行驶时间（min）\n TrafficEvent: 交通事件（Normal, Accident, Traffic Jam, Breakdown）\n你作为人工智能训练师，根据提供的vehicle_traffic_data.csv数据集和Python代码框架（1.1.5.ipynb），完成以下数据的采集、处理和审核任务，确保数据的准确性和可靠性。请按照以下要求完成任务，确保结果准确并保存相应的截图。\n（1）数据采集：\n通过运行Python代码（1.1.5.ipynb），从本地文件vehicle_traffic_data.csv中读取数据，并将数据加载到DataFrame中。显示前5行数据截图以jpg的格式保存，命名为“1.1.5-1”。\n（2）数据清洗与预处理： \n通过运行Python代码（1.1.5.ipynb）对数据进行清洗和预处理，具体要求如下：\n 处理缺失值：对缺失值进行删除。\n 数据类型转换：确保每个字段的数据类型正确。\n 处理异常值：删除不合理的年龄、车速、行驶距离和行驶时间。\n清洗后的数据保存为新文件cleaned_vehicle_traffic_data.csv。\n（3）数据合理性审核： 通过运行Python代码审核以下字段的合理性：\n 年龄：应在18到70岁之间。\n 车速：应在0到200 km/h之间。\n 行驶距离：应在1到1000 km之间。\n 行驶时间：应在1到1440分钟（24小时）之间。\n对不合理的数据进行标记，并将审核结果截图以jpg的格式保存，命名为“1.1.5-2”。\n（4）数据统计：\n通过运行Python代码（1.1.5.ipynb），完成以下数据统计任务：\n 统计每种交通事件的发生次数。\n 统计不同性别的平均车速、行驶距离和行驶时间。\n 统计不同年龄段的驾驶员数（18-25岁、26-35岁、36-45岁、46-55岁、56-65岁、65岁以上）。\n将统计结果分别截图以jpg的格式保存，分别命名为“1.1.5-3”、“1.1.5-4”、“1.1.5-5”。\n所有结果文件储存在桌面新建的考生文件夹中，文件夹命名为“准考证号+身份证号后六位”。",
+    "cells": [
+      {
+        "cellIndex": 0,
+        "source": "import pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n\n# 1. 数据采集\n# 从本地文件中读取数据  2分\ndata = _____________\nprint(\"数据采集完成，已加载到DataFrame中\")\n\n# 打印数据的前5条记录 2分\nprint(_____________)",
+        "lines": [
+          "import pandas as pd",
+          "import numpy as np",
+          "import matplotlib.pyplot as plt",
+          "",
+          "# 1. 数据采集",
+          "# 从本地文件中读取数据  2分",
+          "data = _____________",
+          "print(\"数据采集完成，已加载到DataFrame中\")",
+          "",
+          "# 打印数据的前5条记录 2分",
+          "print(_____________)"
+        ],
+        "blanks": [
+          {
+            "id": "b0",
+            "accepted": [
+              "pd.read_csv('vehicle_traffic_data.csv')"
+            ]
+          },
+          {
+            "id": "b1",
+            "accepted": [
+              "data.head()"
+            ]
+          }
+        ]
+      },
+      {
+        "cellIndex": 1,
+        "source": "# 2. 数据清洗与预处理\n# 处理缺失值（删除）  2分\ndata = _____________\n\n# 数据类型转换\ndata_____________ = _____________(int)       #Age数据类型转换为int 1分\ndata_____________ = _____________(float)     #Speed数据类型转换为float 1分\ndata_____________ = _____________(float)     #TravelDistance数据类型转换为float 1分\ndata_____________ = _____________(float)     #TravelTime数据类型转换为float 1分\n\n# 处理异常值  2分\ndata = data[(_____________(18, 70))  & \n            (_____________(0, 200)) & \n            (_____________(1, 1000)) & \n            (_____________(1, 1440))]\n\n# 保存清洗后的数据  1分\n_____________('cleaned_vehicle_traffic_data.csv', index=False)\nprint(\"数据清洗完成，已保存为 'cleaned_vehicle_traffic_data.csv'\")",
+        "lines": [
+          "# 2. 数据清洗与预处理",
+          "# 处理缺失值（删除）  2分",
+          "data = _____________",
+          "",
+          "# 数据类型转换",
+          "data_____________ = _____________(int)       #Age数据类型转换为int 1分",
+          "data_____________ = _____________(float)     #Speed数据类型转换为float 1分",
+          "data_____________ = _____________(float)     #TravelDistance数据类型转换为float 1分",
+          "data_____________ = _____________(float)     #TravelTime数据类型转换为float 1分",
+          "",
+          "# 处理异常值  2分",
+          "data = data[(_____________(18, 70))  & ",
+          "            (_____________(0, 200)) & ",
+          "            (_____________(1, 1000)) & ",
+          "            (_____________(1, 1440))]",
+          "",
+          "# 保存清洗后的数据  1分",
+          "_____________('cleaned_vehicle_traffic_data.csv', index=False)",
+          "print(\"数据清洗完成，已保存为 'cleaned_vehicle_traffic_data.csv'\")"
+        ],
+        "blanks": [
+          {
+            "id": "b2",
+            "accepted": [
+              "data.dropna()"
+            ]
+          },
+          {
+            "id": "b3",
+            "accepted": [
+              "['Age']"
+            ]
+          },
+          {
+            "id": "b4",
+            "accepted": [
+              "data['Age'].astype"
+            ]
+          },
+          {
+            "id": "b5",
+            "accepted": [
+              "['Speed']"
+            ]
+          },
+          {
+            "id": "b6",
+            "accepted": [
+              "data['Speed'].astype"
+            ]
+          },
+          {
+            "id": "b7",
+            "accepted": [
+              "['TravelDistance']"
+            ]
+          },
+          {
+            "id": "b8",
+            "accepted": [
+              "data['TravelDistance'].astype"
+            ]
+          },
+          {
+            "id": "b9",
+            "accepted": [
+              "['TravelTime']"
+            ]
+          },
+          {
+            "id": "b10",
+            "accepted": [
+              "data['TravelTime'].astype"
+            ]
+          },
+          {
+            "id": "b11",
+            "accepted": [
+              "data['Age'].between"
+            ]
+          },
+          {
+            "id": "b12",
+            "accepted": [
+              "data['Speed'].between"
+            ]
+          },
+          {
+            "id": "b13",
+            "accepted": [
+              "data['TravelDistance'].between"
+            ]
+          },
+          {
+            "id": "b14",
+            "accepted": [
+              "data['TravelTime'].between"
+            ]
+          },
+          {
+            "id": "b15",
+            "accepted": [
+              "data.to_csv"
+            ]
+          }
+        ]
+      },
+      {
+        "cellIndex": 2,
+        "source": "# 3. 数据合理性审核\n# 审核字段合理性 1分\nunreasonable_data = data[~((_____________(18, 70)) & \n                           (_____________(0, 200)) & \n                           (_____________(1, 1000)) & \n                           (_____________(1, 1440)))]\nprint(\"不合理的数据:\\n\", unreasonable_data)\n\n# 4. 数据统计\n# 统计每种交通事件的发生次数  2分\ntraffic_event_counts = _____________\nprint(\"每种交通事件的发生次数:\\n\", traffic_event_counts)\n\n# 统计不同性别的平均车速、行驶距离和行驶时间  2分\ngender_stats = data._____________._____________\nprint(\"不同性别的平均车速、行驶距离和行驶时间:\\n\", gender_stats)\n\n# 统计不同年龄段的驾驶员数  5分\nage_bins = [18, 26, 36, 46, 56, 66, np.inf]\nage_labels = ['18-25', '26-35', '36-45', '46-55', '56-65', '65+']\ndata['AgeGroup'] = _____________(_____________,_____________,_____________, right=False)\nage_group_counts = _____________\nprint(\"不同年龄段的驾驶员数:\\n\", age_group_counts)",
+        "lines": [
+          "# 3. 数据合理性审核",
+          "# 审核字段合理性 1分",
+          "unreasonable_data = data[~((_____________(18, 70)) & ",
+          "                           (_____________(0, 200)) & ",
+          "                           (_____________(1, 1000)) & ",
+          "                           (_____________(1, 1440)))]",
+          "print(\"不合理的数据:\\n\", unreasonable_data)",
+          "",
+          "# 4. 数据统计",
+          "# 统计每种交通事件的发生次数  2分",
+          "traffic_event_counts = _____________",
+          "print(\"每种交通事件的发生次数:\\n\", traffic_event_counts)",
+          "",
+          "# 统计不同性别的平均车速、行驶距离和行驶时间  2分",
+          "gender_stats = data._____________._____________",
+          "print(\"不同性别的平均车速、行驶距离和行驶时间:\\n\", gender_stats)",
+          "",
+          "# 统计不同年龄段的驾驶员数  5分",
+          "age_bins = [18, 26, 36, 46, 56, 66, np.inf]",
+          "age_labels = ['18-25', '26-35', '36-45', '46-55', '56-65', '65+']",
+          "data['AgeGroup'] = _____________(_____________,_____________,_____________, right=False)",
+          "age_group_counts = _____________",
+          "print(\"不同年龄段的驾驶员数:\\n\", age_group_counts)"
+        ],
+        "blanks": [
+          {
+            "id": "b16",
+            "accepted": [
+              "data['Age'].between"
+            ]
+          },
+          {
+            "id": "b17",
+            "accepted": [
+              "data['Speed'].between"
+            ]
+          },
+          {
+            "id": "b18",
+            "accepted": [
+              "data['TravelDistance'].between"
+            ]
+          },
+          {
+            "id": "b19",
+            "accepted": [
+              "data['TravelTime'].between"
+            ]
+          },
+          {
+            "id": "b20",
+            "accepted": [
+              "data['TrafficEvent'].value_counts()"
+            ]
+          },
+          {
+            "id": "b21",
+            "accepted": [
+              "groupby('Gender')"
+            ]
+          },
+          {
+            "id": "b22",
+            "accepted": [
+              "agg({'Speed': 'mean', 'TravelDistance': 'mean', 'TravelTime': 'mean'})"
+            ]
+          },
+          {
+            "id": "b23",
+            "accepted": [
+              "pd.cut"
+            ]
+          },
+          {
+            "id": "b24",
+            "accepted": [
+              "data['Age']"
+            ]
+          },
+          {
+            "id": "b25",
+            "accepted": [
+              "bins=age_bins"
+            ]
+          },
+          {
+            "id": "b26",
+            "accepted": [
+              "labels=age_labels"
+            ]
+          },
+          {
+            "id": "b27",
+            "accepted": [
+              "data['AgeGroup'].value_counts()"
+            ]
+          }
+        ]
+      }
+    ],
+    "meta": {
+      "examId": "AITrainer",
+      "levelId": "level3",
+      "blankCount": 28,
+      "cellCount": 3
+    }
+  },
+  {
+    "id": "2.1.1",
+    "title": "2.1.1 智慧交通中燃油效率模型的数据清洗和标注流程设计",
+    "stem": "在现代交通中，燃油效率（MPG）是衡量汽车性能和交通系统优化的重要指标之一。高效的燃油利用不仅能够降低车辆运营成本，还能减少碳排放，促进环保。开发一个用于预测汽车燃油效率的模型可以帮助智慧交通系统优化路线规划和车辆调度，从而提升整体交通效率和减少能源消耗。此外，这样的模型还可以帮助消费者做出更明智的购车决策，并帮助厂商优化汽车设计。\n现要求根据提供的汽车燃油效率数据集，补全2.1.1.ipynb代码。选择合适的特征，开发一个燃油效率预测模型。在开发预测模型之前，首先要对数据进行数据清洗和标注，请完成下面的数据预处理任务，并设计一套标注流程规范：\n(1)正确加载数据集，并显示前五行的数据及数据类型。\n(2)检查数据集中的缺失值并删除缺失值所在的行。\n(3)将“horsepower”列转换为数值类型，并处理转换中的异常值。\n(4)对数值型数据进行标准化处理，确保数据在同一量纲下进行分析。\n(5)根据业务需求和数据特性，选择对燃油效率预测最有用的特征：选择以下特征：'cylinders'、'displacement'、'horsepower'、'weight'、'acceleration'、'model year'、'origin'\n(6)将“mpg”设为目标变量并标注；\n(7)对数据进行标注和划分；\n(8)保存处理后的数据，并命名为：2.1.1_cleaned_data.csv，保存到考生文件夹；\n(9)制定数据清洗和标注规范，将答案写到答题卷文件中，答题卷文件命名为“2.1.1.docx”，保存到考生文件夹；\n(10)将以上代码以及运行结果，以html格式保存并命名为2.1.1.html，保存到考生文件夹，考生文件夹命名为“准考证号+身份证后6位”。",
+    "cells": [
+      {
+        "cellIndex": 0,
+        "source": "import pandas as pd\n\n# 加载数据集并显示数据集的前五行 1分\ndata = __________\nprint(\"数据集的前五行:\")\nprint(__________)\n\n# 显示每一列的数据类型\nprint(data.dtypes)\n\n# 检查缺失值并删除缺失值所在的行  2分\nprint(\"\\n检查缺失值:\")\nprint(__________.__________.__________)  \ndata = __________\n\n# 将 'horsepower' 列转换为数值类型，并（删除）处理转换中的异常值 1分\ndata['horsepower'] = __________(data['horsepower'], errors='coerce')\ndata = __________\n\n# 显示每一列的数据类型\nprint(data.horsepower.dtypes)\n\n# 检查清洗后的缺失值\nprint(\"\\n检查清洗后的缺失值:\")\nprint(data.isnull().sum())\n\nfrom sklearn.preprocessing import StandardScaler\n# 对数值型数据进行标准化处理 1分\nnumerical_features = ['displacement', 'horsepower', 'weight', 'acceleration']\nscaler = StandardScaler()\ndata[numerical_features] = __________\n\nfrom sklearn.model_selection import train_test_split\n# 选择特征、自变量和目标变量 2分\nselected_features = __________\nX = __________\ny = __________\n\n# 划分数据集为训练集和测试集（训练集占8成） 1分\nX_train, X_test, y_train, y_test = __________(__________, random_state=42)\n\n\n# 将特征和目标变量合并到一个数据框中\ncleaned_data = X.copy()\ncleaned_data['mpg'] = y\n\n# 保存清洗和处理后的数据（不存储额外的索引号） 1分\n__________('2.1.1_cleaned_data.csv', __________)\n\n# 打印消息指示文件已保存\nprint(\"\\n清洗后的数据已保存到 2.1.1_cleaned_data.csv\")",
+        "lines": [
+          "import pandas as pd",
+          "",
+          "# 加载数据集并显示数据集的前五行 1分",
+          "data = __________",
+          "print(\"数据集的前五行:\")",
+          "print(__________)",
+          "",
+          "# 显示每一列的数据类型",
+          "print(data.dtypes)",
+          "",
+          "# 检查缺失值并删除缺失值所在的行  2分",
+          "print(\"\\n检查缺失值:\")",
+          "print(__________.__________.__________)  ",
+          "data = __________",
+          "",
+          "# 将 'horsepower' 列转换为数值类型，并（删除）处理转换中的异常值 1分",
+          "data['horsepower'] = __________(data['horsepower'], errors='coerce')",
+          "data = __________",
+          "",
+          "# 显示每一列的数据类型",
+          "print(data.horsepower.dtypes)",
+          "",
+          "# 检查清洗后的缺失值",
+          "print(\"\\n检查清洗后的缺失值:\")",
+          "print(data.isnull().sum())",
+          "",
+          "from sklearn.preprocessing import StandardScaler",
+          "# 对数值型数据进行标准化处理 1分",
+          "numerical_features = ['displacement', 'horsepower', 'weight', 'acceleration']",
+          "scaler = StandardScaler()",
+          "data[numerical_features] = __________",
+          "",
+          "from sklearn.model_selection import train_test_split",
+          "# 选择特征、自变量和目标变量 2分",
+          "selected_features = __________",
+          "X = __________",
+          "y = __________",
+          "",
+          "# 划分数据集为训练集和测试集（训练集占8成） 1分",
+          "X_train, X_test, y_train, y_test = __________(__________, random_state=42)",
+          "",
+          "",
+          "# 将特征和目标变量合并到一个数据框中",
+          "cleaned_data = X.copy()",
+          "cleaned_data['mpg'] = y",
+          "",
+          "# 保存清洗和处理后的数据（不存储额外的索引号） 1分",
+          "__________('2.1.1_cleaned_data.csv', __________)",
+          "",
+          "# 打印消息指示文件已保存",
+          "print(\"\\n清洗后的数据已保存到 2.1.1_cleaned_data.csv\")"
+        ],
+        "blanks": [
+          {
+            "id": "b0",
+            "accepted": [
+              "pd.read_csv('auto-mpg.csv')"
+            ]
+          },
+          {
+            "id": "b1",
+            "accepted": [
+              "data.head()"
+            ]
+          },
+          {
+            "id": "b2",
+            "accepted": [
+              "data"
+            ]
+          },
+          {
+            "id": "b3",
+            "accepted": [
+              "isnull()"
+            ]
+          },
+          {
+            "id": "b4",
+            "accepted": [
+              "sum()"
+            ]
+          },
+          {
+            "id": "b5",
+            "accepted": [
+              "data.dropna()"
+            ]
+          },
+          {
+            "id": "b6",
+            "accepted": [
+              "pd.to_numeric"
+            ]
+          },
+          {
+            "id": "b7",
+            "accepted": [
+              "data.dropna(subset=['horsepower'])"
+            ]
+          },
+          {
+            "id": "b8",
+            "accepted": [
+              "scaler.fit_transform(data[numerical_features])"
+            ]
+          },
+          {
+            "id": "b9",
+            "accepted": [
+              "['cylinders', 'displacement', 'horsepower', 'weight', 'acceleration', 'model year', 'origin']"
+            ]
+          },
+          {
+            "id": "b10",
+            "accepted": [
+              "data[selected_features]"
+            ]
+          },
+          {
+            "id": "b11",
+            "accepted": [
+              "data['mpg']"
+            ]
+          },
+          {
+            "id": "b12",
+            "accepted": [
+              "train_test_split"
+            ]
+          },
+          {
+            "id": "b13",
+            "accepted": [
+              "X, y, test_size=0.2"
+            ]
+          },
+          {
+            "id": "b14",
+            "accepted": [
+              "cleaned_data.to_csv"
+            ]
+          },
+          {
+            "id": "b15",
+            "accepted": [
+              "index=False"
+            ]
+          }
+        ]
+      },
+      {
+        "cellIndex": 1,
+        "source": "",
+        "lines": [
+          ""
+        ],
+        "blanks": []
+      }
+    ],
+    "meta": {
+      "examId": "AITrainer",
+      "levelId": "level3",
+      "blankCount": 16,
+      "cellCount": 2
+    }
+  },
+  {
+    "id": "2.1.2",
+    "title": "2.1.2 低碳生活行为影响因素数据清洗和标注流程设计",
+    "stem": "在应对气候变化的背景下，了解和促进低碳生活行为变得越来越重要。现要求根据提供的“大学生低碳生活行为的影响因素数据集”，选择合适的特征，开发一个预测大学生低碳生活行为的模型。提供的数据集样本数据包含300多个关于大学生低碳生活行为的自变量和因变量。自变量为主观规范、知觉行为控制、低碳行为态度，中介变量为行为意愿，因变量为低碳生活行为。同时，性别、生源地、月生活费作为控制变量进行研究。在开发预测模型之前，首先要对数据进行数据清洗和标注。补全2.1.2.ipynb代码。完成下面的数据预处理任务，并设计一套标注流程规范：\n（1）正确加载数据集，并显示前五行的数据；\n（2）检查数据集中的缺失值，使用删除包含缺失值的行的办法处理，记录缺失值处理后的数据行数；\n（3）检查数据集中的重复值并删除所有重复值，并记录删除的行数；\n（4）对数值型数据进行标准化处理，确保数据在同一量纲下进行分析；\n（5）根据业务需求和数据特性，选择对低碳生活行为预测最有用的特征，将“低碳行为积极性”设为目标变量并标注。选择以下特征：\n1.您的性别○男性 ○女性\n2.您的年级○大一 ○大二 ○大三 ○大四\n3.您的生源地○农村 ○城镇（乡镇） ○地县级城市 ○省会城市及直辖市\n4.您的月生活费○≦1,000元 ○1,001-2,000元 ○2,001-3,000元 ○≧3,001元\n5.您进行过绿色低碳的相关生活方式吗?\n6.您觉得“低碳”，与你的生活关系密切吗？\n7.低碳生活是否会成为未来的主流生活方式？\n8.您是否认为低碳生活会提高您的生活质量？\n（6）对数据进行划分（8:2）；\n（7）保存处理后的数据，并命名为：2.1.2_cleaned_data.csv，保存到考生文件夹；\n（8）制定数据清洗和标注规范，将答案写到答题卷文件中，答题卷文件命名为“2.1.2.docx”，保存到考生文件夹；\n（9）将以上代码以及运行结果，以html格式保存并命名为2.1.2.html，保存到考生文件夹，考生文件夹命名为“准考证号+身份证后6位”。",
+    "cells": [
+      {
+        "cellIndex": 0,
+        "source": "import pandas as pd\n#读取一个Excel文件，并将读取到的数据存储在变量data中\ndata = __________\n#打印出数据集的前5行\nprint(data.head())\n\n#处理数据集中的缺失值\ninitial_row_count = __________   #处理前的数据行数\ndata = __________                #删除缺失值所在行\nfinal_row_count = __________     #处理后的数据行数\nprint(f'处理后数据行数: {final_row_count}, 删除的行数: {initial_row_count - final_row_count}')\n\n#删除重复行\ndata = __________\n\nfrom sklearn.preprocessing import StandardScaler\nnumerical_features = ['4.您的月生活费○≦1,000元   ○1,001-2,000元   ○2,001-3,000元   ○≧3,001元']\nscaler = StandardScaler()\ndata[numerical_features] = __________\n\n#选择特征\nselected_features = [__________]\nX = __________\n\n# 创建目标变量\ny = __________\n\nfrom sklearn.model_selection import train_test_split\n# 数据划分（测试集取20%）\nX_train, X_test, y_train, y_test = __________(__________, random_state=42)\n\n# 合并处理后得数据，并将其保存（保存中不用额外创建索引）\ncleaned_data = __________(__________, axis=1)\n__________('2.1.2_cleaned_data.csv', __________)",
+        "lines": [
+          "import pandas as pd",
+          "#读取一个Excel文件，并将读取到的数据存储在变量data中",
+          "data = __________",
+          "#打印出数据集的前5行",
+          "print(data.head())",
+          "",
+          "#处理数据集中的缺失值",
+          "initial_row_count = __________   #处理前的数据行数",
+          "data = __________                #删除缺失值所在行",
+          "final_row_count = __________     #处理后的数据行数",
+          "print(f'处理后数据行数: {final_row_count}, 删除的行数: {initial_row_count - final_row_count}')",
+          "",
+          "#删除重复行",
+          "data = __________",
+          "",
+          "from sklearn.preprocessing import StandardScaler",
+          "numerical_features = ['4.您的月生活费○≦1,000元   ○1,001-2,000元   ○2,001-3,000元   ○≧3,001元']",
+          "scaler = StandardScaler()",
+          "data[numerical_features] = __________",
+          "",
+          "#选择特征",
+          "selected_features = [__________]",
+          "X = __________",
+          "",
+          "# 创建目标变量",
+          "y = __________",
+          "",
+          "from sklearn.model_selection import train_test_split",
+          "# 数据划分（测试集取20%）",
+          "X_train, X_test, y_train, y_test = __________(__________, random_state=42)",
+          "",
+          "# 合并处理后得数据，并将其保存（保存中不用额外创建索引）",
+          "cleaned_data = __________(__________, axis=1)",
+          "__________('2.1.2_cleaned_data.csv', __________)"
+        ],
+        "blanks": [
+          {
+            "id": "b0",
+            "accepted": [
+              "pd.read_excel('大学生低碳生活行为的影响因素数据集.xlsx')"
+            ]
+          },
+          {
+            "id": "b1",
+            "accepted": [
+              "data.shape[0]"
+            ]
+          },
+          {
+            "id": "b2",
+            "accepted": [
+              "data.dropna()"
+            ]
+          },
+          {
+            "id": "b3",
+            "accepted": [
+              "data.shape[0]"
+            ]
+          },
+          {
+            "id": "b4",
+            "accepted": [
+              "data.drop_duplicates()"
+            ]
+          },
+          {
+            "id": "b5",
+            "accepted": [
+              "scaler.fit_transform(data[numerical_features])"
+            ]
+          },
+          {
+            "id": "b6",
+            "accepted": [
+              "'1.您的性别○男性 ○女性', '2.您的年级○大一 ○大二 ○大三 ○大四', '3.您的生源地○农村 ○城镇（乡镇） ○地县级城市 ○省会城市及直辖市', '4.您的月生活费○≦1,000元 ○1,001-2,000元 ○2,001-3,000元 ○≧3,001元', '5.您进行过绿色低碳的相关生活方式吗?', '6.您觉得“低碳”，与你的生活关系密切吗？', '7.低碳生活是否会成为未来的主流生活方式？', '8.您是否认为低碳生活会提高您的生活质量？'"
+            ]
+          },
+          {
+            "id": "b7",
+            "accepted": [
+              "data[selected_features]"
+            ]
+          },
+          {
+            "id": "b8",
+            "accepted": [
+              "data['低碳行为积极性']"
+            ]
+          },
+          {
+            "id": "b9",
+            "accepted": [
+              "train_test_split"
+            ]
+          },
+          {
+            "id": "b10",
+            "accepted": [
+              "X, y, test_size=0.2"
+            ]
+          },
+          {
+            "id": "b11",
+            "accepted": [
+              "pd.concat"
+            ]
+          },
+          {
+            "id": "b12",
+            "accepted": [
+              "[X, y]"
+            ]
+          },
+          {
+            "id": "b13",
+            "accepted": [
+              "cleaned_data.to_csv"
+            ]
+          },
+          {
+            "id": "b14",
+            "accepted": [
+              "index=False"
+            ]
+          }
+        ]
+      },
+      {
+        "cellIndex": 1,
+        "source": "",
+        "lines": [
+          ""
+        ],
+        "blanks": []
+      }
+    ],
+    "meta": {
+      "examId": "AITrainer",
+      "levelId": "level3",
+      "blankCount": 15,
+      "cellCount": 2
+    }
+  },
+  {
+    "id": "2.1.3",
+    "title": "2.1.3 信用评分模型数据清洗和标注流程设计",
+    "stem": "互联网金融飞速发展，使得个人金融理财变得越来越容易。而其中信用评分技术是一种对贷款申请人（信用卡申请人）做风险评估分值的统计模型，可以根据客户提供的资料、客户的历史数据、第三方平台数据（芝麻分、京东、微信等），对客户的信用进行评估。现要求根据提供的Finance数据集，选择合适的特征，开发一个申请的评分模型，对未来一段时间内借贷人出现违约的概率进行预测，对客户信用进行评估打分。提供的数据集样本数据一共15000条，10个自变量，1个因变量（SeriousDlqin2yrs）。在开发评分模型之前，首先要对数据进行数据清洗，请补全2.1.3.ipynb代码完成下面的数据预处理任务，并设计一套标注流程规范：\n（1）正确加载数据集，并显示前五行的数据；\n（2）检查数据集中的异常值并处理异常值，使用箱线图检测异常值，使用IQR方法处理异常值；\n设置图像的尺寸为12英寸宽和8英寸高；\n将画布分成3行4列，总共可以容纳12个子图；\n（3）检查数据集中的重复值并删除所有重复值，并记录删除的行数；\n（4）对数据进行归一化处理；\n（5）创建新的特征IncomeToDebtRatio，MonthlyIncome，并添加到数据集中；\n（6）将SeriousDlqin2yrs设为目标变量并标注；\n（7）对数据进行划分；\n（8）保存处理后的数据，并命名为：2.1.3_cleaned_data.csv，保存到考生文件夹；\n（9）制定数据清洗和特征工程规范，将答案写到答题卷文件中，答题卷文件命名为“2.1.3.docx”，保存到考生文件夹；\n（10）将以上代码以及运行结果，以html格式保存并命名为2.1.3.html，保存到考生文件夹，考生文件夹命名为“准考证号+身份证后6位”。",
+    "cells": [
+      {
+        "cellIndex": 0,
+        "source": "import pandas as pd\n\n# 加载数据\ndata = __________\n\n# 显示前五行的数据\n__________\n\nimport matplotlib.pyplot as plt\nimport seaborn as sns\n\n# 设置图像尺寸\nplt.figure(figsize=(12, 8))\n\n# 识别数值列用于箱线图\nnumeric_cols = data.select_dtypes(include=['float64', 'int64']).columns\n\n# 创建箱线图\nfor i, col in enumerate(numeric_cols, 1):\n    plt.subplot(3, 4, i)\n    sns.boxplot(x=data[col])\n    plt.title(col)\n\nplt.tight_layout()\nplt.show()\n\n# 使用IQR处理异常值\nQ1 = __________(0.25)\nQ3 = __________(0.75)\nIQR = __________\n\n# 移除异常值\ndata_cleaned = data[~((data[numeric_cols] < (Q1 - 1.5 * __________)) | (data[numeric_cols] > (Q3 + 1.5 * __________))).any(axis=1)]\n\n# 检查处理重复值\nduplicates = __________()\nnum_duplicates = duplicates.sum()\ndata_cleaned = data_cleaned[~duplicates]\n\nprint(f'删除的重复行数: {num_duplicates}')\n\n#对数据进行归一化处理\nfrom sklearn.preprocessing import MinMaxScaler\n\nscaler = MinMaxScaler()\ndata_cleaned[numeric_cols] = __________\n\n# 设定目标变量\ntarget_variable = __________\n\nfrom sklearn.model_selection import train_test_split\n\n# 定义特征和目标\nX = __________(columns=[__________])   #1分\ny = __________                         #1分\n\n# 划分数据（训练集占80%）\nX_train, X_test, y_train, y_test = __________(__________, random_state=42)\n\n# 显示划分后的数据形状\nprint(f'训练数据形状: {X_train.shape}')\nprint(f'测试数据形状: {X_test.shape}')\n\n# 保存清洗后的数据到CSV\ncleaned_file_path = '2.1.3_cleaned_data.csv'\n__________(__________, index=False)\n",
+        "lines": [
+          "import pandas as pd",
+          "",
+          "# 加载数据",
+          "data = __________",
+          "",
+          "# 显示前五行的数据",
+          "__________",
+          "",
+          "import matplotlib.pyplot as plt",
+          "import seaborn as sns",
+          "",
+          "# 设置图像尺寸",
+          "plt.figure(figsize=(12, 8))",
+          "",
+          "# 识别数值列用于箱线图",
+          "numeric_cols = data.select_dtypes(include=['float64', 'int64']).columns",
+          "",
+          "# 创建箱线图",
+          "for i, col in enumerate(numeric_cols, 1):",
+          "    plt.subplot(3, 4, i)",
+          "    sns.boxplot(x=data[col])",
+          "    plt.title(col)",
+          "",
+          "plt.tight_layout()",
+          "plt.show()",
+          "",
+          "# 使用IQR处理异常值",
+          "Q1 = __________(0.25)",
+          "Q3 = __________(0.75)",
+          "IQR = __________",
+          "",
+          "# 移除异常值",
+          "data_cleaned = data[~((data[numeric_cols] < (Q1 - 1.5 * __________)) | (data[numeric_cols] > (Q3 + 1.5 * __________))).any(axis=1)]",
+          "",
+          "# 检查处理重复值",
+          "duplicates = __________()",
+          "num_duplicates = duplicates.sum()",
+          "data_cleaned = data_cleaned[~duplicates]",
+          "",
+          "print(f'删除的重复行数: {num_duplicates}')",
+          "",
+          "#对数据进行归一化处理",
+          "from sklearn.preprocessing import MinMaxScaler",
+          "",
+          "scaler = MinMaxScaler()",
+          "data_cleaned[numeric_cols] = __________",
+          "",
+          "# 设定目标变量",
+          "target_variable = __________",
+          "",
+          "from sklearn.model_selection import train_test_split",
+          "",
+          "# 定义特征和目标",
+          "X = __________(columns=[__________])   #1分",
+          "y = __________                         #1分",
+          "",
+          "# 划分数据（训练集占80%）",
+          "X_train, X_test, y_train, y_test = __________(__________, random_state=42)",
+          "",
+          "# 显示划分后的数据形状",
+          "print(f'训练数据形状: {X_train.shape}')",
+          "print(f'测试数据形状: {X_test.shape}')",
+          "",
+          "# 保存清洗后的数据到CSV",
+          "cleaned_file_path = '2.1.3_cleaned_data.csv'",
+          "__________(__________, index=False)",
+          ""
+        ],
+        "blanks": [
+          {
+            "id": "b0",
+            "accepted": [
+              "pd.read_csv('finance数据集.csv')"
+            ]
+          },
+          {
+            "id": "b1",
+            "accepted": [
+              "print(data.head())"
+            ]
+          },
+          {
+            "id": "b2",
+            "accepted": [
+              "data[numeric_cols].quantile"
+            ]
+          },
+          {
+            "id": "b3",
+            "accepted": [
+              "data[numeric_cols].quantile"
+            ]
+          },
+          {
+            "id": "b4",
+            "accepted": [
+              "Q3-Q1"
+            ]
+          },
+          {
+            "id": "b5",
+            "accepted": [
+              "IQR"
+            ]
+          },
+          {
+            "id": "b6",
+            "accepted": [
+              "IQR"
+            ]
+          },
+          {
+            "id": "b7",
+            "accepted": [
+              "data_cleaned.duplicated"
+            ]
+          },
+          {
+            "id": "b8",
+            "accepted": [
+              "scaler.fit_transform(data_cleaned[numeric_cols])"
+            ]
+          },
+          {
+            "id": "b9",
+            "accepted": [
+              "'SeriousDlqin2yrs'"
+            ]
+          },
+          {
+            "id": "b10",
+            "accepted": [
+              "data_cleaned.drop"
+            ]
+          },
+          {
+            "id": "b11",
+            "accepted": [
+              "target_variable"
+            ]
+          },
+          {
+            "id": "b12",
+            "accepted": [
+              "data_cleaned[target_variable]"
+            ]
+          },
+          {
+            "id": "b13",
+            "accepted": [
+              "train_test_split"
+            ]
+          },
+          {
+            "id": "b14",
+            "accepted": [
+              "X, y, test_size=0.2"
+            ]
+          },
+          {
+            "id": "b15",
+            "accepted": [
+              "data_cleaned.to_csv"
+            ]
+          },
+          {
+            "id": "b16",
+            "accepted": [
+              "cleaned_file_path"
+            ]
+          }
+        ]
+      }
+    ],
+    "meta": {
+      "examId": "AITrainer",
+      "levelId": "level3",
+      "blankCount": 17,
+      "cellCount": 1
+    }
+  },
+  {
+    "id": "2.1.4",
+    "title": "2.1.4 医疗研究数据清洗和标注设计",
+    "stem": "随着医学技术的进步和医疗资源的丰富，医疗研究在改善患者治疗效果、提升医疗服务质量方面起到了重要作用。研究人员通过分析大量患者的治疗数据，能够评估不同治疗方案的效果，发现潜在的健康问题，并提出针对性的治疗建议。这不仅可以帮助患者获得更好的治疗效果，还能为医疗机构优化资源配置、提升服务水平提供重要依据。\n现提供一份医疗研究数据集，训练集样本数据一共5441条记录。请补全2.1.4.ipynb代码，完成下面的数据预处理任务：\n1、加载数据集，查看表的数据类型，表结构和显示每一列的空缺值数量；\n2、将“就诊日期”和“诊断日期”规范为“yyyy-mm-dd”格式，并将“病人ID”列名改为“患者ID”，显示修改后的表结构；\n3、增加“诊断延迟”（诊断日期-就诊日期）和“病程”（当前日期-诊断日期）两列，删除不合理的数据（如负数，年龄为几百岁等）；\n4、检查数据集中的重复值并删除所有重复值，并记录删除的行数；\n5、对数据段[年龄，体重，身高]进行归一化处理；\n6、统计不同疾病类型的治疗结果分布，并画出柱状图；\n7、分析年龄和疾病严重程度的关系，绘制出散点图；\n8、保存处理后的数据，并命名为：2.1.4_cleaned_data.csv，保存到考生文件夹；\n9、制定数据清洗和数据标注规范，将答案写到答题卷文件中，答题卷文件命名为“2.1.4.docx”，保存到考生文件夹；\n10、将以上代码以及运行结果，以html格式保存并命名为2.1.4.html，保存到考生文件夹，考生文件夹命名为“准考证号+身份证后6位”。",
+    "cells": [
+      {
+        "cellIndex": 0,
+        "source": "import pandas as pd\n\n# 加载数据集并指定编码为gbk\ndata = _________\n\n# 查看数据类型\nprint(data.dtypes)\n# 查看表结构基本信息\nprint(_________)\n\n# 显示每一列的空缺值数量\nprint(data.isnull().sum())\n\n# 规范日期格式\ndata['就诊日期'] = pd.to_datetime(data['就诊日期'])\ndata['诊断日期'] = pd.to_datetime(data['诊断日期'])\n\n# 修改列名\n_________(_________, inplace=True)\n\n# 查看修改后的表结构\nprint(data.head())\n\nfrom datetime import datetime\n\n# 增加诊断延迟和病程列\ndata['诊断延迟'] = _________.dt.days\ndata['病程'] = (datetime(2024, 9, 1) - data['诊断日期']).dt.days\n\n# 删除不合理的数据\ndata = _________[(_________ >= 0) & (_________ > 0) & (_________ < 120)]\n\n# 查看修改后的数据\nprint(data.describe())\n\n# 删除重复值并记录删除的行数\ninitial_rows = data.shape[0]\n_________(inplace=True)\ndeleted_rows = initial_rows - data.shape[0]\n\nprint(f'删除的重复行数: {deleted_rows}')\n\nfrom sklearn.preprocessing import MinMaxScaler\n\n# 对需要归一化的列进行处理\nscaler = MinMaxScaler()\ncolumns_to_normalize = [_________]\ndata[columns_to_normalize] = _________\n\n# 查看归一化后的数据\nprint(data.head())\n\nimport matplotlib.pyplot as plt\nimport matplotlib.font_manager as fm\n\n\n# 统计治疗结果分布\ntreatment_outcome_distribution = data.groupby('疾病类型')['治疗结果'].value_counts().unstack()\n\n# 设置中文字体\nfont_path = 'C:/Windows/Fonts/simhei.ttf'  # 根据你的系统调整字体路径\nmy_font = fm.FontProperties(fname=font_path)\n\n# 绘制柱状图\n_________(_________, stacked=True)\nplt.title('不同疾病类型的治疗结果分布', fontproperties=my_font)\nplt.xlabel('疾病类型', fontproperties=my_font)\nplt.ylabel('治疗结果数量', fontproperties=my_font)\nplt.xticks(fontproperties=my_font)  # 设置x轴刻度标签的字体\nplt.yticks(fontproperties=my_font)  # 设置y轴刻度标签的字体\nplt.legend(prop=my_font)  # 设置图例字体\nplt.show()\n\n# 绘制散点图\n_________(_________, _________)\nplt.title('年龄和疾病严重程度的关系', fontproperties=my_font)\nplt.xlabel('年龄', fontproperties=my_font)\nplt.ylabel('疾病严重程度', fontproperties=my_font)\nplt.xticks(fontproperties=my_font)  # 设置x轴刻度标签的字体\nplt.yticks(fontproperties=my_font)  # 设置y轴刻度标签的字体\nplt.legend(prop=my_font)  # 设置图例字体\nplt.show()\n\n# 保存处理后得数据\noutput_path = '2.1.4_cleaned_data.csv'\n_________(_________, index=False)",
+        "lines": [
+          "import pandas as pd",
+          "",
+          "# 加载数据集并指定编码为gbk",
+          "data = _________",
+          "",
+          "# 查看数据类型",
+          "print(data.dtypes)",
+          "# 查看表结构基本信息",
+          "print(_________)",
+          "",
+          "# 显示每一列的空缺值数量",
+          "print(data.isnull().sum())",
+          "",
+          "# 规范日期格式",
+          "data['就诊日期'] = pd.to_datetime(data['就诊日期'])",
+          "data['诊断日期'] = pd.to_datetime(data['诊断日期'])",
+          "",
+          "# 修改列名",
+          "_________(_________, inplace=True)",
+          "",
+          "# 查看修改后的表结构",
+          "print(data.head())",
+          "",
+          "from datetime import datetime",
+          "",
+          "# 增加诊断延迟和病程列",
+          "data['诊断延迟'] = _________.dt.days",
+          "data['病程'] = (datetime(2024, 9, 1) - data['诊断日期']).dt.days",
+          "",
+          "# 删除不合理的数据",
+          "data = _________[(_________ >= 0) & (_________ > 0) & (_________ < 120)]",
+          "",
+          "# 查看修改后的数据",
+          "print(data.describe())",
+          "",
+          "# 删除重复值并记录删除的行数",
+          "initial_rows = data.shape[0]",
+          "_________(inplace=True)",
+          "deleted_rows = initial_rows - data.shape[0]",
+          "",
+          "print(f'删除的重复行数: {deleted_rows}')",
+          "",
+          "from sklearn.preprocessing import MinMaxScaler",
+          "",
+          "# 对需要归一化的列进行处理",
+          "scaler = MinMaxScaler()",
+          "columns_to_normalize = [_________]",
+          "data[columns_to_normalize] = _________",
+          "",
+          "# 查看归一化后的数据",
+          "print(data.head())",
+          "",
+          "import matplotlib.pyplot as plt",
+          "import matplotlib.font_manager as fm",
+          "",
+          "",
+          "# 统计治疗结果分布",
+          "treatment_outcome_distribution = data.groupby('疾病类型')['治疗结果'].value_counts().unstack()",
+          "",
+          "# 设置中文字体",
+          "font_path = 'C:/Windows/Fonts/simhei.ttf'  # 根据你的系统调整字体路径",
+          "my_font = fm.FontProperties(fname=font_path)",
+          "",
+          "# 绘制柱状图",
+          "_________(_________, stacked=True)",
+          "plt.title('不同疾病类型的治疗结果分布', fontproperties=my_font)",
+          "plt.xlabel('疾病类型', fontproperties=my_font)",
+          "plt.ylabel('治疗结果数量', fontproperties=my_font)",
+          "plt.xticks(fontproperties=my_font)  # 设置x轴刻度标签的字体",
+          "plt.yticks(fontproperties=my_font)  # 设置y轴刻度标签的字体",
+          "plt.legend(prop=my_font)  # 设置图例字体",
+          "plt.show()",
+          "",
+          "# 绘制散点图",
+          "_________(_________, _________)",
+          "plt.title('年龄和疾病严重程度的关系', fontproperties=my_font)",
+          "plt.xlabel('年龄', fontproperties=my_font)",
+          "plt.ylabel('疾病严重程度', fontproperties=my_font)",
+          "plt.xticks(fontproperties=my_font)  # 设置x轴刻度标签的字体",
+          "plt.yticks(fontproperties=my_font)  # 设置y轴刻度标签的字体",
+          "plt.legend(prop=my_font)  # 设置图例字体",
+          "plt.show()",
+          "",
+          "# 保存处理后得数据",
+          "output_path = '2.1.4_cleaned_data.csv'",
+          "_________(_________, index=False)"
+        ],
+        "blanks": [
+          {
+            "id": "b0",
+            "accepted": [
+              "pd.read_csv('medical_data.csv', encoding='gbk')"
+            ]
+          },
+          {
+            "id": "b1",
+            "accepted": [
+              "data.info()"
+            ]
+          },
+          {
+            "id": "b2",
+            "accepted": [
+              "data.rename"
+            ]
+          },
+          {
+            "id": "b3",
+            "accepted": [
+              "columns={'病人ID':'患者ID'}"
+            ]
+          },
+          {
+            "id": "b4",
+            "accepted": [
+              "(data['诊断日期'] - data['就诊日期'])"
+            ]
+          },
+          {
+            "id": "b5",
+            "accepted": [
+              "data"
+            ]
+          },
+          {
+            "id": "b6",
+            "accepted": [
+              "data['诊断延迟']"
+            ]
+          },
+          {
+            "id": "b7",
+            "accepted": [
+              "data['年龄']"
+            ]
+          },
+          {
+            "id": "b8",
+            "accepted": [
+              "data['年龄']"
+            ]
+          },
+          {
+            "id": "b9",
+            "accepted": [
+              "data.drop_duplicates"
+            ]
+          },
+          {
+            "id": "b10",
+            "accepted": [
+              "'年龄', '体重', '身高'"
+            ]
+          },
+          {
+            "id": "b11",
+            "accepted": [
+              "scaler.fit_transform(data[columns_to_normalize])"
+            ]
+          },
+          {
+            "id": "b12",
+            "accepted": [
+              "treatment_outcome_distribution.plot"
+            ]
+          },
+          {
+            "id": "b13",
+            "accepted": [
+              "kind='bar'"
+            ]
+          },
+          {
+            "id": "b14",
+            "accepted": [
+              "plt.scatter"
+            ]
+          },
+          {
+            "id": "b15",
+            "accepted": [
+              "data['年龄']"
+            ]
+          },
+          {
+            "id": "b16",
+            "accepted": [
+              "data['疾病严重程度']"
+            ]
+          },
+          {
+            "id": "b17",
+            "accepted": [
+              "data.to_csv"
+            ]
+          },
+          {
+            "id": "b18",
+            "accepted": [
+              "output_path"
+            ]
+          }
+        ]
+      }
+    ],
+    "meta": {
+      "examId": "AITrainer",
+      "levelId": "level3",
+      "blankCount": 19,
+      "cellCount": 1
+    }
+  },
+  {
+    "id": "2.1.5",
+    "title": "2.1.5 健康与营养咨询数据预处理与数据规范设计",
+    "stem": "在健康与营养咨询领域，客户的健康数据是评估其饮食和生活方式建议的重要依据。通过对客户健康数据的分析，可以帮助健康咨询师更准确地评估客户的健康状况，并制定个性化的营养和健康管理计划。现提供一份健康咨询客户数据集。请补全2.1.5.ipynb代码，完成下面的数据预处理任务：\n（1）加载数据集：查看表的数据类型，表结构和显示每一列的空缺值数量；\n（2）缺失值处理：对于含有缺失值的行进行删除操作；\n（3）数据类型转换：将“Your age”列的数据类型转换为整数类型，并处理其中的异常值；\n（4）数据去重：检查数据集中的重复值并删除所有重复值，并记录删除的行数；\n（5）数据归一化处理：对“如何形容你的当前健身水平？”（How do you describe your current level of fitness ?）列中的数据进行归一化处理；\n（6）绘制健身频率分布的饼图；\n（7）对数据进行标注划分；\n（8）保存处理后的数据，并命名为：2.1.5_cleaned_data.csv，保存到考生文件夹；\n（9）制定数据清洗和数据标注规范，将答案写到答题卷文件中，答题卷文件命名为“2.1.5.docx”，保存到考生文件夹；\n（10）将以上代码以及运行结果，以html格式保存并命名为2.1.5.html，保存到考生文件夹，考生文件夹命名为“准考证号+身份证后6位”。",
+    "cells": [
+      {
+        "cellIndex": 0,
+        "source": "import pandas as pd\n\n# 加载数据集\ndata = __________\n\n# 查看表结构基本信息\nprint(__________)\n\n# 显示每一列的空缺值数量\nprint(__________)\n\n# 删除含有缺失值的行\ndata_cleaned = __________\n\n# 转换 'Your age' 列的数据类型为整数类型，并处理异常值\ndata_cleaned.loc[:, 'Your age'] = __________(__________, errors='coerce')\ndata_cleaned = data_cleaned.dropna(subset=['Your age'])\ndata_cleaned = data_cleaned[data_cleaned['Your age'] >= 0]\ndata_cleaned.loc[:, 'Your age'] = data_cleaned['Your age'].__________\n\nprint(data_cleaned['Your age'].dtype)\n\n# 检查和删除重复值\nduplicates_removed = data_cleaned.duplicated().sum()\ndata_cleaned = __________\n\nprint(f\"Removed {duplicates_removed} duplicate rows\")\n\nfrom sklearn.preprocessing import LabelEncoder\n\n# 归一化 'How do you describe your current level of fitness ?' 列\nlabel_encoder = LabelEncoder()\ndata_cleaned[__________] = __________\n\nprint(data_cleaned['How do you describe your current level of fitness ?'].unique())\n\nfrom sklearn.preprocessing import LabelEncoder\nimport matplotlib.pyplot as plt\n\n# 去掉列名中的空格\ndata.columns = data.columns.str.strip()\n# 显示数据集的列名\nprint(data.columns)\n\n# 删除包含缺失值的行\ndata_cleaned = data.dropna(subset=['How often do you exercise?'])\n\n# 统计不同健身频率的分布情况\nexercise_frequency_counts = data_cleaned['How often do you exercise?'].value_counts()\n\n# 绘制饼图\nplt.figure(figsize=(10, 6))\n__________(autopct='%1.1f%%', startangle=90, colors=plt.cm.Paired.colors)\nplt.title('Distribution of Exercise Frequency')\nplt.ylabel('')\nplt.show()\n\nimport pandas as pd\nfrom sklearn.model_selection import train_test_split\nimport matplotlib.pyplot as plt\n\n# 填充缺失值\ndata_filled = data.apply(lambda x: x.fillna(x.mode()[0]))\n\n# 划分数据（测试集占比20%）\ntrain_data, test_data = __________(__________, random_state=42)\n\n# 保存处理后的数据\ncleaned_file_path = '__________'\n__________(__________, index=False)\n",
+        "lines": [
+          "import pandas as pd",
+          "",
+          "# 加载数据集",
+          "data = __________",
+          "",
+          "# 查看表结构基本信息",
+          "print(__________)",
+          "",
+          "# 显示每一列的空缺值数量",
+          "print(__________)",
+          "",
+          "# 删除含有缺失值的行",
+          "data_cleaned = __________",
+          "",
+          "# 转换 'Your age' 列的数据类型为整数类型，并处理异常值",
+          "data_cleaned.loc[:, 'Your age'] = __________(__________, errors='coerce')",
+          "data_cleaned = data_cleaned.dropna(subset=['Your age'])",
+          "data_cleaned = data_cleaned[data_cleaned['Your age'] >= 0]",
+          "data_cleaned.loc[:, 'Your age'] = data_cleaned['Your age'].__________",
+          "",
+          "print(data_cleaned['Your age'].dtype)",
+          "",
+          "# 检查和删除重复值",
+          "duplicates_removed = data_cleaned.duplicated().sum()",
+          "data_cleaned = __________",
+          "",
+          "print(f\"Removed {duplicates_removed} duplicate rows\")",
+          "",
+          "from sklearn.preprocessing import LabelEncoder",
+          "",
+          "# 归一化 'How do you describe your current level of fitness ?' 列",
+          "label_encoder = LabelEncoder()",
+          "data_cleaned[__________] = __________",
+          "",
+          "print(data_cleaned['How do you describe your current level of fitness ?'].unique())",
+          "",
+          "from sklearn.preprocessing import LabelEncoder",
+          "import matplotlib.pyplot as plt",
+          "",
+          "# 去掉列名中的空格",
+          "data.columns = data.columns.str.strip()",
+          "# 显示数据集的列名",
+          "print(data.columns)",
+          "",
+          "# 删除包含缺失值的行",
+          "data_cleaned = data.dropna(subset=['How often do you exercise?'])",
+          "",
+          "# 统计不同健身频率的分布情况",
+          "exercise_frequency_counts = data_cleaned['How often do you exercise?'].value_counts()",
+          "",
+          "# 绘制饼图",
+          "plt.figure(figsize=(10, 6))",
+          "__________(autopct='%1.1f%%', startangle=90, colors=plt.cm.Paired.colors)",
+          "plt.title('Distribution of Exercise Frequency')",
+          "plt.ylabel('')",
+          "plt.show()",
+          "",
+          "import pandas as pd",
+          "from sklearn.model_selection import train_test_split",
+          "import matplotlib.pyplot as plt",
+          "",
+          "# 填充缺失值",
+          "data_filled = data.apply(lambda x: x.fillna(x.mode()[0]))",
+          "",
+          "# 划分数据（测试集占比20%）",
+          "train_data, test_data = __________(__________, random_state=42)",
+          "",
+          "# 保存处理后的数据",
+          "cleaned_file_path = '__________'",
+          "__________(__________, index=False)",
+          ""
+        ],
+        "blanks": [
+          {
+            "id": "b0",
+            "accepted": [
+              "pd.read_csv('健康咨询客户数据集.csv')"
+            ]
+          },
+          {
+            "id": "b1",
+            "accepted": [
+              "data.info()"
+            ]
+          },
+          {
+            "id": "b2",
+            "accepted": [
+              "data.isnull().sum()"
+            ]
+          },
+          {
+            "id": "b3",
+            "accepted": [
+              "data.dropna()"
+            ]
+          },
+          {
+            "id": "b4",
+            "accepted": [
+              "pd.to_numeric"
+            ]
+          },
+          {
+            "id": "b5",
+            "accepted": [
+              "data_cleaned['Your age']"
+            ]
+          },
+          {
+            "id": "b6",
+            "accepted": [
+              "astype(int)"
+            ]
+          },
+          {
+            "id": "b7",
+            "accepted": [
+              "data_cleaned.drop_duplicates()"
+            ]
+          },
+          {
+            "id": "b8",
+            "accepted": [
+              "'How do you describe your current level of fitness ?'"
+            ]
+          },
+          {
+            "id": "b9",
+            "accepted": [
+              "label_encoder.fit_transform(data_cleaned['How do you describe your current level of fitness ?'])"
+            ]
+          },
+          {
+            "id": "b10",
+            "accepted": [
+              "exercise_frequency_counts.plot.pie"
+            ]
+          },
+          {
+            "id": "b11",
+            "accepted": [
+              "train_test_split"
+            ]
+          },
+          {
+            "id": "b12",
+            "accepted": [
+              "data_filled, test_size=0.2"
+            ]
+          },
+          {
+            "id": "b13",
+            "accepted": [
+              "2.1.5_cleaned_data.csv"
+            ]
+          },
+          {
+            "id": "b14",
+            "accepted": [
+              "data_filled.to_csv"
+            ]
+          },
+          {
+            "id": "b15",
+            "accepted": [
+              "cleaned_file_path"
+            ]
+          }
+        ]
+      }
+    ],
+    "meta": {
+      "examId": "AITrainer",
+      "levelId": "level3",
+      "blankCount": 16,
+      "cellCount": 1
+    }
+  },
+  {
+    "id": "2.2.1",
+    "title": "2.2.1 智能信用评分Logistic回归模型开发与测试",
+    "stem": "互联网金融飞速发展，使得个人金融理财变得越来越容易。而其中信用评分技术是一种对贷款申请人（信用卡申请人）做风险评估分值的统计模型，可以根据客户提供的资料、客户的历史数据、第三方平台数据（芝麻分、京东、微信等），对客户的信用进行评估。现要求根据提供的finance数据集，补全2.2.1.ipynb代码。选择合适的特征，开发一个申请的评分模型，利用测试工具对模型进行测试，并对测试结果进行分析，完成测试报告，并运用工具对错误原因进行纠正。\n（1）正确加载数据集，显示前五行的数据。\n（2）使用Logistic模型进行模型训练，要求设定自变量和因变量，并根据自变量特征进行模型训练，最终将训练好的模型以文件名2.2.1_model.pkl保存到考生文件夹，结果文件以2.2.1_results.txt保存到考生文件夹。\n（3）使用测试工具对模型进行测试，并记录测试结果，命名2.2.1_report.txt，保存到考生文件夹\n（4）对测试结果进行详细分析，并编写测试报告，包括模型性能评估、错误分析及改进建议，将答案写到答题卷文件中，答题卷文件命名为“2.2.1.docx”，保存到考生文件夹。\n（5）运用工具分析算法中错误案例产生的原因并进行纠正，重新得到模型训练结果，以文件名2.2.1_results_xg.txt保存到考生文件夹。\n（6）将以上代码以及运行结果，以html格式保存并命名为2.2.1.html，保存到考生文件夹，考生文件夹命名为“准考证号+身份证后6位”。\n数据集说明：\nUnnamed: 0 - 索引号。\nSeriousDlqin2yrs - 个人在过去两年内是否出现过严重的拖欠（1 表示有严重拖欠，0 表示没有）。\nRevolvingUtilizationOfUnsecuredLines - 这是指个人未偿还的信用额度与总信用额度的比例。\nage - 客户的年龄。\nNumberOfTime30-59DaysPastDueNotWorse - 在过去一段时间内，贷款逾期30至59天的次数。\nDebtRatio - 债务比率。\nMonthlyIncome - 客户的月收入。\nNumberOfOpenCreditLinesAndLoans - 正在使用的信贷账户或贷款的数量。\nNumberOfTimes90DaysLate - 贷款逾期超过90天的次数。\nNumberRealEstateLoansOrLines - 持有的房地产相关贷款或信贷的数量。\nNumberOfTime60-89DaysPastDueNotWorse - 贷款逾期60至89天的次数。\nNumberOfDependents - 家庭中依赖该个人的人数。",
+    "cells": [
+      {
+        "cellIndex": 0,
+        "source": "import pandas as pd\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.linear_model import LogisticRegression\nimport pickle\nfrom sklearn.metrics import classification_report\nfrom imblearn.over_sampling import SMOTE\n\n# 加载数据\ndata = __________\n\n# 显示前五行的数据\nprint(__________)\n\n# 选择自变量和因变量\nX = data.drop(['SeriousDlqin2yrs', 'Unnamed: 0'], axis=1)\ny = data['SeriousDlqin2yrs']\n\n# 分割训练集和测试集（测试集20%）\nX_train, X_test, y_train, y_test = __________(__________, random_state=42)\n\n# 训练Logistic回归模型（最大迭代次数为1000次）\nmodel = __________\n#训练 Logistic 回归模型\n__________\n\n# 保存模型\nwith open('2.2.1_model.pkl', 'wb') as file:\n    pickle.__________\n\n# 预测并保存结果\ny_pred = __________\npd.DataFrame(y_pred, columns=['预测结果']).to_csv('2.2.1_results.txt', index=False)\n\n# 生成测试报告\nreport = classification_report(y_test, y_pred, zero_division=1)\nwith open('2.2.1_report.txt', 'w') as file:\n    file.write(report)\n\n# 分析测试结果\naccuracy = __________\nprint(f\"模型准确率: {accuracy:.2f}\")\n\n# 处理数据不平衡\nsmote = SMOTE(random_state=42)\nX_resampled, y_resampled = __________\n\n# 重新训练模型\n__________\n# 重新预测\ny_pred_resampled = __________\n\n# 保存新结果\npd.DataFrame(y_pred_resampled, columns=['预测结果']).to_csv('2.2.1_results_xg.txt', index=False)\n\n# 生成新的测试报告\nreport_resampled = classification_report(y_test, y_pred_resampled, zero_division=1)\nwith open('2.2.1_report_xg.txt', 'w') as file:\n    file.write(report_resampled)\n\n# 分析新的测试结果\naccuracy_resampled = __________\nprint(f\"重新采样后的模型准确率: {accuracy_resampled:.2f}\")\n",
+        "lines": [
+          "import pandas as pd",
+          "from sklearn.model_selection import train_test_split",
+          "from sklearn.linear_model import LogisticRegression",
+          "import pickle",
+          "from sklearn.metrics import classification_report",
+          "from imblearn.over_sampling import SMOTE",
+          "",
+          "# 加载数据",
+          "data = __________",
+          "",
+          "# 显示前五行的数据",
+          "print(__________)",
+          "",
+          "# 选择自变量和因变量",
+          "X = data.drop(['SeriousDlqin2yrs', 'Unnamed: 0'], axis=1)",
+          "y = data['SeriousDlqin2yrs']",
+          "",
+          "# 分割训练集和测试集（测试集20%）",
+          "X_train, X_test, y_train, y_test = __________(__________, random_state=42)",
+          "",
+          "# 训练Logistic回归模型（最大迭代次数为1000次）",
+          "model = __________",
+          "#训练 Logistic 回归模型",
+          "__________",
+          "",
+          "# 保存模型",
+          "with open('2.2.1_model.pkl', 'wb') as file:",
+          "    pickle.__________",
+          "",
+          "# 预测并保存结果",
+          "y_pred = __________",
+          "pd.DataFrame(y_pred, columns=['预测结果']).to_csv('2.2.1_results.txt', index=False)",
+          "",
+          "# 生成测试报告",
+          "report = classification_report(y_test, y_pred, zero_division=1)",
+          "with open('2.2.1_report.txt', 'w') as file:",
+          "    file.write(report)",
+          "",
+          "# 分析测试结果",
+          "accuracy = __________",
+          "print(f\"模型准确率: {accuracy:.2f}\")",
+          "",
+          "# 处理数据不平衡",
+          "smote = SMOTE(random_state=42)",
+          "X_resampled, y_resampled = __________",
+          "",
+          "# 重新训练模型",
+          "__________",
+          "# 重新预测",
+          "y_pred_resampled = __________",
+          "",
+          "# 保存新结果",
+          "pd.DataFrame(y_pred_resampled, columns=['预测结果']).to_csv('2.2.1_results_xg.txt', index=False)",
+          "",
+          "# 生成新的测试报告",
+          "report_resampled = classification_report(y_test, y_pred_resampled, zero_division=1)",
+          "with open('2.2.1_report_xg.txt', 'w') as file:",
+          "    file.write(report_resampled)",
+          "",
+          "# 分析新的测试结果",
+          "accuracy_resampled = __________",
+          "print(f\"重新采样后的模型准确率: {accuracy_resampled:.2f}\")",
+          ""
+        ],
+        "blanks": [
+          {
+            "id": "b0",
+            "accepted": [
+              "pd.read_csv('finance数据集.csv')"
+            ]
+          },
+          {
+            "id": "b1",
+            "accepted": [
+              "data.head()"
+            ]
+          },
+          {
+            "id": "b2",
+            "accepted": [
+              "train_test_split"
+            ]
+          },
+          {
+            "id": "b3",
+            "accepted": [
+              "X, y, test_size=0.2"
+            ]
+          },
+          {
+            "id": "b4",
+            "accepted": [
+              "LogisticRegression(max_iter=1000)"
+            ]
+          },
+          {
+            "id": "b5",
+            "accepted": [
+              "model.fit(X_train, y_train)"
+            ]
+          },
+          {
+            "id": "b6",
+            "accepted": [
+              "dump(model, file)"
+            ]
+          },
+          {
+            "id": "b7",
+            "accepted": [
+              "model.predict(X_test)"
+            ]
+          },
+          {
+            "id": "b8",
+            "accepted": [
+              "(y_test==y_pred).mean()"
+            ]
+          },
+          {
+            "id": "b9",
+            "accepted": [
+              "smote.fit_resample(X_train, y_train)"
+            ]
+          },
+          {
+            "id": "b10",
+            "accepted": [
+              "model.fit(X_resampled, y_resampled)"
+            ]
+          },
+          {
+            "id": "b11",
+            "accepted": [
+              "model.predict(X_test)"
+            ]
+          },
+          {
+            "id": "b12",
+            "accepted": [
+              "(y_test== y_pred_resampled).mean()"
+            ]
+          }
+        ]
+      },
+      {
+        "cellIndex": 1,
+        "source": "",
+        "lines": [
+          ""
+        ],
+        "blanks": []
+      }
+    ],
+    "meta": {
+      "examId": "AITrainer",
+      "levelId": "level3",
+      "blankCount": 13,
+      "cellCount": 2
+    }
+  },
+  {
+    "id": "2.2.2",
+    "title": "2.2.2 智慧交通中燃油效率随机森林模型开发与测试",
+    "stem": "在现代交通中，燃油效率（MPG）是衡量汽车性能和交通系统优化的重要指标之一。高效的燃油利用不仅能够降低车辆运营成本，还能减少碳排放，促进环保。开发一个用于预测汽车燃油效率的模型可以帮助智慧交通系统优化路线规划和车辆调度，从而提升整体交通效率和减少能源消耗。此外，这样的模型还可以帮助消费者做出更明智的购车决策，并帮助厂商优化汽车设计。\n现要求根据提供的汽车燃油效率数据集，补全2.2.2.ipynb代码。选择合适的特征，开发一个燃油效率预测模型。利用测试工具对模型进行测试，并对测试结果进行分析，完成测试报告，并运用工具对错误原因进行纠正。\n（1）正确加载数据集，显示前五行的数据。\n（2）使用线性回归模型进行模型训练，要求设定自变量和因变量，并根据自变量特征进行模型训练，最终将训练好的模型以“2.2.2_model.pkl”命名保存到考生文件夹，结果文件以“2.2.2_results.txt”命名保存到考生文件夹。\n（3）使用测试工具对模型进行测试，并记录测试结果，以“2.2.2_report.txt”命名保存到考生文件夹。\n（4）运用工具分析算法中错误案例产生的原因并进行纠正，重新进行模型训练，并以“2.2.2_results_rf.txt”命名保存到考生文件夹。\n（5）对测试结果进行详细分析，并编写测试报告，包括模型性能评估、错误分析及改进建议，将答案以“2.2.2.docx”命名写到答题卷文件中，并保存到考生文件夹。\n（6）将以上代码以及运行结果，以html格式保存并命名为2.2.2.html，保存到考生文件夹，考生文件夹命名为“准考证号+身份证后6位”。\n数据集说明：\nmpg : 燃油效率，每加仑油可以行驶的英里数。\ncylinders: 发动机气缸的数量。\ndisplacement: 这是指发动机所有气缸的总容积。\nhorsepower: 发动机的马力。\nweight: 车辆的重量。\nacceleration: 加速。\nmodel year: 车辆的生产年份。\norigin: 指的是车辆的制造地或品牌所属国家。\ncar name: 每辆车的具体名称或型号。",
+    "cells": [
+      {
+        "cellIndex": 0,
+        "source": "import pandas as pd\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nimport pickle\nfrom sklearn.ensemble import RandomForestRegressor\n\n# 加载数据集\ndf = __________\n\n# 显示前五行数据\nprint(__________)\n\n# 处理缺失值\n# 将 'horsepower' 列中的所有值转换为数值类型\ndf['horsepower'] = __________(__________, errors='coerce')\n# 删除包含缺失值的行\ndf = __________\n\n# 选择相关特征进行建模（定义自变量（返回一个DataFrame）和因变量）\nX = __________\ny = __________\n\n# 将数据集划分为训练集和测试集（测试集占比20%）\nX_train, X_test, y_train, y_test = __________(__________, random_state=42)\n\n# 创建包含标准化和线性回归的管道\npipeline = __________([('scaler', __________),('linreg', __________)])\n\n# 训练模型\n__________\n\n# 保存训练好的模型\nwith open('2.2.2_model.pkl', 'wb') as model_file:\n    pickle.__________\n\n# 预测并保存结果\ny_pred = __________\nresults_df = pd.DataFrame(y_pred, columns=['预测结果'])\n__________('2.2.2_results.txt', index=False)\n\n# 测试模型\nwith open('2.2.2_report.txt', 'w') as results_file:\n    results_file.write(f'训练集得分: {pipeline.score(X_train, y_train)}\\n')\n    results_file.write(f'测试集得分: {pipeline.score(X_test, y_test)}\\n')\n\n# 创建随机森林回归模型实例（创建的决策树的数量为100）\nrf_model = __________(__________, random_state=42)\n# 训练随机森林回归模型\n__________\n\n# 使用随机森林模型进行预测\ny_pred_rf = __________\n\n# 保存新的结果\nresults_rf_df = pd.DataFrame(y_pred_rf, columns=['预测结果'])\n__________('2.2.2_results_rf.txt', index=False)\n\n# 测试模型并保存得分\nwith open('2.2.2_report_rf.txt', 'w') as results_rf_file:\n    results_rf_file.write(f'训练集得分: {rf_model.score(X_train, y_train)}\\n')\n    results_rf_file.write(f'测试集得分: {rf_model.score(X_test, y_test)}\\n')\n",
+        "lines": [
+          "import pandas as pd",
+          "from sklearn.model_selection import train_test_split",
+          "from sklearn.linear_model import LinearRegression",
+          "from sklearn.preprocessing import StandardScaler",
+          "from sklearn.pipeline import Pipeline",
+          "import pickle",
+          "from sklearn.ensemble import RandomForestRegressor",
+          "",
+          "# 加载数据集",
+          "df = __________",
+          "",
+          "# 显示前五行数据",
+          "print(__________)",
+          "",
+          "# 处理缺失值",
+          "# 将 'horsepower' 列中的所有值转换为数值类型",
+          "df['horsepower'] = __________(__________, errors='coerce')",
+          "# 删除包含缺失值的行",
+          "df = __________",
+          "",
+          "# 选择相关特征进行建模（定义自变量（返回一个DataFrame）和因变量）",
+          "X = __________",
+          "y = __________",
+          "",
+          "# 将数据集划分为训练集和测试集（测试集占比20%）",
+          "X_train, X_test, y_train, y_test = __________(__________, random_state=42)",
+          "",
+          "# 创建包含标准化和线性回归的管道",
+          "pipeline = __________([('scaler', __________),('linreg', __________)])",
+          "",
+          "# 训练模型",
+          "__________",
+          "",
+          "# 保存训练好的模型",
+          "with open('2.2.2_model.pkl', 'wb') as model_file:",
+          "    pickle.__________",
+          "",
+          "# 预测并保存结果",
+          "y_pred = __________",
+          "results_df = pd.DataFrame(y_pred, columns=['预测结果'])",
+          "__________('2.2.2_results.txt', index=False)",
+          "",
+          "# 测试模型",
+          "with open('2.2.2_report.txt', 'w') as results_file:",
+          "    results_file.write(f'训练集得分: {pipeline.score(X_train, y_train)}\\n')",
+          "    results_file.write(f'测试集得分: {pipeline.score(X_test, y_test)}\\n')",
+          "",
+          "# 创建随机森林回归模型实例（创建的决策树的数量为100）",
+          "rf_model = __________(__________, random_state=42)",
+          "# 训练随机森林回归模型",
+          "__________",
+          "",
+          "# 使用随机森林模型进行预测",
+          "y_pred_rf = __________",
+          "",
+          "# 保存新的结果",
+          "results_rf_df = pd.DataFrame(y_pred_rf, columns=['预测结果'])",
+          "__________('2.2.2_results_rf.txt', index=False)",
+          "",
+          "# 测试模型并保存得分",
+          "with open('2.2.2_report_rf.txt', 'w') as results_rf_file:",
+          "    results_rf_file.write(f'训练集得分: {rf_model.score(X_train, y_train)}\\n')",
+          "    results_rf_file.write(f'测试集得分: {rf_model.score(X_test, y_test)}\\n')",
+          ""
+        ],
+        "blanks": [
+          {
+            "id": "b0",
+            "accepted": [
+              "pd.read_csv('auto-mpg.csv')"
+            ]
+          },
+          {
+            "id": "b1",
+            "accepted": [
+              "df.head()"
+            ]
+          },
+          {
+            "id": "b2",
+            "accepted": [
+              "pd.to_numeric"
+            ]
+          },
+          {
+            "id": "b3",
+            "accepted": [
+              "df['horsepower']"
+            ]
+          },
+          {
+            "id": "b4",
+            "accepted": [
+              "df.dropna()"
+            ]
+          },
+          {
+            "id": "b5",
+            "accepted": [
+              "df[['cylinders', 'displacement', 'horsepower', 'weight', 'acceleration', 'model year', 'origin']]"
+            ]
+          },
+          {
+            "id": "b6",
+            "accepted": [
+              "df['mpg']"
+            ]
+          },
+          {
+            "id": "b7",
+            "accepted": [
+              "train_test_split"
+            ]
+          },
+          {
+            "id": "b8",
+            "accepted": [
+              "X, y, test_size=0.2"
+            ]
+          },
+          {
+            "id": "b9",
+            "accepted": [
+              "Pipeline"
+            ]
+          },
+          {
+            "id": "b10",
+            "accepted": [
+              "StandardScaler()"
+            ]
+          },
+          {
+            "id": "b11",
+            "accepted": [
+              "LinearRegression()"
+            ]
+          },
+          {
+            "id": "b12",
+            "accepted": [
+              "pipeline.fit(X_train, y_train)"
+            ]
+          },
+          {
+            "id": "b13",
+            "accepted": [
+              "dump(pipeline, model_file)"
+            ]
+          },
+          {
+            "id": "b14",
+            "accepted": [
+              "pipeline.predict(X_test)"
+            ]
+          },
+          {
+            "id": "b15",
+            "accepted": [
+              "results_df.to_csv"
+            ]
+          },
+          {
+            "id": "b16",
+            "accepted": [
+              "RandomForestRegressor"
+            ]
+          },
+          {
+            "id": "b17",
+            "accepted": [
+              "n_estimators=100"
+            ]
+          },
+          {
+            "id": "b18",
+            "accepted": [
+              "rf_model.fit(X_train, y_train)"
+            ]
+          },
+          {
+            "id": "b19",
+            "accepted": [
+              "rf_model.predict(X_test)"
+            ]
+          },
+          {
+            "id": "b20",
+            "accepted": [
+              "results_rf_df.to_csv"
+            ]
+          }
+        ]
+      },
+      {
+        "cellIndex": 1,
+        "source": "",
+        "lines": [
+          ""
+        ],
+        "blanks": []
+      },
+      {
+        "cellIndex": 2,
+        "source": "",
+        "lines": [
+          ""
+        ],
+        "blanks": []
+      }
+    ],
+    "meta": {
+      "examId": "AITrainer",
+      "levelId": "level3",
+      "blankCount": 21,
+      "cellCount": 3
+    }
+  },
+  {
+    "id": "2.2.3",
+    "title": "2.2.3 日常运动量随机森林预测模型开发与测试",
+    "stem": "随着人们健康意识的增强，越来越多的人开始关注日常运动和健康管理。使用提供的训练数据，补全2.2.3.ipynb代码。选择合适的特征，开发一个预测模型，基于个体性别，个体对运动的看法和个人健康评价来预测个体年龄。利用测试工具对模型进行测试，并对测试结果进行分析，完成测试报告，并运用工具对错误原因进行纠正。\n详细说明如下：\n\n（1）正确加载数据集，并显示前五行的数据\n（2）使用随机森林模型进行模型训练，要求设定自变量和因变量，并根据自变量特征进行模型训练，最终将训练好的模型以文件名2.2.3_model.pkl保存到考生文件夹，结果文件以2.2.3_results.txt保存到考生文件夹。\n（3）使用测试工具对模型进行测试，并记录测试结果，命名2.2.3_report.txt，保存到考生文件夹\n（4）对测试结果进行详细分析，并编写测试报告，包括模型性能评估、错误分析及改进建议，将答案写到答题卷文件中，答题卷文件命名为“2.2.3.docx”，保存到考生文件夹。\n（5）运用工具分析算法中错误案例产生的原因并进行纠正，重新得到模型训练结果，以文件名2.2.3_results_xgb.txt保存到考生文件夹。\n（6）将以上代码以及运行结果，以html格式保存并命名为2.2.3.html，保存到考生文件夹，考生文件夹命名为“准考证号+身份证后6位”。",
+    "cells": [
+      {
+        "cellIndex": 0,
+        "source": "import pandas as pd\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.ensemble import RandomForestRegressor\nimport pickle\nfrom sklearn.metrics import mean_squared_error, r2_score\nimport xgboost as xgb\n\n# 加载数据集\ndf = __________\n\n# 显示前五行数据\nprint(__________)\n\n# 去除所有字符串字段的前后空格\ndf = df.applymap(lambda x: x.strip() if isinstance(x, str) else x)\n\n# 检查和清理列名\ndf.columns = df.columns.str.strip()\n\n# 选择相关特征进行建模\nX = df[['Your gender', 'How important is exercise to you ?', 'How healthy do you consider yourself?']]\nX = __________(X)  # 将分类变量转为数值变量\n\n# 将年龄段转为数值变量\ny = __________(lambda x: int(x.split(' ')[0]))  # 假设年龄段为整数\n\n# 将数据集划分为训练集和测试集（测试集占比20%）\nX_train, X_test, y_train, y_test = __________(__________, random_state=42)\n\n# 创建随机森林回归模型（创建的决策树的数量为100）\nrf_model = __________(__________, random_state=42)\n# 训练随机森林回归模型\n__________\n\n# 保存训练好的模型\nwith open('2.2.3_model.pkl', 'wb') as model_file:\n    pickle.__________\n\n# 进行结果预测\ny_pred = __________\nresults_df = pd.DataFrame(y_pred, columns=['预测结果'])\nresults_df.to_csv('2.2.3_results.txt', index=False)\n\n# 使用测试工具对模型进行测试，并记录测试结果\ntrain_score = __________   #训练集分数\ntest_score = __________    #测试集分数\nmse = __________  #均方误差\nr2 = __________  #决定系数\nwith open('2.2.3_report.txt', 'w') as report_file:\n    report_file.write(f'训练集得分: {train_score}\\n')\n    report_file.write(f'测试集得分: {test_score}\\n')\n    report_file.write(f'均方误差(MSE): {mse}\\n')\n    report_file.write(f'决定系数(R^2): {r2}\\n')\n\n# 运用工具分析算法中错误案例产生的原因并进行纠正\n# 初始化XGBoost回归模型（构建100棵树）\nxgb_model = __________(__________, random_state=42)\n# 训练XGBoost回归模型\n__________\n# 使用XGBoost回归模型在测试集上进行结果预测\ny_pred_xgb = __________\n\nresults_df_xgb = pd.DataFrame(y_pred_xgb, columns=['预测结果'])\nresults_df_xgb.to_csv('2.2.3_results_xgb.txt', index=False)\n\nwith open('2.2.3_report_xgb.txt', 'w') as xgb_report_file:\n    xgb_report_file.write(f'XGBoost训练集得分: {__________}\\n')\n    xgb_report_file.write(f'XGBoost测试集得分: {__________}\\n')\n    xgb_report_file.write(f'XGBoost均方误差(MSE): {__________}\\n')\n    xgb_report_file.write(f'XGBoost决定系数(R^2): {__________)}\\n')\n",
+        "lines": [
+          "import pandas as pd",
+          "from sklearn.model_selection import train_test_split",
+          "from sklearn.ensemble import RandomForestRegressor",
+          "import pickle",
+          "from sklearn.metrics import mean_squared_error, r2_score",
+          "import xgboost as xgb",
+          "",
+          "# 加载数据集",
+          "df = __________",
+          "",
+          "# 显示前五行数据",
+          "print(__________)",
+          "",
+          "# 去除所有字符串字段的前后空格",
+          "df = df.applymap(lambda x: x.strip() if isinstance(x, str) else x)",
+          "",
+          "# 检查和清理列名",
+          "df.columns = df.columns.str.strip()",
+          "",
+          "# 选择相关特征进行建模",
+          "X = df[['Your gender', 'How important is exercise to you ?', 'How healthy do you consider yourself?']]",
+          "X = __________(X)  # 将分类变量转为数值变量",
+          "",
+          "# 将年龄段转为数值变量",
+          "y = __________(lambda x: int(x.split(' ')[0]))  # 假设年龄段为整数",
+          "",
+          "# 将数据集划分为训练集和测试集（测试集占比20%）",
+          "X_train, X_test, y_train, y_test = __________(__________, random_state=42)",
+          "",
+          "# 创建随机森林回归模型（创建的决策树的数量为100）",
+          "rf_model = __________(__________, random_state=42)",
+          "# 训练随机森林回归模型",
+          "__________",
+          "",
+          "# 保存训练好的模型",
+          "with open('2.2.3_model.pkl', 'wb') as model_file:",
+          "    pickle.__________",
+          "",
+          "# 进行结果预测",
+          "y_pred = __________",
+          "results_df = pd.DataFrame(y_pred, columns=['预测结果'])",
+          "results_df.to_csv('2.2.3_results.txt', index=False)",
+          "",
+          "# 使用测试工具对模型进行测试，并记录测试结果",
+          "train_score = __________   #训练集分数",
+          "test_score = __________    #测试集分数",
+          "mse = __________  #均方误差",
+          "r2 = __________  #决定系数",
+          "with open('2.2.3_report.txt', 'w') as report_file:",
+          "    report_file.write(f'训练集得分: {train_score}\\n')",
+          "    report_file.write(f'测试集得分: {test_score}\\n')",
+          "    report_file.write(f'均方误差(MSE): {mse}\\n')",
+          "    report_file.write(f'决定系数(R^2): {r2}\\n')",
+          "",
+          "# 运用工具分析算法中错误案例产生的原因并进行纠正",
+          "# 初始化XGBoost回归模型（构建100棵树）",
+          "xgb_model = __________(__________, random_state=42)",
+          "# 训练XGBoost回归模型",
+          "__________",
+          "# 使用XGBoost回归模型在测试集上进行结果预测",
+          "y_pred_xgb = __________",
+          "",
+          "results_df_xgb = pd.DataFrame(y_pred_xgb, columns=['预测结果'])",
+          "results_df_xgb.to_csv('2.2.3_results_xgb.txt', index=False)",
+          "",
+          "with open('2.2.3_report_xgb.txt', 'w') as xgb_report_file:",
+          "    xgb_report_file.write(f'XGBoost训练集得分: {__________}\\n')",
+          "    xgb_report_file.write(f'XGBoost测试集得分: {__________}\\n')",
+          "    xgb_report_file.write(f'XGBoost均方误差(MSE): {__________}\\n')",
+          "    xgb_report_file.write(f'XGBoost决定系数(R^2): {__________)}\\n')",
+          ""
+        ],
+        "blanks": [
+          {
+            "id": "b0",
+            "accepted": [
+              "pd.read_csv('fitness analysis.csv')"
+            ]
+          },
+          {
+            "id": "b1",
+            "accepted": [
+              "df.head()"
+            ]
+          },
+          {
+            "id": "b2",
+            "accepted": [
+              "pd.get_dummies"
+            ]
+          },
+          {
+            "id": "b3",
+            "accepted": [
+              "df['Your age'].apply"
+            ]
+          },
+          {
+            "id": "b4",
+            "accepted": [
+              "train_test_split"
+            ]
+          },
+          {
+            "id": "b5",
+            "accepted": [
+              "X, y, test_size=0.2"
+            ]
+          },
+          {
+            "id": "b6",
+            "accepted": [
+              "RandomForestRegressor"
+            ]
+          },
+          {
+            "id": "b7",
+            "accepted": [
+              "n_estimators=100"
+            ]
+          },
+          {
+            "id": "b8",
+            "accepted": [
+              "rf_model.fit(X_train, y_train)"
+            ]
+          },
+          {
+            "id": "b9",
+            "accepted": [
+              "dump(rf_model, model_file)"
+            ]
+          },
+          {
+            "id": "b10",
+            "accepted": [
+              "rf_model.predict(X_test)"
+            ]
+          },
+          {
+            "id": "b11",
+            "accepted": [
+              "rf_model.score(X_train, y_train)"
+            ]
+          },
+          {
+            "id": "b12",
+            "accepted": [
+              "rf_model.score(X_test, y_test)"
+            ]
+          },
+          {
+            "id": "b13",
+            "accepted": [
+              "mean_squared_error(y_test, y_pred)"
+            ]
+          },
+          {
+            "id": "b14",
+            "accepted": [
+              "r2_score(y_test, y_pred)"
+            ]
+          },
+          {
+            "id": "b15",
+            "accepted": [
+              "xgb.XGBRegressor"
+            ]
+          },
+          {
+            "id": "b16",
+            "accepted": [
+              "n_estimators=100"
+            ]
+          },
+          {
+            "id": "b17",
+            "accepted": [
+              "xgb_model.fit(X_train, y_train)"
+            ]
+          },
+          {
+            "id": "b18",
+            "accepted": [
+              "xgb_model.predict(X_test)"
+            ]
+          },
+          {
+            "id": "b19",
+            "accepted": [
+              "xgb_model.score(X_train, y_train)"
+            ]
+          },
+          {
+            "id": "b20",
+            "accepted": [
+              "xgb_model.score(X_test, y_test)"
+            ]
+          },
+          {
+            "id": "b21",
+            "accepted": [
+              "mean_squared_error(y_test, y_pred_xgb)"
+            ]
+          },
+          {
+            "id": "b22",
+            "accepted": [
+              "r2_score(y_test, y_pred_xgb"
+            ]
+          }
+        ]
+      },
+      {
+        "cellIndex": 1,
+        "source": "",
+        "lines": [
+          ""
+        ],
+        "blanks": []
+      }
+    ],
+    "meta": {
+      "examId": "AITrainer",
+      "levelId": "level3",
+      "blankCount": 23,
+      "cellCount": 2
+    }
+  },
+  {
+    "id": "2.2.4",
+    "title": "2.2.4 低碳生活行为影响因素预测线性回归模型开发与测试",
+    "stem": "在应对气候变化的背景下，了解和促进低碳生活行为变得越来越重要。现要求根据提供的“大学生低碳生活行为的影响因素数据集”，补全2.2.4.ipynb代码。选择合适的特征，开发一个预测大学生低碳生活行为的模型。利用测试工具对模型进行测试，并对测试结果进行分析，完成测试报告，并运用工具对错误原因进行纠正。\n（1）正确加载数据集，并显示前五行的数据。\n（2）请使用线性回归模型，要求设定自变量和因变量，并根据自变量特征进行模型训练，最终将训练好的模型以文件名2.2.4_model.pkl保存到考生文件夹，结果文件以2.2.4_results.txt保存到考生文件夹。\n（3）使用测试工具对模型进行测试，并记录测试结果，命名2.2.4_report.txt，保存到考生文件夹。\n（4）对测试结果进行详细分析，并编写测试报告，包括模型性能评估、错误分析及改进建议，将答案写到答题卷文件中，答题卷文件命名为“2.2.4.docx”，保存到考生文件夹。\n（5）运用工具分析算法中错误案例产生的原因并进行纠正，重新得到模型训练结果，以文件名2.2.4_results_xg.txt保存到考生文件夹。\n（6）将以上代码以及运行结果，以html格式保存并命名为2.2.4.html，保存到考生文件夹，考生文件夹命名为“准考证号+身份证后6位”。",
+    "cells": [
+      {
+        "cellIndex": 0,
+        "source": "import pandas as pd\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.metrics import mean_squared_error, r2_score\nimport joblib\nfrom xgboost import XGBRegressor\n\n# 加载数据集\ndata = __________\n\n# 显示数据集的前五行\nprint(__________)\n\n# 删除不必要的列并处理分类变量\ndata_cleaned = __________(__________=['序号', '所用时间'])  # 删除不必要的列\ndata_cleaned = pd.get_dummies(data_cleaned, drop_first=True)  # 将分类变量转换为哑变量/指示变量\n\n# 定义目标变量和特征\ntarget = '5.您进行过绿色低碳的相关生活方式吗?'  # 确保这是目标变量\n\n# 定义自变量和因变量\nX = __________(__________=__________)\ny = __________\n\n# 将数据拆分为训练集和测试集（测试集占20%）\nX_train, X_test, y_train, y_test = __________(__________, random_state=42)\n\n# 初始化线性回归模型\nmodel = __________\n# 训练线性回归模型\n__________\n\n# 保存训练好的模型\nmodel_filename = '2.2.4_model.pkl'\njoblib.__________\n\n# 进行预测\ny_pred = __________\n\n# 将结果保存到文本文件中\nresults = pd.DataFrame({'实际值': y_test, '预测值': y_pred})\nresults_filename = '2.2.4_results.txt'\n__________(__________, index=False, sep='\\t')  # 使用制表符分隔值保存到文本文件\n\n# 将测试结果保存到报告文件中\nreport_filename = '2.2.4_report.txt'\nwith open(report_filename, 'w') as f:\n    f.write(f'均方误差: {__________}\\n')\n    f.write(f'决定系数: {__________}\\n')\n    \n# 分析并纠正错误（示例：使用XGBoost）\n# 初始化XGBoost模型（设定树的数量为1000，学习率为0.05，每棵树的最大深度为5，）\nxgb_model = __________(__________, subsample=0.8, colsample_bytree=0.8)\n# 训练XGBoost模型\n__________\n\n# 使用XGBoost模型进行预测\ny_pred_xg = __________\n\n# 将XGBoost结果保存到文本文件中\nresults_xg_filename = '2.2.4_results_xg.txt'\nresults_xg = pd.DataFrame({'实际值': y_test, '预测值': y_pred_xg})\nresults_xg.to_csv(results_xg_filename, index=False, sep='\\t')  # 使用制表符分隔值保存到文本文件\n\n# 将XGBoost测试结果保存到报告文件中\nreport_filename_xgb = '2.2.4_report_xgb.txt'\nwith open(report_filename_xgb, 'w') as f:\n    f.write(f'均方误差: {__________}\\n')\n    f.write(f'决定系数: {__________}\\n')\n",
+        "lines": [
+          "import pandas as pd",
+          "from sklearn.model_selection import train_test_split",
+          "from sklearn.linear_model import LinearRegression",
+          "from sklearn.metrics import mean_squared_error, r2_score",
+          "import joblib",
+          "from xgboost import XGBRegressor",
+          "",
+          "# 加载数据集",
+          "data = __________",
+          "",
+          "# 显示数据集的前五行",
+          "print(__________)",
+          "",
+          "# 删除不必要的列并处理分类变量",
+          "data_cleaned = __________(__________=['序号', '所用时间'])  # 删除不必要的列",
+          "data_cleaned = pd.get_dummies(data_cleaned, drop_first=True)  # 将分类变量转换为哑变量/指示变量",
+          "",
+          "# 定义目标变量和特征",
+          "target = '5.您进行过绿色低碳的相关生活方式吗?'  # 确保这是目标变量",
+          "",
+          "# 定义自变量和因变量",
+          "X = __________(__________=__________)",
+          "y = __________",
+          "",
+          "# 将数据拆分为训练集和测试集（测试集占20%）",
+          "X_train, X_test, y_train, y_test = __________(__________, random_state=42)",
+          "",
+          "# 初始化线性回归模型",
+          "model = __________",
+          "# 训练线性回归模型",
+          "__________",
+          "",
+          "# 保存训练好的模型",
+          "model_filename = '2.2.4_model.pkl'",
+          "joblib.__________",
+          "",
+          "# 进行预测",
+          "y_pred = __________",
+          "",
+          "# 将结果保存到文本文件中",
+          "results = pd.DataFrame({'实际值': y_test, '预测值': y_pred})",
+          "results_filename = '2.2.4_results.txt'",
+          "__________(__________, index=False, sep='\\t')  # 使用制表符分隔值保存到文本文件",
+          "",
+          "# 将测试结果保存到报告文件中",
+          "report_filename = '2.2.4_report.txt'",
+          "with open(report_filename, 'w') as f:",
+          "    f.write(f'均方误差: {__________}\\n')",
+          "    f.write(f'决定系数: {__________}\\n')",
+          "    ",
+          "# 分析并纠正错误（示例：使用XGBoost）",
+          "# 初始化XGBoost模型（设定树的数量为1000，学习率为0.05，每棵树的最大深度为5，）",
+          "xgb_model = __________(__________, subsample=0.8, colsample_bytree=0.8)",
+          "# 训练XGBoost模型",
+          "__________",
+          "",
+          "# 使用XGBoost模型进行预测",
+          "y_pred_xg = __________",
+          "",
+          "# 将XGBoost结果保存到文本文件中",
+          "results_xg_filename = '2.2.4_results_xg.txt'",
+          "results_xg = pd.DataFrame({'实际值': y_test, '预测值': y_pred_xg})",
+          "results_xg.to_csv(results_xg_filename, index=False, sep='\\t')  # 使用制表符分隔值保存到文本文件",
+          "",
+          "# 将XGBoost测试结果保存到报告文件中",
+          "report_filename_xgb = '2.2.4_report_xgb.txt'",
+          "with open(report_filename_xgb, 'w') as f:",
+          "    f.write(f'均方误差: {__________}\\n')",
+          "    f.write(f'决定系数: {__________}\\n')",
+          ""
+        ],
+        "blanks": [
+          {
+            "id": "b0",
+            "accepted": [
+              "pd.read_excel('大学生低碳生活行为的影响因素数据集.xlsx')"
+            ]
+          },
+          {
+            "id": "b1",
+            "accepted": [
+              "data.head()"
+            ]
+          },
+          {
+            "id": "b2",
+            "accepted": [
+              "data.drop"
+            ]
+          },
+          {
+            "id": "b3",
+            "accepted": [
+              "columns"
+            ]
+          },
+          {
+            "id": "b4",
+            "accepted": [
+              "data_cleaned.drop"
+            ]
+          },
+          {
+            "id": "b5",
+            "accepted": [
+              "columns"
+            ]
+          },
+          {
+            "id": "b6",
+            "accepted": [
+              "[target]"
+            ]
+          },
+          {
+            "id": "b7",
+            "accepted": [
+              "data_cleaned[target]"
+            ]
+          },
+          {
+            "id": "b8",
+            "accepted": [
+              "train_test_split"
+            ]
+          },
+          {
+            "id": "b9",
+            "accepted": [
+              "X, y, test_size=0.2"
+            ]
+          },
+          {
+            "id": "b10",
+            "accepted": [
+              "LinearRegression()"
+            ]
+          },
+          {
+            "id": "b11",
+            "accepted": [
+              "model.fit(X_train, y_train)"
+            ]
+          },
+          {
+            "id": "b12",
+            "accepted": [
+              "dump(model,model_filename)"
+            ]
+          },
+          {
+            "id": "b13",
+            "accepted": [
+              "model.predict(X_test)"
+            ]
+          },
+          {
+            "id": "b14",
+            "accepted": [
+              "results.to_csv"
+            ]
+          },
+          {
+            "id": "b15",
+            "accepted": [
+              "results_filename"
+            ]
+          },
+          {
+            "id": "b16",
+            "accepted": [
+              "mean_squared_error(y_test, y_pred)"
+            ]
+          },
+          {
+            "id": "b17",
+            "accepted": [
+              "r2_score(y_test, y_pred)"
+            ]
+          },
+          {
+            "id": "b18",
+            "accepted": [
+              "XGBRegressor"
+            ]
+          },
+          {
+            "id": "b19",
+            "accepted": [
+              "n_estimators=1000, learning_rate=0.05,max_depth=5"
+            ]
+          },
+          {
+            "id": "b20",
+            "accepted": [
+              "xgb_model.fit(X_train, y_train)"
+            ]
+          },
+          {
+            "id": "b21",
+            "accepted": [
+              "xgb_model.predict(X_test)"
+            ]
+          },
+          {
+            "id": "b22",
+            "accepted": [
+              "mean_squared_error(y_test, y_pred_xg)"
+            ]
+          },
+          {
+            "id": "b23",
+            "accepted": [
+              "r2_score(y_test, y_pred_xg)"
+            ]
+          }
+        ]
+      },
+      {
+        "cellIndex": 1,
+        "source": "",
+        "lines": [
+          ""
+        ],
+        "blanks": []
+      }
+    ],
+    "meta": {
+      "examId": "AITrainer",
+      "levelId": "level3",
+      "blankCount": 24,
+      "cellCount": 2
+    }
+  },
+  {
+    "id": "2.2.5",
+    "title": "2.2.5 智能步数预测模型开发与测试",
+    "stem": "随着健康意识的增强，越来越多的人开始使用智能设备跟踪自己的日常活动。准确预测每日步数对于用户来说至关重要，因为它可以帮助他们更好地管理健康状况，设定合理的运动目标，并提高生活质量。现要求根据提供的预处理好的fitness analysis数据集，补全2.2.5.ipynb代码。选择合适的特征，开发一个步数预测模型，对用户未来一段时间内的每日步数进行预测。利用测试工具对模型进行测试，并对测试结果进行分析，完成测试报告，并运用工具对错误原因进行纠正。\n（1）正确加载数据集，并显示前五行的数据。\n（2）请使用决策树模型，要求设定自变量和因变量（设定daily_steps为目标变量），并根据自变量特征进行模型训练，最终将训练好的模型以文件名2.2.5_model.pkl保存到考生文件夹，结果文件以2.2.5_results.txt保存到考生文件夹。\n（3）使用测试工具对模型进行测试，并记录测试结果，命名2.2.5_report.txt，保存到考生文件夹。\n（4）对测试结果进行详细分析，并编写测试报告，包括模型性能评估、错误分析及改进建议，将答案写到答题卷文件中，答题卷文件命名为“2.2.5.docx”，保存到考生文件夹。\n（5）将以上代码以及运行结果，以html格式保存并命名为2.2.5.html，保存到考生文件夹，考生文件夹命名为“准考证号+身份证后6位”。",
+    "cells": [
+      {
+        "cellIndex": 0,
+        "source": "import pandas as pd\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.tree import DecisionTreeRegressor\nimport pickle\nfrom sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score\n\n# 加载数据集\ndf = __________\n\n# 显示前五行数据\nprint(__________)\n\n# 选择相关特征进行建模\nX = df[['Your gender ', 'How important is exercise to you ?', 'How healthy do you consider yourself?']]\nX = __________(X)  # 将分类变量转为数值变量\n\n# 设置目标变量\ny = __________  \n\n# 将数据集划分为训练集和测试集（测试集占20%）\nX_train, X_test, y_train, y_test = __________(__________, random_state=42)\n\n# 创建并训练决策树回归模型\n__________ = __________(random_state=42)\n# 训练决策树回归模型\n__________\n\n# 保存训练好的模型\nwith open('2.2.5_model.pkl', 'wb') as model_file:\n    pickle.__________\n\n# 进行预测\ny_pred = __________\n\n# 将结果保存到文本文件中\nresults = pd.DataFrame({'实际值': y_test, '预测值': y_pred})\nresults_filename = '2.2.5_results.txt'\n__________(__________, index=False, sep='\\t')  \n\n# 将测试结果保存到报告文件中\nreport_filename = '2.2.5_report.txt'\nwith open(__________) as f:\n    f.write(f'均方误差: {__________}\\n')\n    f.write(f'平均绝对误差: {__________}\\n')\n    f.write(f'决定系数: {__________}\\n')",
+        "lines": [
+          "import pandas as pd",
+          "from sklearn.model_selection import train_test_split",
+          "from sklearn.tree import DecisionTreeRegressor",
+          "import pickle",
+          "from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score",
+          "",
+          "# 加载数据集",
+          "df = __________",
+          "",
+          "# 显示前五行数据",
+          "print(__________)",
+          "",
+          "# 选择相关特征进行建模",
+          "X = df[['Your gender ', 'How important is exercise to you ?', 'How healthy do you consider yourself?']]",
+          "X = __________(X)  # 将分类变量转为数值变量",
+          "",
+          "# 设置目标变量",
+          "y = __________  ",
+          "",
+          "# 将数据集划分为训练集和测试集（测试集占20%）",
+          "X_train, X_test, y_train, y_test = __________(__________, random_state=42)",
+          "",
+          "# 创建并训练决策树回归模型",
+          "__________ = __________(random_state=42)",
+          "# 训练决策树回归模型",
+          "__________",
+          "",
+          "# 保存训练好的模型",
+          "with open('2.2.5_model.pkl', 'wb') as model_file:",
+          "    pickle.__________",
+          "",
+          "# 进行预测",
+          "y_pred = __________",
+          "",
+          "# 将结果保存到文本文件中",
+          "results = pd.DataFrame({'实际值': y_test, '预测值': y_pred})",
+          "results_filename = '2.2.5_results.txt'",
+          "__________(__________, index=False, sep='\\t')  ",
+          "",
+          "# 将测试结果保存到报告文件中",
+          "report_filename = '2.2.5_report.txt'",
+          "with open(__________) as f:",
+          "    f.write(f'均方误差: {__________}\\n')",
+          "    f.write(f'平均绝对误差: {__________}\\n')",
+          "    f.write(f'决定系数: {__________}\\n')"
+        ],
+        "blanks": [
+          {
+            "id": "b0",
+            "accepted": [
+              "pd.read_csv('fitness analysis.csv')"
+            ]
+          },
+          {
+            "id": "b1",
+            "accepted": [
+              "df.head()"
+            ]
+          },
+          {
+            "id": "b2",
+            "accepted": [
+              "pd.get_dummies"
+            ]
+          },
+          {
+            "id": "b3",
+            "accepted": [
+              "df['daily_steps']"
+            ]
+          },
+          {
+            "id": "b4",
+            "accepted": [
+              "train_test_split"
+            ]
+          },
+          {
+            "id": "b5",
+            "accepted": [
+              "X, y, test_size=0.2"
+            ]
+          },
+          {
+            "id": "b6",
+            "accepted": [
+              "dt_model"
+            ]
+          },
+          {
+            "id": "b7",
+            "accepted": [
+              "DecisionTreeRegressor"
+            ]
+          },
+          {
+            "id": "b8",
+            "accepted": [
+              "dt_model.fit(X_train, y_train)"
+            ]
+          },
+          {
+            "id": "b9",
+            "accepted": [
+              "dump(dt_model, model_file)"
+            ]
+          },
+          {
+            "id": "b10",
+            "accepted": [
+              "dt_model.predict(X_test)"
+            ]
+          },
+          {
+            "id": "b11",
+            "accepted": [
+              "results.to_csv"
+            ]
+          },
+          {
+            "id": "b12",
+            "accepted": [
+              "results_filename"
+            ]
+          },
+          {
+            "id": "b13",
+            "accepted": [
+              "report_filename, 'w'"
+            ]
+          },
+          {
+            "id": "b14",
+            "accepted": [
+              "mean_squared_error(y_test, y_pred)"
+            ]
+          },
+          {
+            "id": "b15",
+            "accepted": [
+              "mean_absolute_error(y_test, y_pred)"
+            ]
+          },
+          {
+            "id": "b16",
+            "accepted": [
+              "r2_score(y_test, y_pred)"
+            ]
+          }
+        ]
+      },
+      {
+        "cellIndex": 1,
+        "source": "",
+        "lines": [
+          ""
+        ],
+        "blanks": []
+      }
+    ],
+    "meta": {
+      "examId": "AITrainer",
+      "levelId": "level3",
+      "blankCount": 17,
+      "cellCount": 2
+    }
+  },
+  {
+    "id": "3.2.1",
+    "title": "3.2.1 图像识别评估系统交互流程设计",
+    "stem": "图像识别评估系统是在深度学习技术日益成熟的背景下发展起来的，旨在解决传统图像识别方法在面对复杂场景和大规模数据集时的局限性。随着互联网和物联网技术的飞速发展，图像数据量呈指数级增长，对图像内容的自动理解和智能分析提出了更高的要求。ResNet作为一种深度卷积神经网络架构，凭借其深度残差连接机制，能够有效缓解梯度消失问题，实现更深层次的网络结构，从而捕获更加丰富和抽象的图像特征，极大地提高了图像识别的准确性和效率，推动了人工智能技术在现实世界中的广泛应用和商业化进程。\nAI模型说明：“resnet.onnx”模型是使用 Pytorch 框架和基于深度卷积神经网络网络训练得到的，专门用于进行图像识别。对应的标签文件为“labels.txt”。该模型的使用交互流程为：\n1)加载“resnet.onnx”模型和“labels.txt”类别标签；\n2)加载本地测试图片“img_test.jpg”，并进行预处理图像以符合模型输入要求；\n3)使用“resnet.onnx”模型对加载的图片进行识别；\n4)输出加载图片的识别结果（输出概率值最大的5组类别和对应概率值）\n你作为一名人工智能训练师，请完成以下工作任务：\n（1）补全该模型的使用交互流程对应的Python代码（3.2.1.ipynb），实现本地测试图片“img_test.jpg”的识别，将其识别结果截图保存为jpg格式文件，命名为3.2.1-1.jpg。\n（2）在上面的使用交互流程基础上，给出在图像识别评估系统中使用“resnet.onnx”模型的一种人机交互的最优方式，将其保存为docx文件，命名为3.2.1.docx。\n所有结果文件储存在桌面新建的考生文件夹中，文件夹命名为“准考证号+身份证号后六位”。",
+    "cells": [
+      {
+        "cellIndex": 0,
+        "source": "import onnxruntime as ort\nimport numpy as np\nimport scipy.special\nfrom PIL import Image\n\n\n# 预处理图像\ndef preprocess_image(image, resize_size=256, crop_size=224, mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]):\n  image = image.resize((resize_size, resize_size), Image.BILINEAR)\n  w, h = image.size\n  left = (w - crop_size) / 2\n  top = (h - crop_size) / 2\n  image = image.crop((left, top, left + crop_size, top + crop_size))\n  image = np.array(image).astype(np.float32)\n  image = image / 255.0\n  image = (image - mean) / std\n  image = np.transpose(image, (2, 0, 1))\n  image = image.reshape((1,) + image.shape)\n  return image\n\n\n# 模型加载 2分\nsession = _________________\n\n\n# 加载类别标签\nlabels_path = 'labels.txt'\nwith open(labels_path) as f:\n  labels = [line.strip() for line in f.readlines()]\n\n\n# 获取模型输入和输出的名称\ninput_name = session.get_inputs()[0].name\noutput_name = session.get_outputs()[0].name\n\n\n# 加载图片 2分\nimage = _________________('RGB')\n\n\n# 预处理图片 2分\nprocessed_image = _________________\n\n\n# 确保输入数据是 float32 类型\nprocessed_image = processed_image.astype(np.float32)\n\n\n# 进行图片识别 2分\noutput = _________________([output_name], {input_name: processed_image})[0]\n\n\n# 应用 softmax 函数获取概率 2分\nprobabilities = _________________(output, axis=-1)\n\n\n# 获取最高的5个概率和对应的类别索引 3分\ntop5_idx = _________________[-5:][::-1]\ntop5_prob = _________________\n\n\n# 打印结果\nprint(\"Top 5 predicted classes:\")\nfor i in range(5):\n  print(f\"{i+1}: {labels[top5_idx[i]]} - Probability: {top5_prob[i]}\")\n",
+        "lines": [
+          "import onnxruntime as ort",
+          "import numpy as np",
+          "import scipy.special",
+          "from PIL import Image",
+          "",
+          "",
+          "# 预处理图像",
+          "def preprocess_image(image, resize_size=256, crop_size=224, mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]):",
+          "  image = image.resize((resize_size, resize_size), Image.BILINEAR)",
+          "  w, h = image.size",
+          "  left = (w - crop_size) / 2",
+          "  top = (h - crop_size) / 2",
+          "  image = image.crop((left, top, left + crop_size, top + crop_size))",
+          "  image = np.array(image).astype(np.float32)",
+          "  image = image / 255.0",
+          "  image = (image - mean) / std",
+          "  image = np.transpose(image, (2, 0, 1))",
+          "  image = image.reshape((1,) + image.shape)",
+          "  return image",
+          "",
+          "",
+          "# 模型加载 2分",
+          "session = _________________",
+          "",
+          "",
+          "# 加载类别标签",
+          "labels_path = 'labels.txt'",
+          "with open(labels_path) as f:",
+          "  labels = [line.strip() for line in f.readlines()]",
+          "",
+          "",
+          "# 获取模型输入和输出的名称",
+          "input_name = session.get_inputs()[0].name",
+          "output_name = session.get_outputs()[0].name",
+          "",
+          "",
+          "# 加载图片 2分",
+          "image = _________________('RGB')",
+          "",
+          "",
+          "# 预处理图片 2分",
+          "processed_image = _________________",
+          "",
+          "",
+          "# 确保输入数据是 float32 类型",
+          "processed_image = processed_image.astype(np.float32)",
+          "",
+          "",
+          "# 进行图片识别 2分",
+          "output = _________________([output_name], {input_name: processed_image})[0]",
+          "",
+          "",
+          "# 应用 softmax 函数获取概率 2分",
+          "probabilities = _________________(output, axis=-1)",
+          "",
+          "",
+          "# 获取最高的5个概率和对应的类别索引 3分",
+          "top5_idx = _________________[-5:][::-1]",
+          "top5_prob = _________________",
+          "",
+          "",
+          "# 打印结果",
+          "print(\"Top 5 predicted classes:\")",
+          "for i in range(5):",
+          "  print(f\"{i+1}: {labels[top5_idx[i]]} - Probability: {top5_prob[i]}\")",
+          ""
+        ],
+        "blanks": [
+          {
+            "id": "b0",
+            "accepted": [
+              "ort.InferenceSession('resnet.onnx')"
+            ]
+          },
+          {
+            "id": "b1",
+            "accepted": [
+              "Image.open('img_test.jpg').convert"
+            ]
+          },
+          {
+            "id": "b2",
+            "accepted": [
+              "preprocess_image(image)"
+            ]
+          },
+          {
+            "id": "b3",
+            "accepted": [
+              "session.run"
+            ]
+          },
+          {
+            "id": "b4",
+            "accepted": [
+              "scipy.special.softmax"
+            ]
+          },
+          {
+            "id": "b5",
+            "accepted": [
+              "np.argsort(probabilities[0])"
+            ]
+          },
+          {
+            "id": "b6",
+            "accepted": [
+              "probabilities[0][top5_idx]"
+            ]
+          }
+        ]
+      }
+    ],
+    "meta": {
+      "examId": "AITrainer",
+      "levelId": "level3",
+      "blankCount": 7,
+      "cellCount": 1
+    }
+  },
+  {
+    "id": "3.2.2",
+    "title": "3.2.2 手写数字识别系统交互流程设计",
+    "stem": "手写数字识别系统是在数字化转型和自动化需求日益增长的社会背景下应运而生的。随着信息时代的到来，大量手写文档需要进行电子化处理，以提高数据存储、检索和分析的效率。传统的光学字符识别(OCR)技术在处理手写体时面临诸多挑战，如书写风格的多样性、笔迹的连笔和重叠等，导致识别率不高。然而，深度学习的兴起，尤其是卷积神经网络(CNN)的发展，为手写数字的精准识别提供了强大的工具。\nAI模型说明：提供的模型“mnist.onnx”是基于卷积神经网络训练得到的，专门用于进行手写数字的识别应用。该模型的使用交互流程为：\n1)加载模型“mnist.onnx”;\n2)加载一张本地手写数字图片“img_test.png”，并进行预处理图像以符合模型输入要求；\n3)使用mnist模型对手写数字图片进行识别；\n4)输出识别后的数字。\n你作为一名人工智能训练师，请完成以下工作任务：\n（1）补全该模型的使用交互流程对应的Python代码（3.2.2.ipynb），实现本地测试图片“img_test.png”的识别，将其识别结果截图保存为jpg格式文件，命名为3.2.2-1.jpg。\n（2）在上面的使用交互流程基础上，给出在手写数字识别系统中使用“mnist.onnx”模型的一种人机交互的最优流程，将其保存为docx文件，命名为3.2.2.docx。\n所有结果文件储存在桌面新建的考生文件夹中，文件夹命名为“准考证号+身份证号后六位”。",
+    "cells": [
+      {
+        "cellIndex": 0,
+        "source": "import onnxruntime\nimport numpy as np\nfrom PIL import Image\n\n\n# 加载ONNX模型  2分\nort_session = __________________\n\n\n# 加载图像 2分\nimage = __________________('L')  # 转为灰度图\n\n\n#图像预处理 \nimage = __________________((28, 28))  # 调整大小为MNIST模型的输入尺寸2分\nimage_array = __________________(__________________, dtype=np.float32)  # 转为numpy数组2分\nimage_array = __________________(__________________, axis=0)  # 添加batch维度2分\nimage_array = __________________(__________________, axis=0)  # 添加通道维度2分\n\n\n#返回模型输入列表 2分\nort_inputs = {__________________()[0].name: image_array}\n# 执行预测 2分\nort_outs = __________________(None, ort_inputs)\n\n\n# 获取预测结果 2分\npredicted_class = __________________\n\n\n# 输出预测结果\nprint(f\"Predicted class: {predicted_class}\")\n",
+        "lines": [
+          "import onnxruntime",
+          "import numpy as np",
+          "from PIL import Image",
+          "",
+          "",
+          "# 加载ONNX模型  2分",
+          "ort_session = __________________",
+          "",
+          "",
+          "# 加载图像 2分",
+          "image = __________________('L')  # 转为灰度图",
+          "",
+          "",
+          "#图像预处理 ",
+          "image = __________________((28, 28))  # 调整大小为MNIST模型的输入尺寸2分",
+          "image_array = __________________(__________________, dtype=np.float32)  # 转为numpy数组2分",
+          "image_array = __________________(__________________, axis=0)  # 添加batch维度2分",
+          "image_array = __________________(__________________, axis=0)  # 添加通道维度2分",
+          "",
+          "",
+          "#返回模型输入列表 2分",
+          "ort_inputs = {__________________()[0].name: image_array}",
+          "# 执行预测 2分",
+          "ort_outs = __________________(None, ort_inputs)",
+          "",
+          "",
+          "# 获取预测结果 2分",
+          "predicted_class = __________________",
+          "",
+          "",
+          "# 输出预测结果",
+          "print(f\"Predicted class: {predicted_class}\")",
+          ""
+        ],
+        "blanks": [
+          {
+            "id": "b0",
+            "accepted": [
+              "onnxruntime.InferenceSession('mnist.onnx')"
+            ]
+          },
+          {
+            "id": "b1",
+            "accepted": [
+              "Image.open('img_test.png').convert"
+            ]
+          },
+          {
+            "id": "b2",
+            "accepted": [
+              "image.resize"
+            ]
+          },
+          {
+            "id": "b3",
+            "accepted": [
+              "np.asarray"
+            ]
+          },
+          {
+            "id": "b4",
+            "accepted": [
+              "image"
+            ]
+          },
+          {
+            "id": "b5",
+            "accepted": [
+              "np.expand_dims"
+            ]
+          },
+          {
+            "id": "b6",
+            "accepted": [
+              "image_array"
+            ]
+          },
+          {
+            "id": "b7",
+            "accepted": [
+              "np.expand_dims"
+            ]
+          },
+          {
+            "id": "b8",
+            "accepted": [
+              "image_array"
+            ]
+          },
+          {
+            "id": "b9",
+            "accepted": [
+              "ort_session.get_inputs"
+            ]
+          },
+          {
+            "id": "b10",
+            "accepted": [
+              "ort_session.run"
+            ]
+          },
+          {
+            "id": "b11",
+            "accepted": [
+              "np.argmax(ort_outs[0])"
+            ]
+          }
+        ]
+      }
+    ],
+    "meta": {
+      "examId": "AITrainer",
+      "levelId": "level3",
+      "blankCount": 12,
+      "cellCount": 1
+    }
+  },
+  {
+    "id": "3.2.3",
+    "title": "3.2.3 面部表情识别系统交互流程设计",
+    "stem": "面部表情识别系统是一种先进的计算机视觉技术，它能够分析人脸的微表情，识别出诸如快乐、悲伤、惊讶等基本情绪。通过捕捉和解读面部特征，如眼睛、眉毛和嘴部的动作，这类系统能在实时或预录的视频中判断人的情感状态，广泛应用于人机交互、市场调研、医疗健康监测、安全监控及教育科技等多个领域，为提升用户体验、增进情感智能和优化社会服务提供了有力工具。\nAI模型说明：提供的已训练的模型“emotion-ferplus.onnx”，其专门用于进行面部表情识别。定义情感类别与数字标签的映射表为{'neutral':0, 'happiness':1, 'surprise':2, 'sadness':3, 'anger':4, 'disgust':5, 'fear':6, 'contempt':7}。\n该模型的使用交互流程为：\n1)加载模型“emotion-ferplus.onnx”和加载情感类别与数字标签的映射表；\n2)加载一张本地图片“img_test.png”，并预处理图像；\n3)使用已训练的模型对图片面部表情识别；\n4)输出识别后的表情标签。\n你作为一名人工智能训练师，请完成以下工作任务：\n（1）补全该模型的使用交互流程对应的Python代码（3.2.3.ipynb），实现本地测试图片“img_test.png”的识别，将其识别结果截图保存为jpg格式文件，命名为3.2.3-1.jpg。\n（2）在上面的使用交互流程基础上，给出在面部表情识别系统中使用“emotion-ferplus.onnx”模型的一种人机交互的最优方式，将其保存为docx文件，命名为3.2.3.docx。\n所有结果文件储存在桌面新建的考生文件夹中，文件夹命名为“准考证号+身份证号后六位”。",
+    "cells": [
+      {
+        "cellIndex": 0,
+        "source": "# 导入必要的库\nimport numpy as np\nfrom PIL import Image\nimport onnxruntime as ort\n\n\n# 定义预处理函数，用于将图片转换为模型所需的输入格式\ndef preprocess(image_path):\n    input_shape = (1, 1, 64, 64)    # 模型输入期望的形状，这里是 (N, C, H, W)，N=batch size, C=channels, H=height, W=width\n    img = Image.open(image_path).convert('L')    # 打开图像文件并将其转换为灰度图  1分\n    img = img.resize((64, 64), Image.ANTIALIAS)    # 调整图像大小到模型输入所需的尺寸\n    img_data = np.array(img, dtype=np.float32)    # 将PIL图像对象转换为numpy数组，并确保数据类型是float32\n    # 调整数组的形状以匹配模型输入的形状\n    img_data = np.expand_dims(img_data, axis=0)  # 添加 batch 维度\n    img_data = np.expand_dims(img_data, axis=1)  # 添加 channel 维度\n    assert img_data.shape == input_shape, f\"Expected shape {input_shape}, but got {img_data.shape}\"    # 确保最终的形状与模型输入要求的形状一致\n    return img_data    # 返回预处理后的图像数据\n\n\n# 定义情感类别与数字标签的映射表 3分\nemotion_table = {____________}\n\n\n# 加载模型 3分\nort_session = ____________    # 使用onnxruntime创建一个会话，用于加载并运行模型\n\n\n# 加载本地图片并进行预处理 3分\ninput_data = ____________\n\n\n# 准备输入数据，确保其符合模型输入的要求\nort_inputs = {ort_session.get_inputs()[0].name: input_data}    # ort_session.get_inputs()[0].name 是获取模型的第一个输入的名字\n\n\n# 运行模型，进行预测 3分\nort_outs = ____________(None, ____________)\n\n\n# 解码模型输出，找到预测概率最高的情感类别 3分\npredicted_label = ____________(ort_outs[0])\n\n\n# 根据预测的标签找到对应的情感名称 3分\npredicted_emotion = ____________[predicted_label]\n\n\n# 输出预测的情感\nprint(f\"Predicted emotion: {predicted_emotion}\")\n",
+        "lines": [
+          "# 导入必要的库",
+          "import numpy as np",
+          "from PIL import Image",
+          "import onnxruntime as ort",
+          "",
+          "",
+          "# 定义预处理函数，用于将图片转换为模型所需的输入格式",
+          "def preprocess(image_path):",
+          "    input_shape = (1, 1, 64, 64)    # 模型输入期望的形状，这里是 (N, C, H, W)，N=batch size, C=channels, H=height, W=width",
+          "    img = Image.open(image_path).convert('L')    # 打开图像文件并将其转换为灰度图  1分",
+          "    img = img.resize((64, 64), Image.ANTIALIAS)    # 调整图像大小到模型输入所需的尺寸",
+          "    img_data = np.array(img, dtype=np.float32)    # 将PIL图像对象转换为numpy数组，并确保数据类型是float32",
+          "    # 调整数组的形状以匹配模型输入的形状",
+          "    img_data = np.expand_dims(img_data, axis=0)  # 添加 batch 维度",
+          "    img_data = np.expand_dims(img_data, axis=1)  # 添加 channel 维度",
+          "    assert img_data.shape == input_shape, f\"Expected shape {input_shape}, but got {img_data.shape}\"    # 确保最终的形状与模型输入要求的形状一致",
+          "    return img_data    # 返回预处理后的图像数据",
+          "",
+          "",
+          "# 定义情感类别与数字标签的映射表 3分",
+          "emotion_table = {____________}",
+          "",
+          "",
+          "# 加载模型 3分",
+          "ort_session = ____________    # 使用onnxruntime创建一个会话，用于加载并运行模型",
+          "",
+          "",
+          "# 加载本地图片并进行预处理 3分",
+          "input_data = ____________",
+          "",
+          "",
+          "# 准备输入数据，确保其符合模型输入的要求",
+          "ort_inputs = {ort_session.get_inputs()[0].name: input_data}    # ort_session.get_inputs()[0].name 是获取模型的第一个输入的名字",
+          "",
+          "",
+          "# 运行模型，进行预测 3分",
+          "ort_outs = ____________(None, ____________)",
+          "",
+          "",
+          "# 解码模型输出，找到预测概率最高的情感类别 3分",
+          "predicted_label = ____________(ort_outs[0])",
+          "",
+          "",
+          "# 根据预测的标签找到对应的情感名称 3分",
+          "predicted_emotion = ____________[predicted_label]",
+          "",
+          "",
+          "# 输出预测的情感",
+          "print(f\"Predicted emotion: {predicted_emotion}\")",
+          ""
+        ],
+        "blanks": [
+          {
+            "id": "b0",
+            "accepted": [
+              "'neutral':0, 'happiness':1, 'surprise':2, 'sadness':3, 'anger':4, 'disgust':5, 'fear':6, 'contempt':7"
+            ]
+          },
+          {
+            "id": "b1",
+            "accepted": [
+              "ort.InferenceSession('emotion-ferplus.onnx')"
+            ]
+          },
+          {
+            "id": "b2",
+            "accepted": [
+              "preprocess('img_test.png')"
+            ]
+          },
+          {
+            "id": "b3",
+            "accepted": [
+              "ort_session.run"
+            ]
+          },
+          {
+            "id": "b4",
+            "accepted": [
+              "ort_inputs"
+            ]
+          },
+          {
+            "id": "b5",
+            "accepted": [
+              "np.argmax"
+            ]
+          },
+          {
+            "id": "b6",
+            "accepted": [
+              "list(emotion_table.keys())"
+            ]
+          }
+        ]
+      },
+      {
+        "cellIndex": 1,
+        "source": "",
+        "lines": [
+          ""
+        ],
+        "blanks": []
+      }
+    ],
+    "meta": {
+      "examId": "AITrainer",
+      "levelId": "level3",
+      "blankCount": 7,
+      "cellCount": 2
+    }
+  },
+  {
+    "id": "3.2.4",
+    "title": "3.2.4 花朵智能识别系统交互流程设计",
+    "stem": "花朵智能识别系统在现代城市绿化管理中起着越来越重要的作用，其利用先进的计算机视觉技术，如花朵检测与识别，实现了对花朵种类的实时监控与管理。本系统要求开发一个基于已训练模型的花朵检测与分类系统，能够准确识别出不同类别的花朵。\nAI模型说明：提供的模型“flower-detection.onnx”是使用 Pytorch 框架和基于深度卷积神经网络训练得到的，专门用于进行花朵识别。对应的标签文件为“labels.txt”。 该模型的使用交互流程为：\n1)加载模型“flower-detection.onnx”和加载类别标签“labels.txt”；\n2)加载一张本地花朵图片“flower_test.png”，并预处理图像；\n3)使用flower-detection模型对花朵图片进行识别；\n4)输出花朵的预测类型和识别的准确率。\n你作为一名人工智能训练师，请完成以下工作任务：\n（1）补全该模型的使用交互流程对应的Python代码（3.2.4.ipynb），实现本地测试图片“flower _test.png”的识别，将其识别结果截图保存为jpg格式文件，命名为3.2.4-1.jpg。\n（2）在上面的使用交互流程基础上，给出在花朵智能识别系统中使用“flower-detection.onnx”模型的一种人机交互的最优流程，将其保存为docx文件，命名为3.2.4.docx。\n所有结果文件储存在桌面新建的考生文件夹中，文件夹命名为“准考证号+身份证号后六位”。",
+    "cells": [
+      {
+        "cellIndex": 0,
+        "source": "import onnxruntime as ort\nimport numpy as np\nimport scipy.special\nfrom PIL import Image\n\n\n# 预处理图像\ndef preprocess_image(image, resize_size=256, crop_size=224, mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]):\n    image = image.resize((resize_size, resize_size), Image.BILINEAR)\n    w, h = image.size\n    left = (w - crop_size) / 2\n    top = (h - crop_size) / 2\n    image = image.crop((left, top, left + crop_size, top + crop_size))\n    image = np.array(image).astype(np.float32)\n    image = image / 255.0\n    image = (image - mean) / std\n    image = np.transpose(image, (2, 0, 1))\n    image = image.reshape((1,) + image.shape)\n    return image\n\n\n# 加载模型  2分\nsession = _________________\n\n\n# 加载类别标签 2分\nwith _________________ as f:\n    labels = [line.strip() for line in f.readlines()]\n\n\n# 获取模型输入和输出的名称\ninput_name = session.get_inputs()[0].name\noutput_name = session.get_outputs()[0].name\n\n\n# 加载图片  2分\nimage = _________________('RGB')\n\n\n# 预处理图片  2分\nprocessed_image = _________________\n\n\n# 确保输入数据是 float32 类型\nprocessed_image = processed_image.astype(np.float32)\n\n\n# 进行图片识别  2分\noutput = _________________([output_name], {input_name: processed_image})[0]\n\n\n# 应用 softmax 函数获取识别分类后的准确率  2分\naccuracy = _________________(output, axis=-1)\n\n\n# 获取预测的类别索引\npredicted_idx =  __________\n\n\n# 获取预测的准确值（转换为百分比）\nprob_percentage =  __________\n\n\n# 获取预测的类别标签\npredicted_label = __________\n\n\n# 输出预测结果，包含百分比形式的概率\nprint(f\"Predicted class: {predicted_label}, Accuracy: {prob_percentage:.2f}%\")\n",
+        "lines": [
+          "import onnxruntime as ort",
+          "import numpy as np",
+          "import scipy.special",
+          "from PIL import Image",
+          "",
+          "",
+          "# 预处理图像",
+          "def preprocess_image(image, resize_size=256, crop_size=224, mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]):",
+          "    image = image.resize((resize_size, resize_size), Image.BILINEAR)",
+          "    w, h = image.size",
+          "    left = (w - crop_size) / 2",
+          "    top = (h - crop_size) / 2",
+          "    image = image.crop((left, top, left + crop_size, top + crop_size))",
+          "    image = np.array(image).astype(np.float32)",
+          "    image = image / 255.0",
+          "    image = (image - mean) / std",
+          "    image = np.transpose(image, (2, 0, 1))",
+          "    image = image.reshape((1,) + image.shape)",
+          "    return image",
+          "",
+          "",
+          "# 加载模型  2分",
+          "session = _________________",
+          "",
+          "",
+          "# 加载类别标签 2分",
+          "with _________________ as f:",
+          "    labels = [line.strip() for line in f.readlines()]",
+          "",
+          "",
+          "# 获取模型输入和输出的名称",
+          "input_name = session.get_inputs()[0].name",
+          "output_name = session.get_outputs()[0].name",
+          "",
+          "",
+          "# 加载图片  2分",
+          "image = _________________('RGB')",
+          "",
+          "",
+          "# 预处理图片  2分",
+          "processed_image = _________________",
+          "",
+          "",
+          "# 确保输入数据是 float32 类型",
+          "processed_image = processed_image.astype(np.float32)",
+          "",
+          "",
+          "# 进行图片识别  2分",
+          "output = _________________([output_name], {input_name: processed_image})[0]",
+          "",
+          "",
+          "# 应用 softmax 函数获取识别分类后的准确率  2分",
+          "accuracy = _________________(output, axis=-1)",
+          "",
+          "",
+          "# 获取预测的类别索引",
+          "predicted_idx =  __________",
+          "",
+          "",
+          "# 获取预测的准确值（转换为百分比）",
+          "prob_percentage =  __________",
+          "",
+          "",
+          "# 获取预测的类别标签",
+          "predicted_label = __________",
+          "",
+          "",
+          "# 输出预测结果，包含百分比形式的概率",
+          "print(f\"Predicted class: {predicted_label}, Accuracy: {prob_percentage:.2f}%\")",
+          ""
+        ],
+        "blanks": [
+          {
+            "id": "b0",
+            "accepted": [
+              "ort.InferenceSession('flower-detection.onnx')"
+            ]
+          },
+          {
+            "id": "b1",
+            "accepted": [
+              "open('labels.txt', 'r')"
+            ]
+          },
+          {
+            "id": "b2",
+            "accepted": [
+              "Image.open('flower_test.png').convert"
+            ]
+          },
+          {
+            "id": "b3",
+            "accepted": [
+              "preprocess_image(image)"
+            ]
+          },
+          {
+            "id": "b4",
+            "accepted": [
+              "session.run"
+            ]
+          },
+          {
+            "id": "b5",
+            "accepted": [
+              "scipy.special.softmax"
+            ]
+          },
+          {
+            "id": "b6",
+            "accepted": [
+              "np.argmax(accuracy)"
+            ]
+          },
+          {
+            "id": "b7",
+            "accepted": [
+              "accuracy[0,predicted_idx]*100"
+            ]
+          },
+          {
+            "id": "b8",
+            "accepted": [
+              "labels[predicted_idx]"
+            ]
+          }
+        ]
+      }
+    ],
+    "meta": {
+      "examId": "AITrainer",
+      "levelId": "level3",
+      "blankCount": 9,
+      "cellCount": 1
+    }
+  },
+  {
+    "id": "3.2.5",
+    "title": "3.2.5 人脸AI智能检测系统交互流程设计",
+    "stem": "在安防监控、智能交通等领域，实时准确的人脸检测需求日益增长。传统的人脸检测方法在面对复杂光照、多角度、遮挡等情况时，检测效果往往不尽人意。随着深度学习技术的发展，基于深度神经网络的人脸检测模型展现出强大的性能优势。ONNX（Open Neural Network Exchange）作为一种开放式的神经网络交换格式，能够实现不同深度学习框架间的模型转换与共享，使得基于 ONNX 的人脸检测模型可以在多种环境下高效运行。本系统所使用的 “version-RFB-320.onnx” 模型，通过大量数据训练，能够快速准确地检测出图像中的人脸，在实际应用场景中具有重要价值。\nAI 模型说明：“version-RFB-320.onnx” 模型是用于人脸检测的 ONNX 格式模型，对应的类别标签文件为 “voc-model-labels.txt” 。该模型的使用交互流程为：\n（1）加载 “version-RFB-320.onnx” 模型和 “voc-model-labels.txt” 类别标签；\n（2）加载本地测试图片文件夹 “imgs” 中的所有图片，并对每张图片进行预处理以符合模型输入要求；\n（3）使用 “version-RFB-320.onnx” 模型对加载的图片进行人脸检测；\n（4）在图片上绘制检测到的人脸框，并将处理后的图片保存到 “./detect_imgs_results_onnx” 文件夹中；\n（5）统计所有图片中检测到的人脸总数并输出。\n你作为一名人工智能训练师，请完成以下工作任务：\n（1）补全该模型的使用交互流程对应的 Python 代码（3.2.5.ipynb），实现本地测试图片文件夹 “imgs” 中所有图片的人脸检测，将运行结果截图保存到3.2.5-1.jpg中，并将检测结果的图片上传。\n（2）在上面的使用交互流程基础上，结合实际应用场景，设计在人脸检测系统中使用 “version-RFB-320.onnx” 模型的一种人机交互优化方案，包括交互界面布局、操作流程等内容，将其保存为docx文件，命名为 3.2.5.docx。\n所有结果文件储存在桌面新建的考生文件夹中，文件夹命名为 “准考证号 + 身份证号后六位”。",
+    "cells": [
+      {
+        "cellIndex": 0,
+        "source": "import os\nimport time\nimport cv2\nimport numpy as np\nimport vision.utils.box_utils_numpy as box_utils\nimport onnxruntime as ort\n\n# 定义预测函数，对模型输出的边界框和置信度进行后处理\ndef predict(width, height, confidences, boxes, prob_threshold, iou_threshold=0.3, top_k=-1):\n    boxes = boxes[0]\n    confidences = confidences[0]\n    picked_box_probs = []\n    picked_labels = []\n    for class_index in range(1, confidences.shape[1]):\n        probs = confidences[:, class_index]\n        mask = probs > prob_threshold\n        probs = probs[mask]\n        if probs.shape[0] == 0:\n            continue\n        subset_boxes = boxes[mask, :]\n        box_probs = np.concatenate([subset_boxes, probs.reshape(-1, 1)], axis=1)\n        box_probs = box_utils.hard_nms(box_probs,\n                                       iou_threshold=iou_threshold,\n                                       top_k=top_k,\n                                       )\n        picked_box_probs.append(box_probs)\n        picked_labels.extend([class_index] * box_probs.shape[0])\n    if not picked_box_probs:\n        return np.array([]), np.array([]), np.array([])\n    picked_box_probs = np.concatenate(picked_box_probs)\n    picked_box_probs[:, 0] *= width\n    picked_box_probs[:, 1] *= height\n    picked_box_probs[:, 2] *= width\n    picked_box_probs[:, 3] *= height\n    return picked_box_probs[:, :4].astype(np.int32), np.array(picked_labels), picked_box_probs[:, 4]\n\n# 从标签文件中读取每一行，并去除行首尾的空白字符，得到类别名称列表 2分\nclass_names = [_______________ for name in open('voc-model-labels.txt').readlines()]\n\n# 创建 ONNX Runtime 的推理会话，用于运行模型进行推理 2分\nort_session = _______________('version-RFB-320.onnx')\n\n# 获取模型输入的名称 2分\ninput_name = _______________()[0].name\n\n# 定义保存检测结果图像的目录路径\nresult_path = \"./detect_imgs_results_onnx\"\n\n# 定义置信度阈值，用于筛选出置信度较高的检测结果\nthreshold = 0.7\n# 定义存储待检测图像的目录路径\npath = \"imgs\"\n# 用于统计所有图像中检测到的目标框总数，初始化为 0\nsum = 0\n\n# 如果保存结果的目录不存在，则创建该目录 2分\nif not os.path.exists(result_path):\n    os._______________\n    \n# 获取指定目录下的所有文件和文件夹名称列表\nlistdir = os.listdir(path)\n\n# 遍历目录下的每个文件\nfor file_path in listdir:\n    # 拼接图像文件的完整路径\n    img_path = os.path.join(path, file_path)\n    # 使用 OpenCV 读取图像文件 2分\n    orig_image = _______________\n    # 将图像从 BGR 颜色空间转换为 RGB 颜色空间（许多模型要求输入为 RGB 格式）\n    image = cv2.cvtColor(orig_image, cv2.COLOR_BGR2RGB)\n    # 将图像调整为 320x240 的尺寸（符合模型输入的尺寸要求） 2分\n    image = _______________(_______________, (320, 240))\n    # 定义图像归一化的均值数组 2分\n    image_mean = _______________([127, 127, 127])\n    # 对图像进行归一化处理，减去均值并除以 128\n    image = (image - image_mean) / 128\n    # 将图像的维度从 (高度, 宽度, 通道数) 转换为 (通道数, 高度, 宽度)\n    image = np.transpose(image, [2, 0, 1])\n    # 在第一个维度上扩展一个维度，将图像变为 (1, 通道数, 高度, 宽度)，以符合模型输入的维度要求  1分\n    image = _______________(image, axis=0)\n    # 将图像数据类型转换为 float32 类型\n    image = image.astype(np.float32)\n    # 记录开始时间，用于计算模型推理的耗时\n    time_time = time.time()\n    # 使用 ONNX Runtime 运行模型，输入图像数据，得到模型输出的置信度和边界框  2分\n    confidences, boxes = _______________(None, {input_name: image})\n    # 计算并打印模型推理的耗时\n    print(\"cost time:{}\".format(time.time() - time_time))\n    # 调用 predict 函数对模型输出的边界框和置信度进行后处理，得到最终的边界框、类别标签和置信度\n    boxes, labels, probs = predict(orig_image.shape[1], orig_image.shape[0], confidences, boxes, threshold)\n    # 遍历每个检测到的目标框\n    for i in range(boxes.shape[0]):\n        # 获取当前目标框的坐标\n        box = boxes[i, :]\n        # 生成当前目标框的标签字符串，包含类别名称和置信度\n        label = f\"{class_names[labels[i]]}: {probs[i]:.2f}\"\n\n        # 在原始图像上绘制目标框，颜色为 (255, 255, 0)，线条粗细为 4\n        cv2.rectangle(orig_image, (box[0], box[1]), (box[2], box[3]), (255, 255, 0), 4)\n        # 将绘制了目标框的图像保存到结果目录中\n        cv2.imwrite(os.path.join(result_path, file_path), orig_image)\n    # 累加当前图像中检测到的目标框数量到总数中\n    sum += boxes.shape[0]\n# 打印所有图像中检测到的目标框总数\nprint(\"sum:{}\".format(sum))",
+        "lines": [
+          "import os",
+          "import time",
+          "import cv2",
+          "import numpy as np",
+          "import vision.utils.box_utils_numpy as box_utils",
+          "import onnxruntime as ort",
+          "",
+          "# 定义预测函数，对模型输出的边界框和置信度进行后处理",
+          "def predict(width, height, confidences, boxes, prob_threshold, iou_threshold=0.3, top_k=-1):",
+          "    boxes = boxes[0]",
+          "    confidences = confidences[0]",
+          "    picked_box_probs = []",
+          "    picked_labels = []",
+          "    for class_index in range(1, confidences.shape[1]):",
+          "        probs = confidences[:, class_index]",
+          "        mask = probs > prob_threshold",
+          "        probs = probs[mask]",
+          "        if probs.shape[0] == 0:",
+          "            continue",
+          "        subset_boxes = boxes[mask, :]",
+          "        box_probs = np.concatenate([subset_boxes, probs.reshape(-1, 1)], axis=1)",
+          "        box_probs = box_utils.hard_nms(box_probs,",
+          "                                       iou_threshold=iou_threshold,",
+          "                                       top_k=top_k,",
+          "                                       )",
+          "        picked_box_probs.append(box_probs)",
+          "        picked_labels.extend([class_index] * box_probs.shape[0])",
+          "    if not picked_box_probs:",
+          "        return np.array([]), np.array([]), np.array([])",
+          "    picked_box_probs = np.concatenate(picked_box_probs)",
+          "    picked_box_probs[:, 0] *= width",
+          "    picked_box_probs[:, 1] *= height",
+          "    picked_box_probs[:, 2] *= width",
+          "    picked_box_probs[:, 3] *= height",
+          "    return picked_box_probs[:, :4].astype(np.int32), np.array(picked_labels), picked_box_probs[:, 4]",
+          "",
+          "# 从标签文件中读取每一行，并去除行首尾的空白字符，得到类别名称列表 2分",
+          "class_names = [_______________ for name in open('voc-model-labels.txt').readlines()]",
+          "",
+          "# 创建 ONNX Runtime 的推理会话，用于运行模型进行推理 2分",
+          "ort_session = _______________('version-RFB-320.onnx')",
+          "",
+          "# 获取模型输入的名称 2分",
+          "input_name = _______________()[0].name",
+          "",
+          "# 定义保存检测结果图像的目录路径",
+          "result_path = \"./detect_imgs_results_onnx\"",
+          "",
+          "# 定义置信度阈值，用于筛选出置信度较高的检测结果",
+          "threshold = 0.7",
+          "# 定义存储待检测图像的目录路径",
+          "path = \"imgs\"",
+          "# 用于统计所有图像中检测到的目标框总数，初始化为 0",
+          "sum = 0",
+          "",
+          "# 如果保存结果的目录不存在，则创建该目录 2分",
+          "if not os.path.exists(result_path):",
+          "    os._______________",
+          "    ",
+          "# 获取指定目录下的所有文件和文件夹名称列表",
+          "listdir = os.listdir(path)",
+          "",
+          "# 遍历目录下的每个文件",
+          "for file_path in listdir:",
+          "    # 拼接图像文件的完整路径",
+          "    img_path = os.path.join(path, file_path)",
+          "    # 使用 OpenCV 读取图像文件 2分",
+          "    orig_image = _______________",
+          "    # 将图像从 BGR 颜色空间转换为 RGB 颜色空间（许多模型要求输入为 RGB 格式）",
+          "    image = cv2.cvtColor(orig_image, cv2.COLOR_BGR2RGB)",
+          "    # 将图像调整为 320x240 的尺寸（符合模型输入的尺寸要求） 2分",
+          "    image = _______________(_______________, (320, 240))",
+          "    # 定义图像归一化的均值数组 2分",
+          "    image_mean = _______________([127, 127, 127])",
+          "    # 对图像进行归一化处理，减去均值并除以 128",
+          "    image = (image - image_mean) / 128",
+          "    # 将图像的维度从 (高度, 宽度, 通道数) 转换为 (通道数, 高度, 宽度)",
+          "    image = np.transpose(image, [2, 0, 1])",
+          "    # 在第一个维度上扩展一个维度，将图像变为 (1, 通道数, 高度, 宽度)，以符合模型输入的维度要求  1分",
+          "    image = _______________(image, axis=0)",
+          "    # 将图像数据类型转换为 float32 类型",
+          "    image = image.astype(np.float32)",
+          "    # 记录开始时间，用于计算模型推理的耗时",
+          "    time_time = time.time()",
+          "    # 使用 ONNX Runtime 运行模型，输入图像数据，得到模型输出的置信度和边界框  2分",
+          "    confidences, boxes = _______________(None, {input_name: image})",
+          "    # 计算并打印模型推理的耗时",
+          "    print(\"cost time:{}\".format(time.time() - time_time))",
+          "    # 调用 predict 函数对模型输出的边界框和置信度进行后处理，得到最终的边界框、类别标签和置信度",
+          "    boxes, labels, probs = predict(orig_image.shape[1], orig_image.shape[0], confidences, boxes, threshold)",
+          "    # 遍历每个检测到的目标框",
+          "    for i in range(boxes.shape[0]):",
+          "        # 获取当前目标框的坐标",
+          "        box = boxes[i, :]",
+          "        # 生成当前目标框的标签字符串，包含类别名称和置信度",
+          "        label = f\"{class_names[labels[i]]}: {probs[i]:.2f}\"",
+          "",
+          "        # 在原始图像上绘制目标框，颜色为 (255, 255, 0)，线条粗细为 4",
+          "        cv2.rectangle(orig_image, (box[0], box[1]), (box[2], box[3]), (255, 255, 0), 4)",
+          "        # 将绘制了目标框的图像保存到结果目录中",
+          "        cv2.imwrite(os.path.join(result_path, file_path), orig_image)",
+          "    # 累加当前图像中检测到的目标框数量到总数中",
+          "    sum += boxes.shape[0]",
+          "# 打印所有图像中检测到的目标框总数",
+          "print(\"sum:{}\".format(sum))"
+        ],
+        "blanks": [
+          {
+            "id": "b0",
+            "accepted": [
+              "name.strip()"
+            ]
+          },
+          {
+            "id": "b1",
+            "accepted": [
+              "ort.InferenceSession"
+            ]
+          },
+          {
+            "id": "b2",
+            "accepted": [
+              "ort_session.get_inputs"
+            ]
+          },
+          {
+            "id": "b3",
+            "accepted": [
+              "makedirs(result_path)"
+            ]
+          },
+          {
+            "id": "b4",
+            "accepted": [
+              "cv2.imread(img_path)"
+            ]
+          },
+          {
+            "id": "b5",
+            "accepted": [
+              "cv2.resize"
+            ]
+          },
+          {
+            "id": "b6",
+            "accepted": [
+              "image"
+            ]
+          },
+          {
+            "id": "b7",
+            "accepted": [
+              "np.array"
+            ]
+          },
+          {
+            "id": "b8",
+            "accepted": [
+              "np.expand_dims"
+            ]
+          },
+          {
+            "id": "b9",
+            "accepted": [
+              "ort_session.run"
+            ]
+          }
+        ]
+      },
+      {
+        "cellIndex": 1,
+        "source": "",
+        "lines": [
+          ""
+        ],
+        "blanks": []
+      }
+    ],
+    "meta": {
+      "examId": "AITrainer",
+      "levelId": "level3",
+      "blankCount": 10,
+      "cellCount": 2
+    }
+  }
+]

@@ -295,7 +295,11 @@ export function AdminUsersPage() {
                           {u.role === "admin" ? (
                             <span className="text-xs text-neutral-400">—</span>
                           ) : (
-                            <button
+                            <div className="flex flex-col items-start gap-1">
+                              {!u.isAuthorized ? (
+                                <span className="text-[11px] text-amber-700">试用/待授权</span>
+                              ) : null}
+                              <button
                               type="button"
                               disabled={busy}
                               onClick={() => void toggleAuthorized(u)}
@@ -307,6 +311,7 @@ export function AdminUsersPage() {
                             >
                               {u.isAuthorized ? "已授权" : "未授权"}
                             </button>
+                            </div>
                           )}
                         </td>
                       </tr>

@@ -14,13 +14,16 @@ export function TheoryHomePage() {
   const { routes: lr } = useLevelRoutes();
   const user = useAuthStore((s) => s.user);
   const bankId = useAppStore((s) => s.selectedQuestionBankId);
-  const bankMeta = getQuestionBankMeta(bankId);
-  const bankTitle = bankMeta?.title ?? "备考题库";
-  const levelLabel = bankMeta?.levelLabel ?? "三级";
-  const showOperate = bankMeta?.operate !== false;
+  const questionBankMeta = getQuestionBankMeta(bankId);
+  const bankTitle = questionBankMeta?.title ?? "备考题库";
+  const levelLabel = questionBankMeta?.levelLabel ?? "三级";
+  const showOperate = questionBankMeta?.operate !== false;
   const examTemplate = getExamTemplateForBank(bankId);
   const mockBrief = formatExamTemplateBrief(examTemplate);
   const stats = useAppStore(useShallow(selectStats));
+  const storeBankMeta = useAppStore((s) => s.bankMeta);
+  const isTrial = user?.contentAccess === "trial";
+  const trialEnt = storeBankMeta?.entitlements ?? user?.entitlements;
   const codeFillHydrated = useCodeFillStoreHydrated();
   const codeStats = useCodeFillStore(useShallow(selectCodeFillStats));
   const seqDone = `${stats.answered}/${stats.total}`;
@@ -49,6 +52,17 @@ export function TheoryHomePage() {
       <p className="mt-1 px-4 text-sm leading-relaxed text-white/80">
         做题进度、错题与收藏保存在本机浏览器；请勿清除本站缓存、Cookie 或站点数据，以免丢失记录。
       </p>
+
+      {isTrial && trialEnt ? (
+        <div className="mx-4 mt-4 rounded-xl border border-amber-200/60 bg-amber-50/95 px-4 py-3 text-sm text-amber-950">
+          <p className="font-semibold">试用中</p>
+          <p className="mt-1 text-xs leading-relaxed text-amber-900/90">
+            当前可练：判断题 {trialEnt.theory.judgment.allowed} 题
+            {trialEnt.operate.allowed > 0 ? `、实操 ${trialEnt.operate.allowed} 题` : ""}
+            。单选/多选与完整实操题需开通全量权限，请联系管理员授权。
+          </p>
+        </div>
+      ) : null}
 
       <div className="mt-6 space-y-4 px-4">
         <section className="rounded-2xl bg-white p-5 text-neutral-900 shadow-card">
@@ -98,7 +112,9 @@ export function TheoryHomePage() {
         {showOperate ? (
           <section className="rounded-2xl bg-white p-5 text-neutral-900 shadow-card">
             <h2 className="text-center text-base font-bold text-neutral-800">实操练习</h2>
-            <p className="mt-2 text-center text-xs text-neutral-500">Python 代码填空 · 20 题</p>
+            <p className="mt-2 text-center text-xs text-neutral-500">
+            Python 代码填空 · {codeStats.total} 题
+          </p>
             <Link
               to={lr.operateHome}
               className="mt-6 flex flex-col items-center justify-center rounded-xl border border-violet-200 bg-gradient-to-br from-violet-50 to-indigo-50 py-8"

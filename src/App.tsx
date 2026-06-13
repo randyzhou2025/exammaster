@@ -9,6 +9,7 @@ import { LevelHomeRedirect } from "@/components/LevelHomeRedirect";
 import { RequireExamAccess } from "@/components/RequireExamAccess";
 import { RequireLogin } from "@/components/RequireLogin";
 import { RequireQuestionBank } from "@/components/RequireQuestionBank";
+import { BankBootstrap } from "@/components/BankBootstrap";
 import { SiteLoginRedirect } from "@/components/SiteLoginRedirect";
 import { SiteAdminRedirect } from "@/components/SiteAdminRedirect";
 import { LEVEL_ROUTE_PREFIX, routes } from "@/lib/routes";
@@ -19,6 +20,7 @@ import { PracticeEntryPage } from "@/pages/PracticeEntryPage";
 import { MockExamIntroPage } from "@/pages/MockExamIntroPage";
 import { MockExamPage } from "@/pages/MockExamPage";
 import { MockExamResultPage } from "@/pages/MockExamResultPage";
+import { MockExamReviewPage } from "@/pages/MockExamReviewPage";
 import { OperateDashboardPage } from "@/pages/OperateDashboardPage";
 import { OperateSessionPage } from "@/pages/OperateSessionPage";
 import { SettingsPage } from "@/pages/SettingsPage";
@@ -57,6 +59,7 @@ function ExamPrepApp() {
             <Route element={<RequireExamAccess />}>
               <Route path="/banks" element={<QuestionBankPage />} />
               <Route element={<RequireQuestionBank />}>
+                <Route element={<BankBootstrap />}>
                 <Route path={levelPath("")} element={<LevelHomeRedirect />} />
                 <Route path={levelPath("/theory")} element={<TheoryHomePage />} />
                 <Route path={levelPath("/theory/sequential")} element={<SequentialDashboardPage />} />
@@ -66,6 +69,7 @@ function ExamPrepApp() {
                 <Route path={levelPath("/theory/mock")} element={<MockExamIntroPage />} />
                 <Route path={levelPath("/theory/mock/session")} element={<MockExamPage />} />
                 <Route path={levelPath("/theory/mock/result")} element={<MockExamResultPage />} />
+                <Route path={levelPath("/theory/mock/review")} element={<MockExamReviewPage />} />
                 <Route path={levelPath("/operate")} element={<OperateDashboardPage />} />
                 <Route path={levelPath("/operate/session")} element={<OperateSessionPage />} />
 
@@ -75,8 +79,10 @@ function ExamPrepApp() {
                 <Route path="/mock" element={<LegacyFlatRedirect target="theoryMock" />} />
                 <Route path="/mock/session" element={<LegacyFlatRedirect target="theoryMockSession" />} />
                 <Route path="/mock/result" element={<LegacyFlatRedirect target="theoryMockResult" />} />
+                <Route path="/mock/review" element={<LegacyFlatRedirect target="theoryMockReview" />} />
                 <Route path="/practice/session" element={<LegacyFlatRedirect target="theoryPracticeSession" />} />
                 <Route path="/practice/:kind" element={<LegacyRedirect />} />
+                </Route>
               </Route>
             </Route>
 

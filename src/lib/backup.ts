@@ -1,12 +1,13 @@
 import type { Question, MockExamRecord } from "@/types/exam";
 
 /** 备份文件格式版本，便于以后迁移 */
-export const BACKUP_FORMAT_VERSION = 1;
+export const BACKUP_FORMAT_VERSION = 2;
 
 export interface BackupPayload {
   formatVersion: number;
   exportedAt: string;
-  bank: Question[];
+  /** 本地开发备份可含题库；API 模式导出不含题目正文 */
+  bank?: Question[];
   byId: Record<string, unknown>;
   mockHistory: MockExamRecord[];
   prefs: {
@@ -22,7 +23,7 @@ export function parseBackupJson(raw: string): BackupPayload | null {
   try {
     const data = JSON.parse(raw) as Partial<BackupPayload>;
     if (!data || typeof data !== "object") return null;
-    if (!Array.isArray(data.bank)) return null;
+    if (data.bank !== undefined && !Array.isArray(data.bank)) return null;
     if (!data.byId || typeof data.byId !== "object") return null;
     if (!Array.isArray(data.mockHistory)) data.mockHistory = [];
     const prefs: BackupPayload["prefs"] =
@@ -32,13 +33,12 @@ export function parseBackupJson(raw: string): BackupPayload | null {
               typeof (data.prefs as { wrongBookAutoRemove?: boolean }).wrongBookAutoRemove === "boolean"
                 ? (data.prefs as { wrongBookAutoRemove: boolean }).wrongBookAutoRemove
                 : DEFAULT_PREFS_IN_BACKUP.wrongBookAutoRemove,
-            /* 旧备份含 wrongRemovalThreshold 时已忽略，后续版本恢复时再解析 */
           }
         : DEFAULT_PREFS_IN_BACKUP;
     return {
       formatVersion: typeof data.formatVersion === "number" ? data.formatVersion : BACKUP_FORMAT_VERSION,
       exportedAt: typeof data.exportedAt === "string" ? data.exportedAt : new Date().toISOString(),
-      bank: data.bank,
+      ...(Array.isArray(data.bank) ? { bank: data.bank } : {}),
       byId: data.byId as Record<string, unknown>,
       mockHistory: data.mockHistory,
       prefs,

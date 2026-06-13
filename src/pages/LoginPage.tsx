@@ -2,13 +2,10 @@ import { useEffect, useState, type FormEvent } from "react";
 import { Link, useLocation, useSearchParams } from "react-router-dom";
 import { AuthShell } from "@/components/AuthShell";
 import { apiFetch } from "@/lib/api";
-import { assignSitePath, sanitizePostLoginReturn } from "@/lib/routes";
+import { assignSitePath, postLoginPathForReturn } from "@/lib/routes";
 import type { AuthUser } from "@/stores/authStore";
 import { useAuthStore } from "@/stores/authStore";
-
-function resolveReturnPath(searchParams: URLSearchParams, stateFrom?: string): string {
-  return sanitizePostLoginReturn(searchParams.get("return") ?? stateFrom ?? undefined);
-}
+import { useAppStore } from "@/stores/appStore";
 
 function goAfterAuth(path: string) {
   assignSitePath(path);
@@ -18,20 +15,31 @@ export function LoginPage() {
   const loc = useLocation();
   const [searchParams] = useSearchParams();
   const setSession = useAuthStore((s) => s.setSession);
+  const bankId = useAppStore((s) => s.selectedQuestionBankId);
+  const [storeReady, setStoreReady] = useState(() => useAppStore.persist.hasHydrated());
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const returnPath = resolveReturnPath(searchParams, (loc.state as { from?: string } | null)?.from);
+  const returnPath = postLoginPathForReturn(
+    searchParams.get("return") ?? (loc.state as { from?: string } | null)?.from ?? null,
+    bankId
+  );
   const ready = useAuthStore((s) => s.ready);
   const existingToken = useAuthStore((s) => s.token);
 
   useEffect(() => {
-    if (ready && existingToken) {
+    const unsub = useAppStore.persist.onFinishHydration(() => setStoreReady(true));
+    if (useAppStore.persist.hasHydrated()) setStoreReady(true);
+    return unsub;
+  }, []);
+
+  useEffect(() => {
+    if (ready && existingToken && storeReady) {
       goAfterAuth(returnPath);
     }
-  }, [ready, existingToken, returnPath]);
+  }, [ready, existingToken, storeReady, returnPath]);
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
