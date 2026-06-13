@@ -1,9 +1,9 @@
 FROM node:20-alpine
-WORKDIR /app/server
-COPY server/package.json server/package-lock.json ./
+WORKDIR /app
+COPY package.json package-lock.json ./
 RUN npm ci
-COPY server/ .
-COPY src/data/theoryBank.json src/data/theoryBankL4.json src/data/codeFillBank.json ./assets/banks/
+COPY . .
+# 题库 JSON 在 server/assets/banks/（scripts/sync-banks-to-server.mjs 同步，勿从仓库根 src/data 拷贝）
 RUN npm run build
 ENV NODE_ENV=production
 EXPOSE 4000

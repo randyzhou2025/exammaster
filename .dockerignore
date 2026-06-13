@@ -3,6 +3,8 @@ dist
 .git
 .github
 .cursor
+# 前端 build context=仓库根；排除 server/ 减小上传体积。API 用 compose 里 context: ./server 单独构建。
+server
 *.md
 .env
 .env.*

@@ -24,8 +24,8 @@ services:
 
   exam_api:
     build:
-      context: .
-      dockerfile: server/Dockerfile
+      context: ./server
+      dockerfile: Dockerfile
     image: exam-master-api:latest
     container_name: exam_api
     restart: unless-stopped
