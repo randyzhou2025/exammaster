@@ -3,7 +3,6 @@ dist
 .git
 .github
 .cursor
-server
 *.md
 .env
 .env.*
