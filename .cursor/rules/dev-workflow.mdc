@@ -12,6 +12,26 @@ alwaysApply: true
 3. **遵循现有约定** — 命名、类型、目录结构、组件风格与周边代码一致。
 4. **注释克制** — 仅解释非显而易见的业务或技术细节。
 
+## 改动后果（必守，详见 docs/SOP.md）
+
+**不要随意更改既有基础设施**（Docker compose 上下文、`.dockerignore`、`Dockerfile`、Nginx 片段、路由挂载方式、env 默认值）。任务没要求就不动。
+
+改动前必须想清楚：
+
+- **影响面**：本地 dev、生产 Docker、宝塔反代、其他服务是否仍一致？
+- **默认行为**：现网不配新 env 时，是否与改前相同？
+- **更窄方案**：能否只加新文件/新接口，而不改共享配置？
+
+**禁止**用「能跑就行」的补丁掩盖根因（例：为修 API build 删掉 `.dockerignore` 的 `server`，会导致前端 build 上下文膨胀）。
+
+### Docker / 部署硬规则
+
+- `exam_api`：`context: ./server`（勿改为仓库根 `.`）
+- `exam_frontend`：`context: .`，根 `.dockerignore` **保留** `server`
+- 题库进 API 镜像：用 `server/assets/banks/`，勿从根 `src/data` COPY
+- 改 compose / Dockerfile / `.dockerignore` 后，交付前必跑：
+  `docker compose -f docker-compose.prod.yml build exam_api exam_frontend`（可用 dummy env）
+
 ## 开发后测试（必做）
 
 功能改完、**push 或告知用户「已完成」之前**，须在本机跑通与改动相关的验证，不能只做静态检查：
