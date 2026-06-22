@@ -7,7 +7,8 @@
     "import-theory-bank": "node parse-theory-bank.mjs",
     "import-theory-bank-l4": "node parse-theory-bank-l4.mjs",
     "mobile-shot": "node mobile-shot.mjs",
-    "dump-pdf-text": "node dump-pdf-text.mjs"
+    "dump-pdf-text": "node dump-pdf-text.mjs",
+    "generate-theory-bank-pdf": "node generate-theory-bank-pdf.mjs"
   },
   "dependencies": {
     "pdf-parse": "^2.4.5",

@@ -24,6 +24,7 @@ import { MockExamReviewPage } from "@/pages/MockExamReviewPage";
 import { OperateDashboardPage } from "@/pages/OperateDashboardPage";
 import { OperateSessionPage } from "@/pages/OperateSessionPage";
 import { SettingsPage } from "@/pages/SettingsPage";
+import { ServiceNoticePage } from "@/pages/ServiceNoticePage";
 import { WrongBookPage } from "@/pages/WrongBookPage";
 import { PendingAuthPage } from "@/pages/PendingAuthPage";
 import { QuestionBankPage } from "@/pages/QuestionBankPage";
@@ -54,6 +55,7 @@ function ExamPrepApp() {
           <Route element={<AppShell />}>
             <Route path="/auth/pending" element={<PendingAuthPage />} />
             <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/notice/service" element={<ServiceNoticePage />} />
             <Route path="/admin/*" element={<SiteAdminRedirect />} />
 
             <Route element={<RequireExamAccess />}>

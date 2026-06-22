@@ -16,6 +16,7 @@
     "build:web": "tsc -b && vite build",
     "import-theory-bank": "npm --prefix scripts run import-theory-bank",
     "import-theory-bank-l4": "npm --prefix scripts run import-theory-bank-l4",
+    "generate-theory-bank-pdf": "npm --prefix scripts run generate-theory-bank-pdf",
     "mobile-shot": "npm --prefix scripts run mobile-shot",
     "build:code-bank": "node scripts/build-code-fill-bank.mjs",
     "preview": "vite preview",

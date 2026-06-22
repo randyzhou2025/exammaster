@@ -32,6 +32,7 @@ export function levelRoutes(levelId: string = DEFAULT_LEVEL_ID) {
 /** 与等级无关的全局路由 */
 export const routes = {
   banks: "/banks",
+  serviceNotice: "/notice/service",
   settings: "/settings",
   login: "/login",
   register: "/register",
