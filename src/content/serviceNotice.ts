@@ -1,7 +1,7 @@
 /** 刷题服务调整通知（首页横幅 + 详情页共用） */
 export const SERVICE_NOTICE = {
-  id: "2025-07-pricing",
-  publishedAt: "2025-05-26",
+  id: "2026-07-pricing",
+  publishedAt: "2026-05-26",
   title: "刷题服务调整通知",
   bannerTitle: "服务调整通知",
   bannerSummary:
@@ -10,8 +10,8 @@ export const SERVICE_NOTICE = {
   contactXiaohongshu: "小红书私信联系",
   priceLabel: "19.8 元",
   priceNote: "可无限制使用本软件直至通过考试",
-  freeUntilLabel: "2025 年 6 月 30 日",
-  paidFromLabel: "2025 年 7 月 1 日",
+  freeUntilLabel: "2026 年 6 月 30 日",
+  paidFromLabel: "2026 年 7 月 1 日",
 } as const;
 
 export const SERVICE_NOTICE_SECTIONS: ReadonlyArray<{ heading: string; body: string[] }> = [
