@@ -38,7 +38,7 @@ export const SERVICE_NOTICE_SECTIONS: ReadonlyArray<{ heading: string; body: str
   {
     heading: "7 月及之后如何继续使用",
     body: [
-      `如需 ${SERVICE_NOTICE.paidFromLabel} 之后继续刷题，请通过以下方式联系我开通：`,
+      `如需 ${SERVICE_NOTICE.paidFromLabel} 之后继续刷题，请通过以下方式联系管理员开通：`,
       `· ${SERVICE_NOTICE.contactXiaohongshu}`,
       `· 邮件：${SERVICE_NOTICE.contactEmail}`,
     ],
