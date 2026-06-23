@@ -86,7 +86,8 @@ function RegisterForm() {
         <input
           type="text"
           value={displayName}
-          onChange={(e) => setDisplayName(e.target.value)}
+          maxLength={10}
+          onChange={(e) => setDisplayName(e.target.value.slice(0, 10))}
           className={inputClassName}
           {...nameHandlers}
         />

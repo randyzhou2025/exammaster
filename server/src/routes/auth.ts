@@ -13,7 +13,7 @@ import { isTrialModeEnabled } from "../trial-config.js";
 const registerSchema = z.object({
   email: z.string().email().max(255),
   password: z.string().min(8).max(128),
-  displayName: z.string().max(100).optional(),
+  displayName: z.string().max(10).optional(),
 });
 
 const loginSchema = z.object({
