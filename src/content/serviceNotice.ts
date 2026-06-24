@@ -5,7 +5,7 @@ export const SERVICE_NOTICE = {
   title: "刷题服务调整通知",
   bannerTitle: "服务调整通知",
   bannerSummary:
-    "平台原先免费开放刷题；6月30日前老用户仍可免费使用，7月起将收取一定费用。",
+    "平台原先免费开放刷题；6月30日前老用户仍可免费使用，7月起将收取一定维护费。",
   contactEmail: "103620995@qq.com",
   contactXiaohongshu: "小红书私信联系",
   priceLabel: "19.8 元",
