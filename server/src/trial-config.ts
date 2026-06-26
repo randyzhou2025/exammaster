@@ -6,7 +6,7 @@ export function isTrialModeEnabled(): boolean {
 export const TRIAL_JUDGMENT_LIMIT = 100;
 export const TRIAL_CODE_FILL_LIMIT = 1;
 
-export const KNOWN_BANK_IDS = ["ai-trainer-l3", "ai-trainer-l4"] as const;
+export const KNOWN_BANK_IDS = ["ai-trainer-l3", "ai-trainer-l4", "fmo-live-l3", "fmo-traffic-l3", "fmo-av-l3"] as const;
 export type KnownBankId = (typeof KNOWN_BANK_IDS)[number];
 
 export function isKnownBankId(id: string): id is KnownBankId {

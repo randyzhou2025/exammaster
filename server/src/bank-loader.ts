@@ -42,8 +42,16 @@ function readJsonFile<T>(filename: string): T {
   return JSON.parse(raw) as T;
 }
 
+const THEORY_BANK_FILES: Record<KnownBankId, string> = {
+  "ai-trainer-l3": "theoryBank.json",
+  "ai-trainer-l4": "theoryBankL4.json",
+  "fmo-live-l3": "theoryBankFmoLiveL3.json",
+  "fmo-traffic-l3": "theoryBankFmoTrafficL3.json",
+  "fmo-av-l3": "theoryBankFmoAvL3.json",
+};
+
 function theoryFilename(bankId: KnownBankId): string {
-  return bankId === "ai-trainer-l4" ? "theoryBankL4.json" : "theoryBank.json";
+  return THEORY_BANK_FILES[bankId];
 }
 
 export function loadTheoryBank(bankId: KnownBankId): TheoryQuestion[] {
@@ -55,7 +63,7 @@ export function loadTheoryBank(bankId: KnownBankId): TheoryQuestion[] {
 }
 
 export function loadCodeFillBank(bankId: KnownBankId): CodeFillQuestion[] {
-  if (bankId === "ai-trainer-l4") return [];
+  if (bankId !== "ai-trainer-l3") return [];
   const cached = codeFillCache.get(bankId);
   if (cached) return cached;
   const bank = readJsonFile<CodeFillQuestion[]>("codeFillBank.json");

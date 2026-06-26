@@ -56,7 +56,9 @@ export interface QuestionBankMeta {
   id: string;
   title: string;
   subtitle: string;
-  /** URL 段，如 level3 / level4 */
+  /** 首页顶栏品牌名，如「人工智能训练师」 */
+  homeBrand: string;
+  /** URL 段，如 level3 / level4 / fmo-live-l3 */
   levelId: string;
   /** 首页展示用，如「三级」「四级」 */
   levelLabel: string;
@@ -70,6 +72,7 @@ export const QUESTION_BANKS: QuestionBankMeta[] = [
     id: "ai-trainer-l3",
     title: "人工智能训练师（3级）",
     subtitle: "理论知识 900 题 · 含 Python 实操填空 20 题",
+    homeBrand: "人工智能训练师",
     levelId: "level3",
     levelLabel: "三级",
     examTemplateId: "l3",
@@ -79,9 +82,40 @@ export const QUESTION_BANKS: QuestionBankMeta[] = [
     id: "ai-trainer-l4",
     title: "人工智能训练师（4级）",
     subtitle: "理论知识 750 题 · 暂无实操练习",
+    homeBrand: "人工智能训练师",
     levelId: "level4",
     levelLabel: "四级",
     examTemplateId: "l4",
+    operate: false,
+  },
+  {
+    id: "fmo-live-l3",
+    title: "全媒体运营师（直播运营·3级）",
+    subtitle: "理论知识 1605 题 · 判断/单选/多选",
+    homeBrand: "全媒体运营师",
+    levelId: "fmo-live-l3",
+    levelLabel: "直播运营·三级",
+    examTemplateId: "l3",
+    operate: false,
+  },
+  {
+    id: "fmo-traffic-l3",
+    title: "全媒体运营师（流量运营·3级）",
+    subtitle: "理论知识 1625 题 · 判断/单选/多选",
+    homeBrand: "全媒体运营师",
+    levelId: "fmo-traffic-l3",
+    levelLabel: "流量运营·三级",
+    examTemplateId: "l3",
+    operate: false,
+  },
+  {
+    id: "fmo-av-l3",
+    title: "全媒体运营师（视听运营·3级）",
+    subtitle: "理论知识 1610 题 · 判断/单选/多选",
+    homeBrand: "全媒体运营师",
+    levelId: "fmo-av-l3",
+    levelLabel: "视听运营·三级",
+    examTemplateId: "l3",
     operate: false,
   },
 ];

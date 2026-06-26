@@ -39,10 +39,11 @@ export async function registerBankRoutes(app: FastifyInstance, authenticate: pre
       const full = loadTheoryBank(bankId);
       const typeCounts = countTheoryByType(full);
       const operateFull = loadCodeFillBank(bankId);
+      const operateEnabled = bankId === "ai-trainer-l3";
       const entitlements = buildEntitlements(
         access,
         { ...typeCounts, operate: operateFull.length },
-        bankId !== "ai-trainer-l4"
+        operateEnabled
       );
       const questions = sliceTheoryBank(full, access);
       const version = bankContentVersion(bankId);
@@ -78,7 +79,7 @@ export async function registerBankRoutes(app: FastifyInstance, authenticate: pre
       const full = loadCodeFillBank(bankId);
       const theoryFull = loadTheoryBank(bankId);
       const typeCounts = countTheoryByType(theoryFull);
-      const operateEnabled = bankId !== "ai-trainer-l4";
+      const operateEnabled = bankId === "ai-trainer-l3";
       const entitlements = buildEntitlements(
         access,
         { ...typeCounts, operate: full.length },

@@ -10,6 +10,12 @@ export async function loadLocalTheoryBank(bankId: string): Promise<Question[]> {
   switch (bankId) {
     case "ai-trainer-l4":
       return (await import("./theoryBankL4.json")).default as Question[];
+    case "fmo-live-l3":
+      return (await import("./theoryBankFmoLiveL3.json")).default as Question[];
+    case "fmo-traffic-l3":
+      return (await import("./theoryBankFmoTrafficL3.json")).default as Question[];
+    case "fmo-av-l3":
+      return (await import("./theoryBankFmoAvL3.json")).default as Question[];
     case "ai-trainer-l3":
     default:
       return (await import("./theoryBank.json")).default as Question[];

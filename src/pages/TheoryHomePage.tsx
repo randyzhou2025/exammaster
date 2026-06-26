@@ -36,7 +36,7 @@ export function TheoryHomePage() {
     <div className="flex min-h-0 flex-1 flex-col bg-gradient-to-b from-brand to-brand-dark pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))] text-white">
       <header className="flex min-w-0 items-start justify-between gap-2 px-4 pt-3">
         <span className="min-w-0 flex-1 text-lg font-semibold leading-snug">
-          人工智能训练师 · {levelLabel}
+          {questionBankMeta?.homeBrand ?? "备考"} · {levelLabel}
         </span>
         <nav className="flex shrink-0 flex-wrap items-center justify-end gap-x-3 gap-y-1 text-sm text-white/90">
           {user?.role === "admin" ? (
