@@ -10,6 +10,7 @@ import { BACKUP_FORMAT_VERSION } from "@/lib/backup";
 import { useLocalBanks } from "@/lib/useLocalBanks";
 import type { ContentEntitlements } from "@/types/contentAccess";
 import { isTypePracticeKind, practiceKindToQuestionType, type TypePracticeKind, type TypePracticeOrder } from "@/lib/practice";
+import { paperFromQuestionIds, wrongQuestionsInPaper } from "@/lib/mockExamReview";
 
 const STORAGE_KEY = "ai-trainer-exam-v2";
 
@@ -89,6 +90,27 @@ export function effectiveLatestOutcome(r: QuestionRecord): "unset" | "correct" |
 /** 错题本收录规则：与仪表盘「答错」一致，只看最近一次答题模式判分是否为错 */
 export function isWrongBookMember(r: QuestionRecord): boolean {
   return effectiveLatestOutcome(r) === "wrong";
+}
+
+/** 模考/练习答错时写入错题本（与 submitPracticeAnswer 答错分支一致） */
+export function markAsWrongForBook(prev: QuestionRecord): QuestionRecord {
+  const nextRec: QuestionRecord = { ...prev };
+  const now = Date.now();
+
+  if (prev.firstAnswerMode === "unset") {
+    nextRec.firstAnswerMode = "wrong";
+    nextRec.remediated = false;
+    nextRec.wrongStreakWhileInBook = 0;
+    nextRec.lastWrongAt = now;
+  } else {
+    nextRec.remediated = false;
+    nextRec.lastWrongAt = now;
+    if (prev.firstAnswerMode === "wrong") {
+      nextRec.wrongStreakWhileInBook = 0;
+    }
+  }
+  nextRec.latestAnswerOutcome = "wrong";
+  return nextRec;
 }
 
 export interface BankMeta {
@@ -629,9 +651,17 @@ export const useAppStore = create<AppState>()(
 
       submitMockExam: (payload) => {
         const id = `exam_${Date.now()}`;
+        const state = get();
+        const paper = paperFromQuestionIds(state.bank, payload.questionIds);
+        const wrongs = wrongQuestionsInPaper(paper, payload.answers ?? {});
+        const byId = { ...state.byId };
+        for (const q of wrongs) {
+          byId[q.id] = markAsWrongForBook(byId[q.id] ?? defaultRecord());
+        }
         set({
-          mockHistory: [{ id, ...payload }, ...get().mockHistory],
+          mockHistory: [{ id, ...payload }, ...state.mockHistory],
           mockExam: null,
+          byId,
         });
         return id;
       },

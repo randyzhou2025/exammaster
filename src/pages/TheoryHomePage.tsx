@@ -34,11 +34,8 @@ export function TheoryHomePage() {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-gradient-to-b from-brand to-brand-dark pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))] text-white">
-      <header className="flex min-w-0 items-start justify-between gap-2 px-4 pt-3">
-        <span className="min-w-0 flex-1 text-lg font-semibold leading-snug">
-          {questionBankMeta?.homeBrand ?? "备考"} · {levelLabel}
-        </span>
-        <nav className="flex shrink-0 flex-wrap items-center justify-end gap-x-3 gap-y-1 text-sm text-white/90">
+      <header className="px-4 pt-3">
+        <nav className="flex flex-wrap items-center justify-end gap-x-3 gap-y-1 text-sm text-white/90">
           {user?.role === "admin" ? (
             <a href={routes.adminUsers} className="text-white/90">
               用户管理
@@ -49,6 +46,11 @@ export function TheoryHomePage() {
           </Link>
           <Link to={routes.settings}>设置</Link>
         </nav>
+        <h1 className="mt-1 min-w-0 text-base font-semibold leading-snug sm:text-lg">
+          <span className="[overflow-wrap:anywhere]">{questionBankMeta?.homeBrand ?? "备考"}</span>
+          <span aria-hidden> · </span>
+          <span className="whitespace-nowrap">{levelLabel}</span>
+        </h1>
       </header>
       <p className="mt-1 px-4 text-sm leading-relaxed text-white/80">
         做题进度、错题与收藏保存在本机浏览器；请勿清除本站缓存、Cookie 或站点数据，以免丢失记录。

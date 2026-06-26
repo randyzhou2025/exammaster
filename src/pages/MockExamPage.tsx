@@ -358,11 +358,8 @@ export function MockExamPage() {
           onPointerCancel={onSwipePointerCancel}
         >
           <main ref={slideInnerRef} className="space-y-4 px-4 py-4 pb-36">
-            <div className="flex justify-between text-xs text-neutral-500">
-              <span>
-                第 {mock.currentIndex + 1} / {paper.length} 题
-              </span>
-              <span>考试中 · 多选须全对才得分</span>
+            <div className="text-xs text-neutral-500">
+              第 {mock.currentIndex + 1} / {paper.length} 题
             </div>
             <p className="text-base font-medium leading-relaxed text-neutral-900">
               <TypeTag type={q.type} className="mr-1.5 translate-y-[-0.06em]" />

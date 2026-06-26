@@ -52,7 +52,10 @@ export function MockExamResultPage() {
           )}
           <span className="text-neutral-500">（合格线 {examTemplate.passScore}）</span>
         </p>
-        <p className="mt-3 text-xs text-neutral-500">错题 {wrongCount} 道（多选题须全对才得分）</p>
+        <p className="mt-3 text-xs text-neutral-500">错题 {wrongCount} 道</p>
+        {wrongCount > 0 ? (
+          <p className="mt-2 text-xs text-brand">本次错题已加入错题本，可在首页进入错题本继续练习。</p>
+        ) : null}
       </div>
 
       <div className="mt-6 space-y-3">
