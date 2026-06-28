@@ -6,7 +6,6 @@ import { routes } from "@/lib/routes";
 import { useAppStore, selectStats } from "@/stores/appStore";
 import { useAuthStore } from "@/stores/authStore";
 import { selectCodeFillStats, useCodeFillStore, useCodeFillStoreHydrated } from "@/stores/codeFillStore";
-import { ServiceNoticeBanner } from "@/components/ServiceNoticeBanner";
 
 const SEQ_ENTRY_CLASS =
   "flex h-36 w-36 flex-col items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-dark text-white shadow-lg ring-4 ring-brand-light/60";
@@ -53,8 +52,6 @@ export function TheoryHomePage() {
       <p className="mt-1 px-4 text-sm leading-relaxed text-white/80">
         做题进度、错题与收藏保存在本机浏览器；请勿清除本站缓存、Cookie 或站点数据，以免丢失记录。
       </p>
-
-      <ServiceNoticeBanner />
 
       {isTrial && trialEnt ? (
         <div className="mx-4 mt-4 rounded-xl border border-amber-200/60 bg-amber-50/95 px-4 py-3 text-sm text-amber-950">
