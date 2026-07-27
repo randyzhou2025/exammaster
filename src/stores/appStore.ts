@@ -87,9 +87,9 @@ export function effectiveLatestOutcome(r: QuestionRecord): "unset" | "correct" |
   return r.remediated ? "correct" : "wrong";
 }
 
-/** 错题本收录规则：与仪表盘「答错」一致，只看最近一次答题模式判分是否为错 */
+/** 错题本收录：首次答错且未 remediated（自动/手动移出后为 true） */
 export function isWrongBookMember(r: QuestionRecord): boolean {
-  return effectiveLatestOutcome(r) === "wrong";
+  return r.firstAnswerMode === "wrong" && !r.remediated;
 }
 
 /** 模考/练习答错时写入错题本（与 submitPracticeAnswer 答错分支一致） */
@@ -570,7 +570,7 @@ export const useAppStore = create<AppState>()(
           }
         } else {
           nextRec.lastWrongAt = Date.now();
-          /** 任意一次答错：重新进入错题本可视状态（与 isWrongBookMember 基于 latest 一致） */
+          /** 任意一次答错：重新进入错题本（remediated=false） */
           nextRec.remediated = false;
           if (prev.firstAnswerMode === "wrong") {
             nextRec.wrongStreakWhileInBook = 0;
